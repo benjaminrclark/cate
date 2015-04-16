@@ -1,0 +1,25 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css" />
+</head>
+<body>
+	<div class="container">
+		<div class="span12">
+			<div th:fragment="alert (id, cssClass, iconClass, title, message, alert)"
+				id="alert_id" th:id="${id}" class="alert alert-block"
+				th:classappend="${cssClass}" data-dismiss="alert">
+				<a class="close" href="#">&times;</a>
+				<h4 class="alert-heading" th:text="${title}">
+					<i class="${iconClass}">
+						<!---->
+					</i>Title
+				</h4>
+				
+				<p th:if="${message != null}" th:text="#{${message.getCode()}(${@viewUtils.toCommaSeparatedString(message.getArguments())})}">Alert Message</p>
+				<p th:if="${message == null}" th:text="#{${alert}}">Alert Message</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

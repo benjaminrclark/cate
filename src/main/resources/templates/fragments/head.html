@@ -1,0 +1,12 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head (title)">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=8" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css" th:href="@{/static/styles/standard.css}"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js" th:src="@{/webjars/jquery/1.8.2/jquery.min.js}"><!-- required for FF3 and Opera --></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/2.2.2/js/bootstrap.min.js}"><!-- required for FF3 and Opera --></script>
+  <title th:text="${title}">Page Title</title>
+</head>
+<body>
+</body>
+</html>

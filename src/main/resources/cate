@@ -1,0 +1,44 @@
+#!/bin/sh
+SERVICE=cate
+JAR_FILE=/var/lib/cate/cate-0.0.1-SNAPSHOT.jar
+PID_FILE=/tmp/cate.pid
+LOG_FILE=/var/log/cate.log
+CONFIG_FILE=/etc/cate.conf
+case $1 in
+    start)
+        echo "Starting $SERVICE ..."
+        if [ ! -f $PID_FILE ]; then
+            nohup java -jar $JAR_FILE --spring.config.location=file:$CONFIG_FILE /tmp 2>> /dev/null >> $LOG_FILE &
+                        echo $! > $PID_FILE
+            echo "$SERVICE started ..."
+        else
+            echo "$SERVICE is already running ..."
+        fi
+    ;;
+    stop)
+        if [ -f $PID_FILE ]; then
+            PID=$(cat $PID_FILE);
+            echo "$SERVICE stoping ..."
+            kill $PID;
+            echo "$SERVICE stopped ..."
+            rm $PID_FILE
+        else
+            echo "$SERVICE is not running ..."
+        fi
+    ;;
+    restart)
+        if [ -f $PID_FILE ]; then
+            PID=$(cat $PID_FILE);
+            echo "$SERVICE stopping ...";
+            kill $PID;
+            echo "$SERVICE stopped ...";
+            rm $PID_FILE
+            echo "$SERVICE starting ..."
+            nohup java -jar $JAR_FILE --spring.config.location=file:$CONFIG_FILE /tmp 2>> /dev/null >> $LOG_FILE &
+                        echo $! > $PID_FILE
+            echo "$SERVICE started ..."
+        else
+            echo "$SERVICE is not running ..."
+        fi
+    ;;
+esac

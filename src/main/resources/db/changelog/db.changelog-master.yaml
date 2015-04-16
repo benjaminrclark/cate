@@ -1,0 +1,296 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2015-01-31-01
+      author: ben
+      changes:
+        - createTable:
+            tableName: hibernate_sequences
+            columns:
+              - column:
+                  name: sequence_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sequence_next_hi_value
+                  type: bigint
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 2015-02-05-01
+      author: ben
+      dbms: h2
+      changes:
+        - createSequence:
+            sequenceName: tenant_seq
+  - changeSet:
+      author: ben
+      id: 2015-02-05-02
+      dbms: mysql
+      changes:
+      - createTable:
+          tableName: tenant_seq
+          columns:
+            - column:
+                name: ID
+                type: BIGINT
+                constraints:
+                  nullable: false
+  - changeSet:
+      id: 2015-01-08-01
+      author: ben
+      changes:
+        - createTable:
+            tableName: multitenant
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: identifier
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: admin_email
+                  type: VARCHAR(255)
+              - column:
+                  name: owner_email
+                  type: VARCHAR(255)
+              - column:
+                  name: database_username
+                  type: VARCHAR(255)
+              - column: 
+                  name: database_url
+                  type: VARCHAR(255)
+              - column: 
+                  name: database_password
+                  type: VARCHAR(255)
+              - column:
+                  name: driver_class_name
+                  type: VARCHAR(255)
+              - column: 
+                  name: hostname
+                  type: VARCHAR(255)
+              - column: 
+                  name: version
+                  type: INT
+  - changeSet:
+      id: 2015-03-01-01
+      author: ben
+      changes:
+        - createTable:
+            tableName: tenant
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: identifier
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column: 
+                  name: version
+                  type: INT
+  - changeSet:
+      author: ben
+      id: 2015-03-01-02
+      changes:
+        - createTable:
+            tableName: tenant_properties
+            columns:
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: properties
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: properties_key
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+  - changeSet:
+      author: ben
+      id: 2015-03-01-03
+      changes:
+        - createTable:
+            tableName: tenant_theme
+            columns:
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: theme
+                  type: VARCHAR(255)
+              - column:
+                  name: theme_key
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+  - changeSet:
+      author: ben
+      id: 2015-03-01-04
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: tenant_id
+            baseTableName: tenant_properties
+            constraintName: tenant_properties_tenant_id_FK
+            referencedColumnNames: id
+            referencedTableName: tenant
+  - changeSet:
+      author: ben
+      id: 2015-03-01-05
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: tenant_id
+            baseTableName: tenant_theme
+            constraintName: tenant_theme_tenant_id_FK
+            referencedColumnNames: id
+            referencedTableName: tenant
+  - changeSet:
+      author: ben
+      id: 2015-02-19-01
+      changes:
+        - createTable:
+            tableName: user_account
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: version
+                  type: INT
+              - column:
+                  name: account_non_expired
+                  type: BIT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: account_non_locked
+                  type: BIT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: credentials_non_expired
+                  type: BIT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: BIT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+              - column: 
+                  name: username
+                  type: VARCHAR(255)
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column: 
+                  name: first_name
+                  type: VARCHAR(255)
+              - column:
+                  name: last_name
+                  type: VARCHAR(255)
+              - column:
+                  name: tenant
+                  type: VARCHAR(255)
+  - changeSet:
+      author: ben
+      id: 2015-02-19-02
+      changes:
+        - createTable:
+            tableName: user_account_groups
+            columns:
+              - column:
+                  name: members_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: groups_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+  - changeSet:
+      author: ben
+      id: 2015-02-19-03
+      changes:
+       - createTable:
+           tableName: user_account_permissions
+           columns:
+             - column:
+                 name: user_account_id
+                 type: BIGINT
+                 constraints:
+                   nullable: false
+             - column:
+                 name: permissions
+                 type: INT
+  - changeSet:
+      author: ben
+      id: 2015-02-19-04
+      changes:
+        - createTable: 
+            tableName: user_group
+            columns:
+            - column:
+                name: id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: version
+                type: INT
+            - column:
+                name: name
+                type: VARCHAR(255)
+            - column: 
+                name: tenant
+                type: VARCHAR(255)	
+  - changeSet:
+      author: ben
+      id: 2015-02-19-05
+      changes:
+        - createTable:
+            tableName: user_group_permissions
+            columns:
+            - column:
+                name: user_group_id
+                type: BIGINT
+                constraints:
+                  nullable: false
+            - column:
+                name: permissions
+                type: INT

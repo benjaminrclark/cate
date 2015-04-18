@@ -111,6 +111,10 @@ public class MultitenantProperties implements InitializingBean {
 		return multitenantProperties.getProperty("tenant.property.".concat(propertyName));
 	}
 	
+	public void setMultitenantProperties(Properties multitenantProperties) {
+		this.multitenantProperties = multitenantProperties;
+	}
+	
 	public Set<String> getDefaultTenantPropertyNames() {
 		Set<String> defaultTenantProperyNames = new HashSet<String>();
 		Enumeration<?> propertyNames = multitenantProperties.propertyNames();

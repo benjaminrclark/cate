@@ -39,4 +39,8 @@ public class MultitenantThemeResolver implements ThemeResolver {
 	public void setThemeName(HttpServletRequest request, HttpServletResponse response, String themeName) {
 		throw new UnsupportedOperationException("setThemeName is not supported");
 	}
+
+	public void setMultitenantStatus(MultitenantStatus multitenantStatus) {
+		this.multitenantStatus = multitenantStatus;
+	}
 }

@@ -209,10 +209,10 @@
                 "gpgcheck": "false",
                 "name": "CATE Yum Repo"
               }
-            }
+            },
             "packages" : {
               "yum" : {
-                "cate-portal"     : []
+                "cate"     : []
               }
             },           
             "files" : {
@@ -256,7 +256,8 @@
 
             "services" : {
               "sysvinit" : {
-                "cate" : { "enabled" : "true", "ensureRunning" : "true" },
+                "cate" : { "enabled" : "true", "ensureRunning" : "true",
+                           "files" : [ "/etc/cate.properties" ] },
                 "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
                               "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
               }
@@ -343,7 +344,7 @@
 
   "Outputs" : {
     "WebsiteURL" : {
-      "Description" : "URL for newly created LAMP stack",
+      "Description" : "URL for newly created CATE stack",
       "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "ElasticLoadBalancer", "DNSName" ]}]] }
     }
   }

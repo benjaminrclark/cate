@@ -1,3 +1,9 @@
+CATE
+===
+
+CATE helps you discover, organize, and publish taxonomic information
+
+It allows you to upload, curate, and publish your taxonomic information.
 
 Architecture
 Portal (e-Monocot Portal)

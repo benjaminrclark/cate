@@ -199,7 +199,7 @@
     "LaunchConfig": {
       "Type" : "AWS::AutoScaling::LaunchConfiguration",
       "Metadata" : {
-        "Comment1" : "Configure the bootstrap helpers to install the Apache Web Server and PHP",
+        "Comment1" : "Configure the bootstrap helpers to install the CATE",
         "AWS::CloudFormation::Init" : {
           "config" : {
             "yum_repos": {
@@ -257,7 +257,7 @@
             "services" : {
               "sysvinit" : {
                 "cate" : { "enabled" : "true", "ensureRunning" : "true",
-                           "files" : [ "/etc/cate.properties" ] },
+                           "files" : [ "/var/lib/cate.jar", "/etc/cate.properties" ] },
                 "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
                               "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
               }

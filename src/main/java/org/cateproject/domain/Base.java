@@ -53,6 +53,10 @@ public abstract class Base {
     @Transient
     private transient Integer lineNumber;
     
+    public abstract String getIdentifier();
+    
+    public abstract void setIdentifier(String identifier);
+    
     public Long getId() {
         return this.id;
     }

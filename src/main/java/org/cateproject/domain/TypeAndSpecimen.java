@@ -81,6 +81,11 @@ public class TypeAndSpecimen extends NonOwnedEntity {
 		return this.getOccurrenceId();
 	}
 	
+	@Transient
+	public void setIdentifier(String identifier) {
+		this.setOccurrenceId(identifier);
+	}
+	
 	public TypeStatus getTypeStatus() {
         return this.typeStatus;
     }

@@ -12,7 +12,7 @@ public class BaseTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		base = new Base();
+		base = new Taxon();
 		base.setIdentifier("IDENTIFIER");
 		base.setId(1L);
 		base.setVersion(1);
@@ -26,17 +26,7 @@ public class BaseTest {
 		base.setModified(new DateTime(2000, 1, 1, 1, 1, 2));
 		base.setRights("RIGHTS");
 		base.setRightsHolder("RIGHTS_HOLDER");
-	}
-
-	@Test
-	public void testGetIdentifier() {
-		assertNull("identifier should equal null", base.getIdentifier());
-	}
-
-	@Test
-	public void testToString() {
-		assertEquals("toString should return Base<null>","Base<null>", base.toString());
-	}
+	}	
 
 	@Test
 	public void testGetId() {

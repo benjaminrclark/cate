@@ -216,7 +216,7 @@
               }
             },           
             "files" : {
-              "/etc/cate.properties" : {
+              "/etc/sysconfig/cate" : {
                 "content" : { "Fn::Join" : [ "", [
                   "server.port=80\n",
                   "spring.datasource.name=cate\n",
@@ -257,7 +257,7 @@
             "services" : {
               "sysvinit" : {
                 "cate" : { "enabled" : "true", "ensureRunning" : "true",
-                           "files" : [ "/var/lib/cate.jar", "/etc/cate.properties" ] },
+                           "files" : [ "/var/lib/cate.jar", "/etc/sysconfig/cate" ] },
                 "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
                               "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
               }

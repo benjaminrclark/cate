@@ -26,6 +26,8 @@ repositories {
     jcenter()
     maven { url "http://repo.spring.io/snapshot" }
     maven { url "http://repo.spring.io/milestone" }
+    maven { url "http://repository.gbif.org/content/groups/gbif" }
+    maven { url "http://repository.gbif.org/content/repositories/thirdparty/" }
 }
 
 dependencies {
@@ -54,6 +56,15 @@ dependencies {
   compile("org.apache.commons:commons-lang3:3.3.2")
   compile("org.apache.activemq:activemq-broker")
   compile("org.apache.activemq:activemq-pool")
+  compile("org.gbif:dwca-reader:1.12")
+  compile("org.gbif:dwc-api:1.1")
+  compile("org.gbif:gbif-common:0.8")
+  compile("org.gbif:ecat-common:1.6") {
+    exclude group: "org.apache.lucene"
+  }
+  compile("com.vividsolutions:jts:1.11") {
+    exclude group: "xerces"
+  }
   testCompile("org.springframework.boot:spring-boot-starter-test")
   testCompile("org.easymock:easymock:3.3")
   testCompile("org.seleniumhq.selenium:selenium-java:2.43.1")

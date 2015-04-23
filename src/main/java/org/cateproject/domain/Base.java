@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -14,7 +15,7 @@ import org.joda.time.DateTime;
 
 @MappedSuperclass
 @Audited
-public class Base {
+public abstract class Base {
 	
 	@Id
     @GeneratedValue(generator = "table-hilo", strategy = GenerationType.TABLE)
@@ -43,27 +44,14 @@ public class Base {
     
     private String contributor;
     
-    //@ManyToOne
-    //private Dataset dataset;
+    @ManyToOne
+    private Dataset dataset;
     
     @Transient
     private transient String line;
 
     @Transient
     private transient Integer lineNumber;
-    
-    public String getIdentifier() {
-    	return null;
-    }
-    
-    public void setIdentifier(String identifier) {
-    	
-    }
-    
-    @Override
-    public String toString() {
-            return this.getClass().getSimpleName() + "<" + this.getIdentifier() + ">";
-    }
     
     public Long getId() {
         return this.id;
@@ -145,13 +133,13 @@ public class Base {
         this.contributor = contributor;
     }
     
-    /*public Dataset getDataset() {
+    public Dataset getDataset() {
         return this.dataset;
     }
     
     public void setDataset(Dataset dataset) {
         this.dataset = dataset;
-    }*/
+    }
     
     public String getLine() {
         return this.line;

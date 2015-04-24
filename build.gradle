@@ -3,16 +3,20 @@ buildscript {
       jcenter()
       maven { url "http://repo.spring.io/snapshot" }
       maven { url "http://repo.spring.io/milestone" }
+      mavenCentral()
   }
   dependencies {
       classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.1.BUILD-SNAPSHOT")
       classpath("com.netflix.nebula:gradle-ospackage-plugin:2.0.1")
+      classpath("org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1")
   }
 }
 apply plugin: 'java'
 apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
+apply plugin: 'os-package'
 
 jar {
   version =  '0.0.1-SNAPSHOT'
@@ -81,7 +85,12 @@ test {
    maxHeapSize = '1024m'
 }
 
-apply plugin: 'os-package'
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
 
 ospackage {
   release = '1'
@@ -104,7 +113,7 @@ ospackage {
   }   
 }
 
-task 	buildrpm(type: Rpm, dependsOn: build) {
+task buildrpm(type: Rpm, dependsOn: build) {
   requires('java', '1.5', GREATER | EQUAL)
   requires('ImageMagick')
 }

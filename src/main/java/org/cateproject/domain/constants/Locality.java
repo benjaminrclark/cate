@@ -486,7 +486,7 @@ public enum Locality {
 		if(string.startsWith("TDWG:")) {
 			String code = string.substring(5);
 		    for(Locality l : Locality.values()) {
-			    if(l.toString().equals(string)) {
+			    if(l.name().equals(code)) {
 				    return l;
 			    }
 		    }

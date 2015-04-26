@@ -6,7 +6,7 @@
 # description: CATE Server
 # processname: cate
 # pidfile: /var/run/cate.pid
-# config: /etc/sysconfig/cate
+# config: /etc/sysconfig/cate.properties
 
 
 ### BEGIN INIT INFO
@@ -26,7 +26,7 @@
 
 prog="cate"
 pidfile="/var/run/${prog}.pid"
-config="/etc/sysconfig/${prog}"
+config="/etc/sysconfig/${prog}.properties"
 logfile="/var/log/${prog}.log"
 jarfile="/var/lib/${prog}.jar"
 lockfile="/var/lock/subsys/${prog}"

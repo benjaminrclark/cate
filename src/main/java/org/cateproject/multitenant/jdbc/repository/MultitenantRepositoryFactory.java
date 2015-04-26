@@ -34,7 +34,7 @@ public class MultitenantRepositoryFactory {
 		if(platform.equals("h2")) {
 		    tenantRepository.setTenantIncrementer(new H2SequenceMaxValueIncrementer(dataSource, "tenant_seq"));	
 		} else if(platform.equals("mysql")) {
-			tenantRepository.setTenantIncrementer(new MySQLMaxValueIncrementer(dataSource, "tenant_seq", "ID"));
+			tenantRepository.setTenantIncrementer(new MySQLMaxValueIncrementer(dataSource, "tenant_seq", "id"));
 			
 		}
 		

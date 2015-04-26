@@ -180,20 +180,6 @@
         "MaxSize" : "5",
         "DesiredCapacity" : { "Ref" : "WebServerCapacity" },
         "LoadBalancerNames" : [ { "Ref" : "ElasticLoadBalancer" } ]
-      },
-      "CreationPolicy" : {
-        "ResourceSignal" : {
-          "Timeout" : "PT5M",
-          "Count"   : { "Ref" : "WebServerCapacity" }
-        }
-      },
-      "UpdatePolicy": {
-        "AutoScalingRollingUpdate": {
-          "MinInstancesInService": "1",
-          "MaxBatchSize": "1",
-          "PauseTime" : "PT15M",
-          "WaitOnResourceSignals": "true"
-        }
       }
     },
     "LaunchConfig": {
@@ -201,27 +187,38 @@
       "Metadata" : {
         "Comment1" : "Configure the bootstrap helpers to install the CATE",
         "AWS::CloudFormation::Init" : {
-          "config" : {
-            "yum_repos": {
-              "cate": {
-                "baseurl": "http://yum.cate-project.net/",
-                "enabled": "true",
-                "gpgcheck": "false",
-                "name": "CATE Yum Repo"
+          "configSets" : {
+            "default" : [ "installRepo", "config" ]
+          },
+          "installRepo" : {
+            "files" : {
+              "/etc/yum.repos.d/cate.repo" : {
+                "content" : { "Fn::Join" : [ "", [
+                  "[cate]\n",
+                  "name=cate\n",
+                  "baseurl=http://yum.cate-project.net/\n",
+                  "enabled=1\n",
+                  "gpgcheck=0\n"
+                ]]},
+                "mode"  : "000644",
+                "owner" : "root",
+                "group" : "root"
               }
-            },
+            }
+          },
+          "config" : {
             "packages" : {
               "yum" : {
                 "cate"     : []
               }
             },           
             "files" : {
-              "/etc/sysconfig/cate" : {
+              "/etc/sysconfig/cate.properties" : {
                 "content" : { "Fn::Join" : [ "", [
                   "server.port=80\n",
                   "spring.datasource.name=cate\n",
                   "spring.datasource.driver-class-name=com.mysql.jdbc.Driver\n",
-                  "spring.datasource.url=jdbc:mysql://", {"Fn::GetAtt" : ["MySQLDatabase", "Endpoint.Address"]}, ":3306/cate\n",
+                  "spring.datasource.url=jdbc:mysql://", {"Fn::GetAtt" : ["MySQLDatabase", "Endpoint.Address"]}, ":3306/", {"Ref" : "DBName"}, "\n",
                   "spring.datasource.username=", {"Ref" : "DBUser"}, "\n",
                   "spring.datasource.password=", {"Ref" : "DBPassword"}, "\n"
                 ]]},
@@ -239,7 +236,6 @@
                 "owner"   : "root",
                 "group"   : "root"
               },
-
               "/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
                 "content": { "Fn::Join" : ["", [
                   "[cfn-auto-reloader-hook]\n",
@@ -253,11 +249,10 @@
                 ]]}
               }
             },
-
             "services" : {
               "sysvinit" : {
                 "cate" : { "enabled" : "true", "ensureRunning" : "true",
-                           "files" : [ "/var/lib/cate.jar", "/etc/sysconfig/cate" ] },
+                           "files" : [ "/var/lib/cate.jar", "/etc/sysconfig/cate.properties" ] },
                 "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
                               "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
               }
@@ -339,7 +334,26 @@
         "VPCSecurityGroups": { "Fn::If" : [ "Is-EC2-VPC", [ { "Fn::GetAtt": [ "DBEC2SecurityGroup", "GroupId" ] } ], { "Ref" : "AWS::NoValue"}]},
         "DBSecurityGroups": { "Fn::If" : [ "Is-EC2-Classic", [ { "Ref": "DBSecurityGroup" } ], { "Ref" : "AWS::NoValue"}]}
       }
-    }
+    },
+    "DNSRecord" : {
+      "Type" : "AWS::Route53::RecordSet",
+      "Properties" : {
+          "HostedZoneName" : {
+            "Fn::Join" : [ "", [
+               { "Ref" : "HostedZone" }, "."
+            ]]},
+         "Comment" : "DNS name for the stack.",
+         "Name" : {
+            "Fn::Join" : [ "", [
+               {"Ref" : "DomainName"}, "."
+            ]]},
+         "Type" : "A",
+         "AliasTarget" : {
+                  "HostedZoneId" : { "Fn::GetAtt" : ["ElasticLoadBalancer", "CanonicalHostedZoneNameID"] },
+                  "DNSName" : { "Fn::GetAtt" : ["ElasticLoadBalancer","CanonicalHostedZoneName"] }
+         }
+      }
+   }
   },
 
   "Outputs" : {

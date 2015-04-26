@@ -36,7 +36,7 @@ public class MultitenantRepositoryImpl implements MultitenantRepository {
 	@Override
 	@Transactional("dataSourceTransactionManager")
 	public Page<Multitenant> findAll(Pageable pageable) {
-		List<Multitenant> tenants = jdbcTemplate.query("select * from Multitenant limit ? offset ?", new Object[] {pageable.getPageSize(), pageable.getOffset()}, new MultitenantMapper());
+		List<Multitenant> tenants = jdbcTemplate.query("select * from multitenant limit ? offset ?", new Object[] {pageable.getPageSize(), pageable.getOffset()}, new MultitenantMapper());
 		Long numberOfTenants = count();
 		return new PageImpl<Multitenant>(tenants, pageable, numberOfTenants);
 	}
@@ -44,7 +44,7 @@ public class MultitenantRepositoryImpl implements MultitenantRepository {
 	@Override
 	@Transactional("dataSourceTransactionManager")
 	public Multitenant findByIdentifier(String identifier) {
-		List<Multitenant> tenants = jdbcTemplate.query("select * from Multitenant where identifier = ?", new Object[] { identifier }, new MultitenantMapper());
+		List<Multitenant> tenants = jdbcTemplate.query("select * from multitenant where identifier = ?", new Object[] { identifier }, new MultitenantMapper());
 		if(tenants.size() == 1) {
 			return tenants.get(0);
 		} else if(tenants.size() == 0) {
@@ -57,7 +57,7 @@ public class MultitenantRepositoryImpl implements MultitenantRepository {
 	@Override
 	@Transactional("dataSourceTransactionManager")
 	public Multitenant findOne(Long id) {
-		List<Multitenant> tenants = jdbcTemplate.query("select * from Multitenant where id =  ?", new Object []{ id }, new MultitenantMapper());
+		List<Multitenant> tenants = jdbcTemplate.query("select * from multitenant where id =  ?", new Object []{ id }, new MultitenantMapper());
 		if(tenants.size() == 1) {
 			return tenants.get(0);
 		} else if(tenants.size() == 0) {

@@ -369,7 +369,7 @@ databaseChangeLog:
                 constraints:
                   nullable: false
             - column:
-                name: valu
+                name: value
                 type: VARCHAR(2500)
   - changeSet:
       author: ben
@@ -446,7 +446,7 @@ databaseChangeLog:
                 constraints:
                   nullable: false
             - column:
-                name: valu
+                name: value
                 type: VARCHAR(2500)
             - column:
                 name: REV
@@ -518,7 +518,7 @@ databaseChangeLog:
                 name: dataset
                 type: BIGINT
             - column:
-                name: dscription
+                name: description
                 type: LONGTEXT
             - column:
                 name: identifier
@@ -586,7 +586,7 @@ databaseChangeLog:
                 name: dataset
                 type: BIGINT
             - column:
-                name: dscription
+                name: description
                 type: LONGTEXT
             - column:
                 name: identifier

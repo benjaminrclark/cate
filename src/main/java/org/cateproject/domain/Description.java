@@ -8,8 +8,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cateproject.domain.constants.DescriptionType;
 import org.hibernate.envers.Audited;
 
@@ -90,9 +88,5 @@ public class Description extends OwnedEntity {
     
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
-    }
-    
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

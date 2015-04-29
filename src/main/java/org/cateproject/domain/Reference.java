@@ -47,15 +47,6 @@ public class Reference extends NonOwnedEntity {
     @ManyToMany
     @JoinTable(name = "Reference_Taxon", joinColumns = {@JoinColumn(name = "Reference_id")}, inverseJoinColumns = {@JoinColumn(name = "taxa_id")})
     private List<Taxon> taxa = new ArrayList<Taxon>();
-
-    @Override
-    public String toString() {
-        if(this.getBibliographicCitation() == null || this.getBibliographicCitation().isEmpty()) {
-            return "Reference<" + this.getId() + ">";
-        } else {
-            return this.getBibliographicCitation();
-        }
-    }
     
     public String getIdentifier() {
         return this.identifier;

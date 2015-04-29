@@ -10,8 +10,11 @@ public class BaseTest {
 
 	private Base base;
 	
+	private Dataset dataset;
+	
 	@Before
 	public void setUp() throws Exception {
+		dataset = new Dataset();
 		base = new Taxon();
 		base.setIdentifier("IDENTIFIER");
 		base.setId(1L);
@@ -26,6 +29,7 @@ public class BaseTest {
 		base.setModified(new DateTime(2000, 1, 1, 1, 1, 2));
 		base.setRights("RIGHTS");
 		base.setRightsHolder("RIGHTS_HOLDER");
+		base.setDataset(dataset);
 	}	
 
 	@Test
@@ -77,6 +81,11 @@ public class BaseTest {
 	public void testGetContributor() {
 		assertEquals("contributor should equal 'CONTRIBUTOR'","CONTRIBUTOR", base.getContributor());
 	}
+	
+	@Test
+	public void testToString() {
+		assertEquals("toString should equal 'Taxon<IDENTIFIER>'", "Taxon<IDENTIFIER>", base.toString());
+	}
 
 	@Test
 	public void testGetLine() {
@@ -88,4 +97,8 @@ public class BaseTest {
 		assertEquals("lineNumber should equal 1",new Integer(1), base.getLineNumber());
 	}
 
+	@Test
+	public void testGetDataset() {
+		assertEquals("dataset should equal dataset",dataset, base.getDataset());
+	}
 }

@@ -160,4 +160,9 @@ public abstract class Base {
     public void setLineNumber(Integer lineNumber) {
         this.lineNumber = lineNumber;
     }
+    
+    @Override
+    public String toString() {
+            return this.getClass().getSimpleName() + "<" + this.getIdentifier() + ">";
+    }
 }

@@ -47,11 +47,6 @@ public class Term extends NonOwnedEntity {
     @JoinTable(name = "Term_Taxon", joinColumns = {@JoinColumn(name = "Term_id")}, inverseJoinColumns = {@JoinColumn(name = "taxa_id")})
     private List<Taxon> taxa = new ArrayList<Taxon>();
     
-    @Override
-    public String toString() {
-            return this.getClass().getSimpleName() + "<" + this.getIdentifier() + ">";
-    }
-    
     public String getDescription() {
         return this.description;
     }

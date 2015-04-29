@@ -688,7 +688,7 @@ databaseChangeLog:
                 name: life_stage
                 type: INT
             - column:
-                name: loclity
+                name: locality
                 type: varchar(255)
             - column:
                 name: location
@@ -762,7 +762,7 @@ databaseChangeLog:
                 name: life_stage
                 type: INT
             - column:
-                name: loclity
+                name: locality
                 type: varchar(255)
             - column:
                 name: location

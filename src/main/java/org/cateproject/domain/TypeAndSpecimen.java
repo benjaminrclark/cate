@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cateproject.domain.constants.Locality;
+import org.cateproject.domain.constants.Location;
 import org.cateproject.domain.constants.Sex;
 import org.cateproject.domain.constants.TypeDesignationType;
 import org.cateproject.domain.constants.TypeStatus;
@@ -55,7 +55,7 @@ public class TypeAndSpecimen extends NonOwnedEntity {
     private String locality;
     
     @Enumerated
-    private Locality location;
+    private Location location;
 
     @Enumerated
     private Sex sex;
@@ -190,11 +190,11 @@ public class TypeAndSpecimen extends NonOwnedEntity {
         this.locality = locality;
     }
     
-    public Locality getLocation() {
+    public Location getLocation() {
         return this.location;
     }
     
-    public void setLocation(Locality location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
     
@@ -260,9 +260,5 @@ public class TypeAndSpecimen extends NonOwnedEntity {
     
     public void setTaxa(List<Taxon> taxa) {
         this.taxa = taxa;
-    }
-    
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

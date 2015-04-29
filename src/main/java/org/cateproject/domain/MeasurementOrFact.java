@@ -35,11 +35,6 @@ public class MeasurementOrFact extends OwnedEntity {
 
     private String value;
     
-    @Override
-    public String toString() {
-            return this.getClass().getSimpleName() + "<" + this.getIdentifier() + ">";
-    }
-    
     public Term getType() {
         return this.type;
     }

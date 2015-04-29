@@ -10,7 +10,4 @@ import org.springframework.beans.factory.annotation.Configurable;
 @MappedSuperclass
 public abstract class NonOwnedEntity extends Base implements NonOwned {	
 	
-	public String toString() {
-		return "Searchable<" + this.getId() + ">";
-    }	
 }

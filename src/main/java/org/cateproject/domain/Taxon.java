@@ -147,20 +147,6 @@ public class Taxon extends NonOwnedEntity {
     }
 
     @Override
-    public String toString() {
-        if(this.getScientificName() == null || this.getScientificName().isEmpty()) {
-            return "Taxon<" + this.getTaxonId() + ">";
-        } else {
-            StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append(this.getScientificName());
-            if(this.getScientificNameAuthorship() != null && !this.getScientificNameAuthorship().isEmpty()) {
-                stringBuffer.append(" " + this.getScientificNameAuthorship());
-            }
-            return stringBuffer.toString();
-        }
-    }
-
-    @Override
     public boolean equals(Object other) {
     	// check for self-comparison
         if (this == other) {

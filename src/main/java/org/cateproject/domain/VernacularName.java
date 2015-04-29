@@ -7,12 +7,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
+import org.cateproject.domain.constants.Location;
+import org.cateproject.domain.constants.Sex;
 import org.gbif.ecat.voc.LifeStage;
 import org.hibernate.envers.Audited;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cateproject.domain.constants.Locality;
-import org.cateproject.domain.constants.Sex;
 
 @Audited
 @Entity
@@ -31,7 +29,7 @@ public class VernacularName extends OwnedEntity {
     private String temporal;
 
     @Enumerated
-    private Locality location;
+    private Location location;
 
     private String locality;
 
@@ -95,11 +93,11 @@ public class VernacularName extends OwnedEntity {
         this.temporal = temporal;
     }
     
-    public Locality getLocation() {
+    public Location getLocation() {
         return this.location;
     }
     
-    public void setLocation(Locality location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
     
@@ -173,9 +171,5 @@ public class VernacularName extends OwnedEntity {
     
     public void setTaxon(Taxon taxon) {
         this.taxon = taxon;
-    }
-    
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

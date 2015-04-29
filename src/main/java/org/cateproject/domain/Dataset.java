@@ -34,11 +34,6 @@ public class Dataset extends NonOwnedEntity {
 
     @ManyToMany
     private List<Taxon> taxa = new ArrayList<Taxon>();
-    
-    @Override
-    public String toString() {
-            return this.getClass().getSimpleName() + "<" + this.getIdentifier() + ">";
-    }
 
     public List<Node> getNodes() {
         return this.nodes;

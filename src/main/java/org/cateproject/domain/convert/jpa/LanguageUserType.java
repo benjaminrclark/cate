@@ -10,9 +10,16 @@ import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.Type;
 import org.hibernate.usertype.UserType;
 
 public class LanguageUserType implements UserType {
+	
+	private Type type = StandardBasicTypes.STRING;
+	
+	protected void setType(Type type) {
+		this.type = type;
+	}
 
 	@Override
 	public Object assemble(Serializable cached, Object owner) throws HibernateException {
@@ -48,13 +55,13 @@ public class LanguageUserType implements UserType {
 	@Override
 	public Object nullSafeGet(ResultSet resultSet, String[] names, SessionImplementor sessionImplementor, Object owner) throws HibernateException,
 			SQLException {
-		String value = (String) StandardBasicTypes.STRING.nullSafeGet(resultSet, names[0], sessionImplementor);
+		String value = (String) type.nullSafeGet(resultSet, names[0], sessionImplementor, owner);
 		return value != null ? new Locale(value) : null;
 	}
 
 	@Override
 	public void nullSafeSet(PreparedStatement preparedStatement, Object value, int index, SessionImplementor sessionImplementor) throws HibernateException, SQLException {
-		StandardBasicTypes.STRING.nullSafeSet(preparedStatement, 
+		type.nullSafeSet(preparedStatement, 
           value != null ? ((Locale)value).getLanguage() : null, index, sessionImplementor);
 
 	}
@@ -72,7 +79,7 @@ public class LanguageUserType implements UserType {
 
 	@Override
 	public int[] sqlTypes() {
-		return new int[] {StandardBasicTypes.STRING.sqlType()};
+		return new int[] { StandardBasicTypes.STRING.sqlType() };
 	}
 
 }

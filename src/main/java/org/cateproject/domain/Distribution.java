@@ -5,11 +5,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
+import org.cateproject.domain.constants.Location;
 import org.gbif.ecat.voc.EstablishmentMeans;
 import org.gbif.ecat.voc.LifeStage;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cateproject.domain.constants.Locality;
 import org.gbif.ecat.voc.OccurrenceStatus;
 import org.hibernate.envers.Audited;
 
@@ -21,9 +19,9 @@ public class Distribution extends OwnedEntity {
     private String identifier;
 
     @Enumerated
-    private Locality location;
+    private Location location;
     
-    private String loclity;
+    private String locality;
 
     private String countryCode;
 
@@ -50,20 +48,20 @@ public class Distribution extends OwnedEntity {
         this.identifier = identifier;
     }
     
-    public Locality getLocation() {
+    public Location getLocation() {
         return this.location;
     }
     
-    public void setLocation(Locality location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
     
-    public String getLoclity() {
-        return this.loclity;
+    public String getLocality() {
+        return this.locality;
     }
     
-    public void setLoclity(String loclity) {
-        this.loclity = loclity;
+    public void setLocality(String locality) {
+        this.locality = locality;
     }
     
     public String getCountryCode() {
@@ -112,9 +110,5 @@ public class Distribution extends OwnedEntity {
     
     public void setTaxon(Taxon taxon) {
         this.taxon = taxon;
-    }
-    
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

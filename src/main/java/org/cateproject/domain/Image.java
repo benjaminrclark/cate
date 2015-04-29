@@ -204,11 +204,6 @@ public class Image extends NonOwnedEntity {
     
     public DateTime getFileLastModified() {
     	return this.fileLastModified;
-    }    
-    
-    @Override
-    public String toString() {
-            return this.getClass().getSimpleName() + "<" + this.getIdentifier() + ">";
     }
 
     @Override

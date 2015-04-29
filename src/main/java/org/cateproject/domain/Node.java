@@ -40,11 +40,6 @@ public class Node extends Base {
     @ManyToMany
     private Set<Term> applicableIf = new HashSet<Term>();
     
-    @Override
-    public String toString() {
-            return this.getClass().getSimpleName() + "<" + this.getIdentifier() + ">";
-    }
-    
     public String getIdentifier() {
         return this.identifier;
     }

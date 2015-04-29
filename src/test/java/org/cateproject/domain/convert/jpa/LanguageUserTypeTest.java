@@ -1,17 +1,26 @@
 package org.cateproject.domain.convert.jpa;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Locale;
 
+import org.easymock.EasyMock;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.usertype.UserType;
+import org.hibernate.type.Type;
 import org.junit.Before;
 import org.junit.Test;
 
 public class LanguageUserTypeTest {
 	
-	UserType languageUserType;
+	LanguageUserType languageUserType;
 
 	@Before
 	public void setUp() throws Exception {
@@ -46,6 +55,11 @@ public class LanguageUserTypeTest {
 	public void testHashCodeObject() {
 		assertEquals("hashcode should return the hashcode of the locale", languageUserType.hashCode(Locale.ENGLISH), Locale.ENGLISH.hashCode());
 	}
+	
+	@Test(expected = AssertionError.class)
+	public void testHashCodeNull() {
+		languageUserType.hashCode(null);
+	}
 
 	@Test
 	public void testIsMutable() {
@@ -67,5 +81,63 @@ public class LanguageUserTypeTest {
 	public void testSqlTypes() {
 		assertArrayEquals("languageUserType should store the locale as a string", languageUserType.sqlTypes(), new int[] {StandardBasicTypes.STRING.sqlType()});
 	}
+	
+	@Test
+	public void testNullSafeSetWithValidValue() throws SQLException {
+		Type type = EasyMock.createMock(Type.class);
+		languageUserType.setType(type);
+		PreparedStatement preparedStatement = EasyMock.createMock(PreparedStatement.class);
+		SessionImplementor sessionImplementor = EasyMock.createMock(SessionImplementor.class);
+		
+		type.nullSafeSet(EasyMock.eq(preparedStatement), EasyMock.eq("en"), EasyMock.eq(1), EasyMock.eq(sessionImplementor));
+		
+		EasyMock.replay(type, preparedStatement, sessionImplementor);
+		languageUserType.nullSafeSet(preparedStatement, Locale.ENGLISH, 1, sessionImplementor);
+		EasyMock.verify(type, preparedStatement, sessionImplementor);
+	}
+	
+	@Test
+	public void testNullSafeSetWithNullValue() throws SQLException {
+		Type type = EasyMock.createMock(Type.class);
+		languageUserType.setType(type);
+		PreparedStatement preparedStatement = EasyMock.createMock(PreparedStatement.class);
+		SessionImplementor sessionImplementor = EasyMock.createMock(SessionImplementor.class);
+		
+		type.nullSafeSet(EasyMock.eq(preparedStatement), EasyMock.isNull(), EasyMock.eq(1), EasyMock.eq(sessionImplementor));
+		
+		EasyMock.replay(type, preparedStatement, sessionImplementor);
+		languageUserType.nullSafeSet(preparedStatement, null, 1, sessionImplementor);
+		EasyMock.verify(type, preparedStatement, sessionImplementor);
+	}
+	
+	@Test
+	public void testNullSafeGetWithValidValue() throws SQLException {
+		Type type = EasyMock.createMock(Type.class);
+		languageUserType.setType(type);
+		ResultSet resultSet = EasyMock.createMock(ResultSet.class);
+		String[] names = new String[]{ "language" };
+		SessionImplementor sessionImplementor = EasyMock.createMock(SessionImplementor.class);
+		Object owner = new Object();
+		
+		EasyMock.expect(type.nullSafeGet(EasyMock.eq(resultSet), EasyMock.eq("language"), EasyMock.eq(sessionImplementor), EasyMock.eq(owner))).andReturn("en");
+		
+		EasyMock.replay(type);
+		assertEquals("nullSafeGet should return a valid locale",Locale.ENGLISH,languageUserType.nullSafeGet(resultSet, names, sessionImplementor, owner));
+		EasyMock.verify(type);
+	}
 
+	public void testNullSafeGetWithNullValue() throws SQLException {
+		Type type = EasyMock.createMock(Type.class);
+		languageUserType.setType(type);
+		ResultSet resultSet = EasyMock.createMock(ResultSet.class);
+		String[] names = new String[]{ "language" };
+		SessionImplementor sessionImplementor = EasyMock.createMock(SessionImplementor.class);
+		Object owner = new Object();
+		
+		EasyMock.expect(type.nullSafeGet(EasyMock.eq(resultSet), EasyMock.eq("language"), EasyMock.eq(sessionImplementor), EasyMock.eq(owner))).andReturn(null);
+		
+		EasyMock.replay(type, resultSet, sessionImplementor);
+		assertNull("nullSafeGet should return a null",languageUserType.nullSafeGet(resultSet, names, sessionImplementor, owner));
+		EasyMock.verify(type, resultSet, sessionImplementor);
+	}	
 }

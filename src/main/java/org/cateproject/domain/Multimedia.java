@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.ObjectUtils;
+import org.cateproject.domain.constants.DCMIType;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
@@ -18,7 +19,7 @@ import org.joda.time.DateTime;
 
 @Audited
 @Entity
-public class Image extends NonOwnedEntity {
+public class Multimedia extends NonOwnedEntity {
 	
     @NotNull
     @NaturalId
@@ -26,11 +27,11 @@ public class Image extends NonOwnedEntity {
     
     private String title;
 
-    private String refrences;
+    private String references;
 
     private String description;
 
-    private String locality;
+    private String spatial;
 
     private Double latitude;
 
@@ -45,6 +46,9 @@ public class Image extends NonOwnedEntity {
     private Integer width;
     
     private Integer height;
+    
+    @Enumerated
+    private DCMIType type;
     
     private Long size;
     
@@ -78,12 +82,12 @@ public class Image extends NonOwnedEntity {
         this.title = title;
     }
     
-    public String getRefrences() {
-        return this.refrences;
+    public String getReferences() {
+        return this.references;
     }
     
-    public void setRefrences(String refrences) {
-        this.refrences = refrences;
+    public void setReferences(String references) {
+        this.references = references;
     }
     
     public String getDescription() {
@@ -94,12 +98,12 @@ public class Image extends NonOwnedEntity {
         this.description = description;
     }
     
-    public String getLocality() {
-        return this.locality;
+    public String getSpatial() {
+        return this.spatial;
     }
     
-    public void setLocality(String locality) {
-        this.locality = locality;
+    public void setSpatial(String spatial) {
+        this.spatial = spatial;
     }
     
     public Double getLatitude() {
@@ -206,20 +210,11 @@ public class Image extends NonOwnedEntity {
     	return this.fileLastModified;
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (other == null || other.getClass() != this.getClass()) {
-            return false;
-        }
-        Image image = (Image) other;
-        return ObjectUtils.equals(this.identifier, identifier);
-    }
+	public DCMIType getType() {
+		return type;
+	}
 
-    @Override
-    public int hashCode() {
-        return ObjectUtils.hashCode(this.identifier);
-    }
+	public void setType(DCMIType type) {
+		this.type = type;
+	}
 }

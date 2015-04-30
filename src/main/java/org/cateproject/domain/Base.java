@@ -9,8 +9,10 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
+import org.hibernate.proxy.HibernateProxyHelper;
 import org.joda.time.DateTime;
 
 @MappedSuperclass
@@ -159,6 +161,27 @@ public abstract class Base {
     
     public void setLineNumber(Integer lineNumber) {
         this.lineNumber = lineNumber;
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+        if (HibernateProxyHelper.getClassWithoutInitializingProxy(other).equals(this.getClass())) {
+        	Base base = (Base) other;
+            return ObjectUtils.equals(this.getIdentifier(), base.getIdentifier());
+        }else{
+        	return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return ObjectUtils.hashCode(this.getIdentifier());
     }
     
     @Override

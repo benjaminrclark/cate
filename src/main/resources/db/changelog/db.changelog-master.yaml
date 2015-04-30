@@ -955,7 +955,7 @@ databaseChangeLog:
       id: 1344022313991-15
       changes:
         - createTable:
-            tableName: image
+            tableName: multimedia
             columns:
             - column:
                 name: id
@@ -1014,7 +1014,7 @@ databaseChangeLog:
                 name: latitude
                 type: DOUBLE
             - column:
-                name: locality
+                name: spatial
                 type: VARCHAR(255)
             - column:
                 name: longitude
@@ -1023,7 +1023,10 @@ databaseChangeLog:
                 name: publisher
                 type: VARCHAR(255)
             - column:
-                name: refrences
+                name: references
+                type: VARCHAR(255)
+            - type:
+                name: references
                 type: VARCHAR(255)
             - column:
                 name: term
@@ -1051,7 +1054,7 @@ databaseChangeLog:
       id: 02-01-2014_04
       changes:
         - createTable:
-            tableName: image_AUD
+            tableName: multimedia_AUD
             columns:
             - column:
                 name: id
@@ -1110,7 +1113,7 @@ databaseChangeLog:
                 name: latitude
                 type: DOUBLE
             - column:
-                name: locality
+                name: spatial
                 type: VARCHAR(255)
             - column:
                 name: longitude
@@ -1119,7 +1122,10 @@ databaseChangeLog:
                 name: publisher
                 type: VARCHAR(255)
             - column:
-                name: refrences
+                name: references
+                type: VARCHAR(255)
+            - column:
+                name: type
                 type: VARCHAR(255)
             - column:
                 name: term
@@ -1162,8 +1168,8 @@ databaseChangeLog:
       id: 1344022313999-15
       changes:
         - createIndex:
-            indexName: ImageIdentifier
-            tableName: image
+            indexName: MultimediaIdentifier
+            tableName: multimedia
             unique: true
             columns:
             - column:
@@ -1173,10 +1179,10 @@ databaseChangeLog:
       id: 1344022313991-16
       changes:
         - createTable:
-            tableName: image_taxon
+            tableName: multimedia_taxon
             columns:
             - column:
-                name: image_id
+                name: multimedia_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -1190,10 +1196,10 @@ databaseChangeLog:
       id: 02-01-2014_05
       changes:
         - createTable:
-            tableName: image_taxon_AUD
+            tableName: multimedia_taxon_AUD
             columns:
             - column:
-                name: image_id
+                name: multimedia_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -1733,7 +1739,7 @@ databaseChangeLog:
                 name: nomenclatural_code
                 type: INT
             - column:
-                name: ordr
+                name: order
                 type: VARCHAR(255)
             - column:
                 name: phylum
@@ -1862,7 +1868,7 @@ databaseChangeLog:
                 name: nomenclatural_code
                 type: INT
             - column:
-                name: ordr
+                name: order
                 type: VARCHAR(255)
             - column:
                 name: phylum
@@ -2002,10 +2008,10 @@ databaseChangeLog:
                 name: unit
                 type: VARCHAR(255)
             - column:
-                name: charactr
+                name: character
                 type: BIGINT
             - column:
-                name: ordr
+                name: order
                 type: INT
   - changeSet:
       author: ben

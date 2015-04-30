@@ -23,20 +23,20 @@ public class Term extends NonOwnedEntity {
     private String description;
 
     @OneToMany(mappedBy = "term")
-    private List<Image> images = new ArrayList<Image>();
+    private List<Multimedia> multimedia = new ArrayList<Multimedia>();
 
-    @OneToMany(mappedBy = "charactr")
+    @OneToMany(mappedBy = "character")
     private List<org.cateproject.domain.Term> states = new ArrayList<org.cateproject.domain.Term>();
 
     @ManyToOne
-    private org.cateproject.domain.Term charactr;
+    private org.cateproject.domain.Term character;
 
     private String unit;
 
     @Enumerated(EnumType.STRING)
     private CharacterType type;
 
-    private Integer ordr;
+    private Integer order;
     
     private String title;
 
@@ -55,12 +55,12 @@ public class Term extends NonOwnedEntity {
         this.description = description;
     }
     
-    public List<Image> getImages() {
-        return this.images;
+    public List<Multimedia> getMultimedia() {
+        return this.multimedia;
     }
     
-    public void setImages(List<Image> images) {
-        this.images = images;
+    public void setMultimedia(List<Multimedia> multimedia) {
+        this.multimedia = multimedia;
     }
     
     public List<Term> getStates() {
@@ -71,12 +71,12 @@ public class Term extends NonOwnedEntity {
         this.states = states;
     }
     
-    public Term getCharactr() {
-        return this.charactr;
+    public Term getCharacter() {
+        return this.character;
     }
     
-    public void setCharactr(Term charactr) {
-        this.charactr = charactr;
+    public void setCharacter(Term character) {
+        this.character = character;
     }
     
     public String getUnit() {
@@ -95,12 +95,12 @@ public class Term extends NonOwnedEntity {
         this.type = type;
     }
     
-    public Integer getOrdr() {
-        return this.ordr;
+    public Integer getOrder() {
+        return this.order;
     }
     
-    public void setOrdr(Integer ordr) {
-        this.ordr = ordr;
+    public void setOrder(Integer order) {
+        this.order = order;
     }
     
     public String getTitle() {

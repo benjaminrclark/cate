@@ -14,14 +14,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.gbif.ecat.voc.NomenclaturalCode;
 import org.gbif.ecat.voc.NomenclaturalStatus;
 import org.gbif.ecat.voc.Rank;
 import org.gbif.ecat.voc.TaxonomicStatus;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.envers.Audited;
-import org.hibernate.proxy.HibernateProxyHelper;
 
 @Entity
 @Audited
@@ -43,7 +41,7 @@ public class Taxon extends NonOwnedEntity {
 
     private String clazz;
 
-    private String ordr;
+    private String order;
 
     private String family;
 
@@ -93,7 +91,7 @@ public class Taxon extends NonOwnedEntity {
     private Set<Description> descriptions = new HashSet<Description>();
 
     @ManyToMany(mappedBy = "taxa")
-    private List<Image> images = new ArrayList<Image>();
+    private List<Multimedia> multimedia = new ArrayList<Multimedia>();
 
     @ManyToMany(mappedBy = "taxa")
     private List<Reference> references = new ArrayList<Reference>();
@@ -144,49 +142,6 @@ public class Taxon extends NonOwnedEntity {
             calculateHigherTaxa(t.getParentNameUsage(), higherTaxa);
         }
         higherTaxa.add(t);
-    }
-
-    @Override
-    public boolean equals(Object other) {
-    	// check for self-comparison
-        if (this == other) {
-            return true;
-        }
-        if (other == null) {
-            return false;
-        }
-        // Only works when classes are instantiated
-        if ((other.getClass().equals(this.getClass()))) {
-
-            Taxon taxon = (Taxon) other;
-            if (this.getTaxonId() == null && getTaxonId() == null) {
-
-                if (this.getId() != null && getId() != null) {
-                    return ObjectUtils.equals(this.getId(), getId());
-                } else {
-                    return false;
-                }
-            } else {
-                return ObjectUtils.equals(this.taxonId, taxonId);
-            }
-        } else if (HibernateProxyHelper.getClassWithoutInitializingProxy(other)
-                .equals(this.getClass())) {
-            // Case to check when proxies are involved
-            Taxon taxon = (Taxon) other;
-
-            if (this.getTaxonId() == null && getTaxonId() == null) {
-                return false;
-            } else {
-                return ObjectUtils.equals(this.taxonId, getTaxonId());
-            }
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        return ObjectUtils.hashCode(this.taxonId);
     }
     
 	@Transient
@@ -255,12 +210,12 @@ public class Taxon extends NonOwnedEntity {
         this.clazz = clazz;
     }
     
-    public String getOrdr() {
-        return this.ordr;
+    public String getOrder() {
+        return this.order;
     }
     
-    public void setOrdr(String ordr) {
-        this.ordr = ordr;
+    public void setOrder(String order) {
+        this.order = order;
     }
     
     public String getFamily() {
@@ -415,12 +370,12 @@ public class Taxon extends NonOwnedEntity {
         this.descriptions = descriptions;
     }
     
-    public List<Image> getImages() {
-        return this.images;
+    public List<Multimedia> getMultimedia() {
+        return this.multimedia;
     }
     
-    public void setImages(List<Image> images) {
-        this.images = images;
+    public void setMultimedia(List<Multimedia> multimedia) {
+        this.multimedia = multimedia;
     }
     
     public List<Reference> getReferences() {

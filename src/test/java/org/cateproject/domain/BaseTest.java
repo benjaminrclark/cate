@@ -30,7 +30,22 @@ public class BaseTest {
 		base.setRights("RIGHTS");
 		base.setRightsHolder("RIGHTS_HOLDER");
 		base.setDataset(dataset);
-	}	
+	}
+	
+	@Test
+	public void testHashcode() {
+		assertEquals("hashcode should the hashcode of the identifier",base.getIdentifier().hashCode(), base.hashCode());
+	}
+	
+	@Test
+	public void testEquals() {
+		Base other = new Taxon();
+		other.setIdentifier("OTHER_IDENTIFIER");
+		assertTrue("equals should return true when the object is the same",base.equals(base));
+		assertFalse("equals should return false when the object is null",base.equals(null));
+		assertFalse("equals should return false when the object is a different class",base.equals(new Description()));
+		assertFalse("equals should return false when the object has a different identifier",base.equals(other));
+	}
 
 	@Test
 	public void testGetId() {

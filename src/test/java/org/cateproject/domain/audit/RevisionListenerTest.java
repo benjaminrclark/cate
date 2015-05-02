@@ -33,7 +33,7 @@ public class RevisionListenerTest {
 		userAccount.setUsername("USER_NAME");
         Authentication authentication = new UsernamePasswordAuthenticationToken(userAccount,null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        
+
 		revisionListener.newRevision(revisionInfo);
 		assertEquals("userName should equal 'USER_NAME'", "USER_NAME", revisionInfo.getUserName());
 	}

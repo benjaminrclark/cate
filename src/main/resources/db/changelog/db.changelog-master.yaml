@@ -296,6 +296,47 @@ databaseChangeLog:
                 type: INT
   - changeSet:
       author: ben
+      id: 2014-01-01_01
+      changes:
+        - createTable:
+            tableName: revinfo
+            columns:
+              - column:
+                  autoIncrement: false
+                  name: REV
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column: 
+                  name: REVTSTMP
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_name
+                  type: VARCHAR(255)
+  - changeSet:
+      id: 2014-01-01_02
+      author: ben
+      changes:
+        - createTable:
+            tableName: revchanges
+            columns:
+              - column:
+                  name: REV
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: ENTITYNAME
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+  - changeSet:
+      author: ben
       id: 1344022313991-10
       changes:
         - createTable:
@@ -343,7 +384,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: unit
@@ -420,7 +461,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: unit
@@ -515,7 +556,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: description
@@ -583,7 +624,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: description
@@ -682,7 +723,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: life_stage
@@ -756,7 +797,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: life_stage
@@ -853,7 +894,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: title
@@ -910,7 +951,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: title
@@ -988,7 +1029,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: title
@@ -1087,7 +1128,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: title
@@ -1319,7 +1360,7 @@ databaseChangeLog:
                 name: version
                 type: INT
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: parent
@@ -1373,7 +1414,7 @@ databaseChangeLog:
                 name: version
                 type: INT
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: parent
@@ -1474,7 +1515,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: title
@@ -1549,7 +1590,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: title
@@ -1703,7 +1744,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: version
@@ -1739,7 +1780,7 @@ databaseChangeLog:
                 name: nomenclatural_code
                 type: INT
             - column:
-                name: order
+                name: ordr
                 type: VARCHAR(255)
             - column:
                 name: phylum
@@ -1780,19 +1821,19 @@ databaseChangeLog:
                 name: verbatim_taxon_rank
                 type: VARCHAR(255)
             - column:
-                name: accepted_name_usage
+                name: accepted_name_usage_id
                 type: BIGINT
             - column:
-                name: name_according_to
+                name: name_according_to_id
                 type: BIGINT
             - column:
-                name: name_published_in
+                name: name_published_in_id
                 type: BIGINT
             - column:
-                name: original_name_usage
+                name: original_name_usage_id
                 type: BIGINT
             - column:
-                name: parent_name_usage
+                name: parent_name_usage_id
                 type: BIGINT
   - changeSet:
       author: ben
@@ -1832,7 +1873,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: version
@@ -1868,7 +1909,7 @@ databaseChangeLog:
                 name: nomenclatural_code
                 type: INT
             - column:
-                name: order
+                name: ordr
                 type: VARCHAR(255)
             - column:
                 name: phylum
@@ -1909,19 +1950,19 @@ databaseChangeLog:
                 name: verbatim_taxon_rank
                 type: VARCHAR(255)
             - column:
-                name: accepted_name_usage
+                name: accepted_name_usage_id
                 type: BIGINT
             - column:
-                name: name_according_to
+                name: name_according_to_id
                 type: BIGINT
             - column:
-                name: name_published_in
+                name: name_published_in_id
                 type: BIGINT
             - column:
-                name: original_name_usage
+                name: original_name_usage_id
                 type: BIGINT
             - column:
-                name: parent_name_usage
+                name: parent_name_usage_id
                 type: BIGINT
             - column:
                 name: REV
@@ -1990,7 +2031,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: title
@@ -2054,7 +2095,7 @@ databaseChangeLog:
                 name: modified
                 type: DATETIME
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
             - column:
                 name: title
@@ -2156,3 +2197,407 @@ databaseChangeLog:
             - column:
                 name: REVTYPE
                 type: TINYINT
+  - changeSet:
+      author: ben
+      id: 19.02.2013-07
+      changes:
+        - createTable:
+            tableName: dataset
+            columns:
+            - column:
+                name: id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: identifier
+                type: VARCHAR(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: title
+                type: varchar(255)
+            - column:
+                name: description
+                type: varchar(255)
+            - column:
+                name: version
+                type: INT
+            - column:
+                name: creator
+                type: varchar(255)
+            - column:
+                name: contributor
+                type: varchar(255)
+            - column:
+                name: license
+                type: varchar(255)
+            - column:
+                name: rights
+                type: varchar(2500)
+            - column:
+                name: rights_holder
+                type: varchar(255)
+            - column:
+                name: access_rights
+                type: varchar(255)
+            - column:
+                name: created
+                type: DATETIME
+            - column:
+                name: modified
+                type: DATETIME
+            - column:
+                name: dataset_id
+                type: BIGINT
+  - changeSet:
+      author: ben
+      id: 01.01.2014-01
+      changes:
+        - createTable:
+            tableName: dataset_AUD
+            columns:
+            - column:
+                name: id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: identifier
+                type: VARCHAR(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: title
+                type: varchar(255)
+            - column:
+                name: description
+                type: varchar(255)
+            - column:
+                name: version
+                type: INT
+            - column:
+                name: creator
+                type: varchar(255)
+            - column:
+                name: contributor
+                type: varchar(255)
+            - column:
+                name: license
+                type: varchar(255)
+            - column:
+                name: rights
+                type: varchar(2500)
+            - column:
+                name: rights_holder
+                type: varchar(255)
+            - column:
+                name: access_rights
+                type: varchar(255)
+            - column:
+                name: created
+                type: DATETIME
+            - column:
+                name: modified
+                type: DATETIME
+            - column:
+                name: dataset_id
+                type: BIGINT
+            - column:
+                name: REV
+                type: INT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: REVEND
+                type: INT
+            - column:
+                name: REVEND_TSTMP
+                type: TIMESTAMP
+            - column:
+                name: REVTYPE
+                type: TINYINT
+  - changeSet:
+      author: ben
+      id: 19.02.2013-07a
+      changes:
+        - createIndex:
+            indexName: DatasetIdentifier
+            tableName: dataset
+            unique: true
+            columns:
+              - column:
+                  name: identifier
+  - changeSet:
+      author: ben
+      id: 19.02.2013-09
+      changes:
+        - createTable:
+            tableName: node_inapplicable_if
+            columns:
+            - column:
+                name: node
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: inapplicable_if
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+  - changeSet:
+      author: ben
+      id: 02-01-2014_15
+      changes:
+        - createTable:
+            tableName: node_inapplicable_if_AUD
+            columns:
+            - column:
+                name: node
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: inapplicable_if
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: REV
+                type: INT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: REVEND
+                type: INT
+            - column:
+                name: REVEND_TSTMP
+                type: TIMESTAMP
+            - column:
+                name: REVTYPE
+                type: TINYINT
+  - changeSet:
+      author: ben
+      id: 19.02.2013-10
+      changes:
+        - createTable:
+            tableName: node_applicable_if
+            columns:
+            - column:
+                name: node
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: applicable_if
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+  - changeSet:
+      author: ben
+      id: 02-01-2014_16
+      changes:
+        - createTable:
+            tableName: node_applicable_if_AUD
+            columns:
+            - column:
+                name: node
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: applicable_if
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: REV
+                type: INT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: REVEND
+                type: INT
+            - column:
+                name: REVEND_TSTMP
+                type: TIMESTAMP
+            - column:
+                name: REVTYPE
+                type: TINYINT
+  - changeSet:
+      author: ben
+      id: 22.02.2013-02
+      changes:
+        - createTable:
+            tableName: dataset_taxa
+            columns:
+            - column:
+                name: dataset
+                type: BIGINT
+                constraints:
+                  nullable: false
+            - column:
+                name: taxa
+                type: BIGINT
+                constraints:
+                  nullable: false
+  - changeSet:
+      author: ben
+      id: 01.01.2014-02
+      changes:
+        - createTable:
+            tableName: dataset_taxa_AUD
+            columns:
+            - column:
+                name: dataset
+                type: BIGINT
+                constraints:
+                  nullable: false
+            - column:
+                name: taxa
+                type: BIGINT
+                constraints:
+                  nullable: false
+            - column:
+                name: REV
+                type: INT
+                constraints:
+                  nullable: false
+            - column:
+                name: REVEND
+                type: INT
+            - column:
+                name: REVEND_TSTMP
+                type: TIMESTAMP
+            - column:
+                name: REVTYPE
+                type: TINYINT
+  - changeSet:
+      author: ben
+      id: 22.02.2013-03
+      changes:
+        - createTable:
+            tableName: dataset_parameters
+            columns:
+            - column:
+                name: dataset
+                type: BIGINT
+                constraints:
+                  nullable: false
+            - column:
+                name: parameters
+                type: varchar(2500)
+                constraints:
+                  nullable: false
+            - column:
+                name: parameters_KEY
+                type: varchar(255)
+                constraints:
+                  nullable: false
+  - changeSet:
+      author: ben
+      id: 01.01.2014-03
+      changes:
+        - createTable:
+            tableName: dataset_parameters_AUD
+            columns:
+            - column:
+                name: dataset
+                type: BIGINT
+                constraints:
+                  nullable: false
+            - column:
+                name: parameters
+                type: varchar(2500)
+                constraints:
+                  nullable: false
+            - column:
+                name: parameters_KEY
+                type: varchar(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: REV
+                type: INT
+                constraints:
+                  nullable: false
+            - column:
+                name: REVEND
+                type: INT
+            - column:
+                name: REVEND_TSTMP
+                type: TIMESTAMP
+            - column:
+                name: REVTYPE
+                type: TINYINT
+  - changeSet:
+      author: ben
+      id: 22.02.2013-04
+      changes:
+        - createTable:
+            tableName: node_parameters
+            columns:
+            - column:
+                name: node
+                type: BIGINT
+                constraints:
+                  nullable: false
+            - column:
+                name: parameters
+                type: varchar(2500)
+                constraints:
+                  nullable: false
+            - column:
+                name: parameters_KEY
+                type: varchar(255)
+                constraints:
+                  nullable: false
+  - changeSet:
+      author: ben
+      id: 02-01-2014_17
+      changes:
+        - createTable:
+            tableName: node_parameters_AUD
+            columns:
+            - column:
+                name: node
+                type: BIGINT
+                constraints:
+                  nullable: false
+            - column:
+                name: parameters
+                type: varchar(2500)
+                constraints:
+                  nullable: false
+            - column:
+                name: parameters_KEY
+                type: varchar(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: REV
+                type: INT
+                constraints:
+                  nullable: false
+            - column:
+                name: REVEND
+                type: INT
+            - column:
+                name: REVEND_TSTMP
+                type: TIMESTAMP
+            - column:
+                name: REVTYPE
+                type: TINYINT                

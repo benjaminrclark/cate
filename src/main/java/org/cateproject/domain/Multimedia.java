@@ -60,7 +60,7 @@ public class Multimedia extends NonOwnedEntity {
     private DateTime fileLastModified;
     
     @ManyToMany
-    @JoinTable(name = "Image_Taxon", joinColumns = {@JoinColumn(name = "Image_id")}, inverseJoinColumns = {@JoinColumn(name = "taxa_id")})
+    @JoinTable(name = "Multimedia_Taxon", joinColumns = {@JoinColumn(name = "Multimedia_id")}, inverseJoinColumns = {@JoinColumn(name = "taxa_id")})
     private List<Taxon> taxa = new ArrayList<Taxon>();
     
     @ManyToOne

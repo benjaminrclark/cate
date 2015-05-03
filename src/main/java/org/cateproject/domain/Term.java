@@ -3,6 +3,7 @@ package org.cateproject.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -36,6 +37,7 @@ public class Term extends NonOwnedEntity {
     @Enumerated(EnumType.STRING)
     private CharacterType type;
 
+    @Column(name = "ordr")
     private Integer order;
     
     private String title;

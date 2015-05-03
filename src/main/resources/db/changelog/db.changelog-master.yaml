@@ -352,10 +352,10 @@ databaseChangeLog:
                 name: version
                 type: INT
             - column:
-                name: type
+                name: type_id
                 type: BIGINT
             - column:
-                name: taxon
+                name: taxon_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -399,7 +399,7 @@ databaseChangeLog:
                 name: determined_by
                 type: varchar(255)
             - column:
-                name: mthod
+                name: method
                 type: varchar(255)
             - column:
                 name: remarks
@@ -429,10 +429,10 @@ databaseChangeLog:
                 name: version
                 type: INT
             - column:
-                name: type
+                name: type_id
                 type: BIGINT
             - column:
-                name: taxon
+                name: taxon_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -476,7 +476,7 @@ databaseChangeLog:
                 name: determined_by
                 type: varchar(255)
             - column:
-                name: mthod
+                name: method
                 type: varchar(255)
             - column:
                 name: remarks
@@ -579,7 +579,7 @@ databaseChangeLog:
                 name: version
                 type: INT
             - column:
-                name: taxon
+                name: taxon_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -647,7 +647,7 @@ databaseChangeLog:
                 name: version
                 type: INT
             - column:
-                name: taxon
+                name: taxon_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -747,7 +747,7 @@ databaseChangeLog:
                 name: version
                 type: INT
             - column:
-                name: taxon
+                name: taxon_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -821,7 +821,7 @@ databaseChangeLog:
                 name: version
                 type: INT
             - column:
-                name: taxon
+                name: taxon_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -993,6 +993,59 @@ databaseChangeLog:
                 name: identifier
   - changeSet:
       author: ben
+      id: 03-05-2015-01
+      changes:
+        - createTable:
+            tableName: identification_key_taxon
+            columns:
+            - column:
+                name: identification_key_id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: taxa_id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+  - changeSet:
+      author: ben
+      id: 03-05-2015-02
+      changes:
+        - createTable:
+            tableName: identification_key_taxon_AUD
+            columns:
+            - column:
+                name: identification_key_id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: taxa_id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: REV
+                type: INT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: REVEND
+                type: INT
+            - column:
+                name: REVEND_TSTMP
+                type: TIMESTAMP
+            - column:
+                name: REVTYPE
+                type: TINYINT
+  - changeSet:
+      author: ben
       id: 1344022313991-15
       changes:
         - createTable:
@@ -1066,11 +1119,11 @@ databaseChangeLog:
             - column:
                 name: references
                 type: VARCHAR(255)
-            - type:
-                name: references
-                type: VARCHAR(255)
             - column:
-                name: term
+                name: type
+                type: INT
+            - column:
+                name: term_id
                 type: BIGINT
             - column:
                 name: width
@@ -1167,9 +1220,9 @@ databaseChangeLog:
                 type: VARCHAR(255)
             - column:
                 name: type
-                type: VARCHAR(255)
+                type: INT
             - column:
-                name: term
+                name: term_id
                 type: BIGINT
             - column:
                 name: REV
@@ -1363,10 +1416,10 @@ databaseChangeLog:
                 name: dataset_id
                 type: BIGINT
             - column:
-                name: parent
+                name: parent_id
                 type: BIGINT
             - column:
-                name: term
+                name: term_id
                 type: BIGINT
             - column:
                 name: identifier
@@ -1417,10 +1470,10 @@ databaseChangeLog:
                 name: dataset_id
                 type: BIGINT
             - column:
-                name: parent
+                name: parent_id
                 type: BIGINT
             - column:
-                name: term
+                name: term_id
                 type: BIGINT
             - column:
                 name: identifier
@@ -2049,10 +2102,10 @@ databaseChangeLog:
                 name: unit
                 type: VARCHAR(255)
             - column:
-                name: character
+                name: character_id
                 type: BIGINT
             - column:
-                name: order
+                name: ordr
                 type: INT
   - changeSet:
       author: ben
@@ -2113,7 +2166,7 @@ databaseChangeLog:
                 name: unit
                 type: VARCHAR(255)
             - column:
-                name: charactr
+                name: character_id
                 type: BIGINT
             - column:
                 name: ordr
@@ -2339,13 +2392,13 @@ databaseChangeLog:
             tableName: node_inapplicable_if
             columns:
             - column:
-                name: node
+                name: node_id
                 type: BIGINT
                 constraints:
                   nullable: false
                   primaryKey: true
             - column:
-                name: inapplicable_if
+                name: inapplicable_if_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -2358,13 +2411,13 @@ databaseChangeLog:
             tableName: node_inapplicable_if_AUD
             columns:
             - column:
-                name: node
+                name: node_id
                 type: BIGINT
                 constraints:
                   nullable: false
                   primaryKey: true
             - column:
-                name: inapplicable_if
+                name: inapplicable_if_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -2392,13 +2445,13 @@ databaseChangeLog:
             tableName: node_applicable_if
             columns:
             - column:
-                name: node
+                name: node_id
                 type: BIGINT
                 constraints:
                   nullable: false
                   primaryKey: true
             - column:
-                name: applicable_if
+                name: applicable_if_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -2411,13 +2464,13 @@ databaseChangeLog:
             tableName: node_applicable_if_AUD
             columns:
             - column:
-                name: node
+                name: node_id
                 type: BIGINT
                 constraints:
                   nullable: false
                   primaryKey: true
             - column:
-                name: applicable_if
+                name: applicable_if_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -2493,7 +2546,7 @@ databaseChangeLog:
             tableName: dataset_parameters
             columns:
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -2515,7 +2568,7 @@ databaseChangeLog:
             tableName: dataset_parameters_AUD
             columns:
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -2551,7 +2604,7 @@ databaseChangeLog:
             tableName: node_parameters
             columns:
             - column:
-                name: node
+                name: node_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -2573,7 +2626,7 @@ databaseChangeLog:
             tableName: node_parameters_AUD
             columns:
             - column:
-                name: node
+                name: node_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -2592,6 +2645,522 @@ databaseChangeLog:
                 type: INT
                 constraints:
                   nullable: false
+            - column:
+                name: REVEND
+                type: INT
+            - column:
+                name: REVEND_TSTMP
+                type: TIMESTAMP
+            - column:
+                name: REVTYPE
+                type: TINYINT
+  - changeSet:
+      author: ben
+      id: 15.11.2012-10
+      changes:
+        - createTable:
+            tableName: vernacular_name
+            columns:
+            - column:
+                name: id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: creator
+                type: varchar(255)
+            - column:
+                name: contributor
+                type: varchar(255)
+            - column:
+                name: license
+                type: varchar(255)
+            - column:
+                name: rights
+                type: varchar(2500)
+            - column:
+                name: rights_holder
+                type: varchar(255)
+            - column:
+                name: access_rights
+                type: varchar(255)
+            - column:
+                name: created
+                type: DATETIME
+            - column:
+                name: modified
+                type: DATETIME
+            - column:
+                name: dataset_id
+                type: BIGINT
+            - column:
+                name: vernacular_name
+                type: VARCHAR(255)
+            - column:
+                name: identifier
+                type: VARCHAR(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: source
+                type: VARCHAR(255)
+            - column:
+                name: lang
+                type: VARCHAR(255)
+            - column:
+                name: temporal
+                type: VARCHAR(255)
+            - column:
+                name: location
+                type: INT
+            - column:
+                name: locality
+                type: VARCHAR(255)
+            - column:
+                name: country_code
+                type: VARCHAR(255)
+            - column:
+                name: sex
+                type: INT
+            - column:
+                name: preferred_name
+                type: boolean
+                defaultValueBoolean: false
+                constraints:
+                  nullable: false
+            - column:
+                name: plural
+                type: boolean
+                defaultValueBoolean: false
+                constraints:
+                  nullable: false
+            - column:
+                name: organism_part
+                type: VARCHAR(255)
+            - column:
+                name: taxon_remarks
+                type: VARCHAR(255)
+            - column:
+                name: life_stage
+                type: INT
+            - column:
+                name: version
+                type: INT
+            - column:
+                name: taxon_id
+                type: BIGINT
+                constraints:
+                  nullable: false
+  - changeSet:
+      author: ben
+      id: 02-01-2014_12
+      changes:
+        - createTable:
+            tableName: vernacular_name_AUD
+            columns:
+            - column:
+                name: id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: creator
+                type: varchar(255)
+            - column:
+                name: contributor
+                type: varchar(255)
+            - column:
+                name: license
+                type: varchar(255)
+            - column:
+                name: rights
+                type: varchar(2500)
+            - column:
+                name: rights_holder
+                type: varchar(255)
+            - column:
+                name: access_rights
+                type: varchar(255)
+            - column:
+                name: created
+                type: DATETIME
+            - column:
+                name: modified
+                type: DATETIME
+            - column:
+                name: dataset_id
+                type: BIGINT
+            - column:
+                name: vernacular_name
+                type: VARCHAR(255)
+            - column:
+                name: identifier
+                type: VARCHAR(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: source
+                type: VARCHAR(255)
+            - column:
+                name: lang
+                type: VARCHAR(255)
+            - column:
+                name: temporal
+                type: VARCHAR(255)
+            - column:
+                name: location
+                type: INT
+            - column:
+                name: locality
+                type: VARCHAR(255)
+            - column:
+                name: country_code
+                type: VARCHAR(255)
+            - column:
+                name: sex
+                type: INT
+            - column:
+                name: preferred_name
+                type: boolean
+                defaultValueBoolean: false
+                constraints:
+                  nullable: false
+            - column:
+                name: plural
+                type: boolean
+                defaultValueBoolean: false
+                constraints:
+                  nullable: false
+            - column:
+                name: organism_part
+                type: VARCHAR(255)
+            - column:
+                name: taxon_remarks
+                type: VARCHAR(255)
+            - column:
+                name: life_stage
+                type: INT
+            - column:
+                name: version
+                type: INT
+            - column:
+                name: taxon_id
+                type: BIGINT
+                constraints:
+                  nullable: false
+            - column:
+                name: REV
+                type: INT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: REVEND
+                type: INT
+            - column:
+                name: REVEND_TSTMP
+                type: TIMESTAMP
+            - column:
+                name: REVTYPE
+                type: TINYINT
+  - changeSet:
+      author: ben
+      id: 15.11.2012-10a
+      changes:
+        - createIndex:
+            indexName: VernacularNameIdentifier
+            tableName: vernacular_name
+            unique: true
+            columns:
+              - column: 
+                  name: identifier
+  - changeSet:
+      author: ben
+      id: 15.11.2012-11
+      changes:
+        - createTable:
+            tableName: type_and_specimen
+            columns:
+            - column:
+                name: id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: creator
+                type: varchar(255)
+            - column:
+                name: contributor
+                type: varchar(255)
+            - column:
+                name: license
+                type: varchar(255)
+            - column:
+                name: rights
+                type: varchar(2500)
+            - column:
+                name: rights_holder
+                type: varchar(255)
+            - column:
+                name: access_rights
+                type: varchar(255)
+            - column:
+                name: created
+                type: DATETIME
+            - column:
+                name: modified
+                type: DATETIME
+            - column:
+                name: dataset_id
+                type: BIGINT
+            - column:
+                name: version
+                type: INT
+            - column:
+                name: type_status
+                type: INT
+            - column:
+                name: type_designation_type
+                type: INT
+            - column:
+                name: type_designated_by
+                type: VARCHAR(255)
+            - column:
+                name: scientific_name
+                type: VARCHAR(255)
+            - column:
+                name: taxon_rank
+                type: INT
+            - column:
+                name: bibliographic_citation
+                type: VARCHAR(255)
+            - column:
+                name: occurrence_id
+                type: VARCHAR(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: institution_code
+                type: VARCHAR(255)
+            - column:
+                name: decimal_longitude
+                type: DOUBLE
+            - column:
+                name: decimal_latitude
+                type: DOUBLE
+            - column:
+                name: collection_code
+                type: VARCHAR(255)
+            - column:
+                name: catalog_number
+                type: VARCHAR(255)
+            - column:
+                name: locality
+                type: VARCHAR(255)
+            - column:
+                name: location
+                type: INT
+            - column:
+                name: sex
+                type: INT
+            - column:
+                name: recorded_by
+                type: VARCHAR(255)
+            - column:
+                name: source
+                type: VARCHAR(255)
+            - column:
+                name: verbatim_event_date
+                type: VARCHAR(255)
+            - column:
+                name: verbatim_longitude
+                type: VARCHAR(255)
+            - column:
+                name: verbatim_latitude
+                type: VARCHAR(255)
+            - column:
+                name: verbatim_label
+                type: VARCHAR(255)
+  - changeSet:
+      author: ben
+      id: 02-01-2014_13
+      changes:
+        - createTable:
+            tableName: type_and_specimen_AUD
+            columns:
+            - column:
+                name: id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: creator
+                type: varchar(255)
+            - column:
+                name: contributor
+                type: varchar(255)
+            - column:
+                name: license
+                type: varchar(255)
+            - column:
+                name: rights
+                type: varchar(2500)
+            - column:
+                name: rights_holder
+                type: varchar(255)
+            - column:
+                name: access_rights
+                type: varchar(255)
+            - column:
+                name: created
+                type: DATETIME
+            - column:
+                name: modified
+                type: DATETIME
+            - column:
+                name: dataset_id
+                type: BIGINT
+            - column:
+                name: version
+                type: INT
+            - column:
+                name: type_status
+                type: INT
+            - column:
+                name: type_designation_type
+                type: INT
+            - column:
+                name: type_designated_by
+                type: VARCHAR(255)
+            - column:
+                name: scientific_name
+                type: VARCHAR(255)
+            - column:
+                name: taxon_rank
+                type: INT
+            - column:
+                name: bibliographic_citation
+                type: VARCHAR(255)
+            - column:
+                name: occurrence_id
+                type: VARCHAR(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: institution_code
+                type: VARCHAR(255)
+            - column:
+                name: decimalLongitude
+                type: DOUBLE
+            - column:
+                name: decimalLatitude
+                type: DOUBLE
+            - column:
+                name: collection_code
+                type: VARCHAR(255)
+            - column:
+                name: catalog_number
+                type: VARCHAR(255)
+            - column:
+                name: locality
+                type: VARCHAR(255)
+            - column:
+                name: location
+                type: INT
+            - column:
+                name: sex
+                type: INT
+            - column:
+                name: recorded_by
+                type: VARCHAR(255)
+            - column:
+                name: source
+                type: VARCHAR(255)
+            - column:
+                name: verbatim_event_date
+                type: VARCHAR(255)
+            - column:
+                name: verbatim_longitude
+                type: VARCHAR(255)
+            - column:
+                name: verbatim_latitude
+                type: VARCHAR(255)
+            - column:
+                name: verbatim_label
+                type: VARCHAR(255)
+            - column:
+                name: REV
+                type: INT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: REVEND
+                type: INT
+            - column:
+                name: REVEND_TSTMP
+                type: TIMESTAMP
+            - column:
+                name: REVTYPE
+                type: TINYINT
+  - changeSet:
+      author: ben
+      id: 15.11.2012-11a
+      changes:
+        - createIndex:
+            indexName: TypeAndSpecimenOccurrenceId
+            tableName: type_and_specimen
+            unique: true
+            columns:
+              - column:
+                  name: occurrence_id
+  - changeSet:
+      author: ben
+      id: 15.11.2012-12
+      changes:
+        - createTable:
+            tableName: type_and_specimen_taxon
+            columns:
+            - column:
+                name: type_and_specimen_id
+                type: BIGINT
+                constraints:
+                  nullable: false"  primaryKey="true
+            - column:
+                name: taxa_id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+  - changeSet:
+      author: ben
+      id: 02-01-2014_14
+      changes:
+        - createTable:
+            tableName: type_and_specimen_taxon_AUD
+            columns:
+            - column:
+                name: type_and_specimen_id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: taxa_id
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: REV
+                type: INT
+                constraints:
+                  nullable: false
+                  primaryKey: true
             - column:
                 name: REVEND
                 type: INT

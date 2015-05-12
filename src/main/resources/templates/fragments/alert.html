@@ -11,7 +11,7 @@
 				th:classappend="${cssClass}" data-dismiss="alert">
 				<a class="close" href="#">&times;</a>
 				<h4 class="alert-heading" th:text="${title}">
-					<i class="${iconClass}">
+					<i th:if="${iconClass != ''}" class="${iconClass}">
 						<!---->
 					</i>Title
 				</h4>

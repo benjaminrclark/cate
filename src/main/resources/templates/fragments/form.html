@@ -8,22 +8,31 @@
 		<div class="span12">
 			<form action="#" method="post">
 				<div th:fragment="text (id, field)" class="control-group" th:classappend="${#fields.hasErrors(field)}? error">
-					<label class="control-label" for="_${id}_id" th:text="#{'label_' + ${id}}">Field Label: </label>
+					<label class="control-label" th:for="__${id}___id" th:text="#{'label_' + ${id}}">Field Label: </label>
 					<div class="controls">
-						<input	id="${id}_id" type="text" th:field="*{__${field}__}" th:errorclass="error"/>
+						<input	th:id="__${id}___id" type="text" th:field="*{__${field}__}" th:errorclass="error"/>
 						<p th:if="${#fields.hasErrors('__${field}__')}" class="help-block" th:errors="*{__${field}__}">Field Error</p>
 					</div>
 				</div>
-				<div th:fragment="display (id, value)" class="control-group">
-					<label class="control-label" for="_${id}_id" th:text="#{'label_' + ${id}}">Field Label: </label>
+				<div th:fragment="display (id, field)" class="control-group">
+					<label class="control-label" th:for="__${id}___id" th:text="#{'label_' + ${id}}">Field Label: </label>
 					<div class="controls">
-					  <span class="uneditable-input" th:text="${value}">Value</span>
+						<span th:id="__${id}___id" class="uneditable-input" th:text="*{__${field}__}" />
+					</div>
+				</div>
+				<div th:fragment="select (id, field, items)" class="control-group" th:classappend="${#fields.hasErrors(field)}? error">
+					<label class="control-label" th:for="__${id}___id" th:text="#{'label_' + ${id}}">Field Label: </label>
+					<div class="controls">
+						<select	th:id="__${id}___id" th:field="*{__${field}__}" th:errorclass="error">
+						  <option th:each="item : ${items}" th:value="${item}" th:text="${item}">Item Text</option>
+						</select>
+						<p th:if="${#fields.hasErrors('__${field}__')}" class="help-block" th:errors="*{__${field}__}">Field Error</p>
 					</div>
 				</div>
 				<div th:fragment="password (id, field)" class="control-group" th:classappend="${#fields.hasErrors(field)}? error">
-					<label class="control-label" for="_${id}_id" th:text="#{'label_' + ${id}}">Field Label: </label>
+					<label class="control-label" th:for="__${id}___id" th:text="#{'label_' + ${id}}">Field Label: </label>
 					<div class="controls">
-						<input	id="${id}_id" type="password" th:field="*{__${field}__}" th:errorclass="error"/>
+						<input	th:id="__${id}___id" type="password" th:field="*{__${field}__}" th:errorclass="error"/>
 						<p th:if="${#fields.hasErrors('__${field}__')}" class="help-block" th:errors="*{__${field}__}">Field Error</p>
 					</div>
 				</div>

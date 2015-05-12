@@ -19,40 +19,18 @@
 			<div class="span12">
 				<section>
 					<form id="init_default_tenant_id" name="init_default_tenant" class="form" action="#" th:action="@{/init}" th:object="${multitenant}" method="post">
-						<div
-							th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_adminEmail',field='adminEmail')">Admin
-							Email Field</div>
-						<div
-							th:replace="fragments/form :: password(id='org_cateproject_multitenant_domain_tenant_adminPassword',field='adminPassword')">Admin
-							Password Field</div>
-						<div
-							th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_ownerEmail',field='ownerEmail')">Owner
-							Email Field</div>
-						<div
-							th:replace="fragments/form :: password(id='org_cateproject_multitenant_domain_tenant_ownerPassword',field='ownerPassword')">Owner
-							Password Field</div>
-						<div
-							th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_identifier',field='identifier')">Identifier
-							Field</div>
-						<div
-							th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_title',field='title')">Title
-							Field</div>
-						<div
-							th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_databaseUsername',field='databaseUsername')">Database
-							Username Field</div>
-						<div
-							th:replace="fragments/form :: password(id='org_cateproject_multitenant_domain_tenant_databasePassword',field='databasePassword')">Database
-							Password Field</div>
-						<div
-							th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_databaseUrl',field='databaseUrl')">Database
-							Url Field</div>
-						<div
-							th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_driverClassName',field='driverClassName')">Database
-							Driver Class Name Field</div>
-						<div class="submit"
-							id="fc_org_cateproject_multitenant_domain_Tenant_submit">
-							<input class="btn btn-primary" id="proceed" type="submit"
-								value="Save" th:value="#{button_save}" />
+						<div th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_adminEmail',field='adminEmail')">Admin Email Field</div>
+						<div th:replace="fragments/form :: password(id='org_cateproject_multitenant_domain_tenant_adminPassword',field='adminPassword')">Admin Password Field</div>
+						<div th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_ownerEmail',field='ownerEmail')">Owner Email Field</div>
+						<div th:replace="fragments/form :: password(id='org_cateproject_multitenant_domain_tenant_ownerPassword',field='ownerPassword')">Owner Password Field</div>
+						<div th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_identifier',field='identifier')">Identifier Field</div>
+						<div th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_title',field='title')">Title Field</div>
+						<div th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_databaseUsername',field='databaseUsername')">Database Username Field</div>
+						<div th:replace="fragments/form :: password(id='org_cateproject_multitenant_domain_tenant_databasePassword',field='databasePassword')">Database Password Field</div>
+						<div th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_databaseUrl',field='databaseUrl')">Database Url Field</div>
+						<div th:replace="fragments/form :: text(id='org_cateproject_multitenant_domain_tenant_driverClassName',field='driverClassName')">Database Driver Class Name Field</div>
+						<div class="submit"	id="fc_org_cateproject_multitenant_domain_Tenant_submit">
+						  <input class="btn btn-primary" id="proceed" type="submit"	value="Save" th:value="#{button_save}"/>
 						</div>
 					</form>
 				</section>

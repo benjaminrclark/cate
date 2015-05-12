@@ -1,0 +1,114 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head(title=#{entity_list_all(#{label_org_cateproject_domain_taxon_plural})})">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js"><!-- required for FF3 and Opera --></script>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="500">
+<div id="header" class="navbar navbar-fixed-top navbar-inverse" th:replace="fragments/header :: init-header">Header Goes Here</div>
+<div class="container">
+  <div class="row">
+    <div class="span12">
+	  <th:block th:if="${success != null}">
+		<div th:replace="fragments/alert :: alert(id='success_alert_id',cssClass='alert-success',iconClass='',title=#{alert_success_title},message=${success}, alert=null)">Success Alert</div>
+	  </th:block>
+	</div>
+  </div>
+  <div class="row">
+  <div class="span12">
+    <section>
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th th:text="#{label_org_cateproject_domain_taxon_taxonid}">Taxon Id</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_scientificname}">Scientific Name</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_scientificnameauthorship}">Scientific Name Authorship</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_nameaccordingto}">Name According To</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_taxonomicstatus}">Taxonomic Status</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_kingdom}">Kingdom</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_phylum}">Phylum</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_clazz}">Class</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_order}">Order</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_family}">Family</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_genus}">Genus</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_subgenus}">Subgenus</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_specificepithet}">Specific Epithet</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_infraspecificepithet}">Infraspecific Epithet</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_taxonrank}">Taxon Rank</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_verbatimtaxonrank}">Verbatim Taxon Rank</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_originalnameusage}">Original Name Usage</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_namepublishedin}">Name Published In</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_nomenclaturalcode}">Nomenclatural Code</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_taxonremarks}">Taxon Remarks</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_parentnameusage}">Parent Name Usage</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_acceptednameusage}">Accepted Name Usage</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_highertaxa}">Higher Taxa</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_creator}">Creator</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_accessrights}">Access Rights</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_created}">Created</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_modified}">Modified</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_license}">License</th>
+          <th th:text="#{label_org_cateproject_domain_taxon_rights}">Rights</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr th:each="result : ${results}">
+        <td>
+          <form th:action="@{/edit/taxon/__${result.id}__}" method="DELETE">
+            <button id="delete" class="btn btn-mini btn-warning" th:title="#{entity_delete(#{label_org_cateproject_domain_taxon})}" ><i class="icon-remove-sign"><!-- --></i></button>
+          </form>
+        </td>
+        <td>
+          <a th:href="@{/edit/taxon/__${result.id}__?form=true}" th:alt="#{entity_update(#{label_org_cateproject_domain_taxon})}" th:title="#{entity_update(#{label_org_cateproject_domain_taxon})}">
+             <i class="icon-pencil"><!--  --></i>
+          </a>
+        </td>
+        <td></td>
+        <td th:text="${result.taxonId}">urn:kew.org:wcs:taxon:16371</td>
+        <td th:text="${result.scientificName}">Arum rupicola var. virescens</td>
+        <td th:text="${result.scientificNameAuthorship}">(Stapf) P.C.Boyce</td>
+        <td th:text="${result.nameAccordingTo}">World Checklist of Selected Plant Families</td>
+        <td th:text="${result.taxonomicStatus}">accepted</td>
+        <td th:text="${result.kingdom}">Plantae</td>
+        <td th:text="${result.phylum}">Magnoliophyta</td>
+        <td th:text="${result.clazz}">Liliopsida</td>
+        <td th:text="${result.order}">Alismatales</td>
+        <td th:text="${result.family}">Araceae</td>
+        <td th:text="${result.genus}">Arum</td>
+        <td th:text="${result.subgenus}"></td>
+        <td th:text="${result.specificEpithet}">rupicola</td>
+        <td th:text="${result.infraspecificEpithet}">virescens</td>
+        <td th:text="${result.taxonRank}">variety</td>
+        <td th:text="${result.verbatimTaxonRank}">var.</td>
+        <td th:text="${result.originalNameUsage}"></td>
+        <td th:text="${result.namePublishedIn}"></td>
+        <td th:text="${result.nomenclaturalCode}">ICBN</td>
+        <td th:text="${result.taxonRemarks}">Distribution: E. Aegean Is. (Lesvos) to Iran and Israel</td>
+        <td th:text="${result.parentNameUsage}">Arum rupicola</td>
+        <td th:text="${result.acceptedNameUsage}"></td>
+        <td th:text="${result.higherTaxa}">Arum, Arum rupicola</td>
+        <td th:text="${result.creator}"></td>
+        <td th:text="${result.accessRights}"></td>
+        <td th:text="${result.created}"></td>
+        <td th:text="${result.modified}"></td>
+        <td th:text="${result.license}">http://creativecommons.org/licenses/by-nc-sa/3.0</td>
+        <td th:text="${result.rights}">See <a href="http://kew.org/about-kew/website-information/legal-notices/index.htm">http://kew.org/about-kew/website-information/legal-notices/index.htm</a>. With the permission of the Trustees of the Royal Botanic Gardens, Kew.</td>
+      </tr>
+      </tbody>
+    </table>
+    <span class="pull-left">
+        <form action="create.html" th:action="@{/edit/taxon?form=true}" method="POST">
+          <button id="create" class="btn btn-mini btn-primary" th:title="#{entity_create(#{label_org_cateproject_domain_taxon})}">
+            <i class="icon-plus-sign icon-white"><!----></i>
+          </button>
+        </form>
+      </span>
+    </section>
+  </div>
+  </div>
+  </div>
+</body>
+</html>

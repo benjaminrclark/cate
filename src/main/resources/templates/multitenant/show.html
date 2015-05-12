@@ -10,15 +10,15 @@
   <div class="row">
   <div class="span9">
     <section>
-        <page:show id="ps_org_cateproject_domain_registry_Tenant" object="${multitenant}" path="/registry/tenant" z="uhw9JdU5C/ibFkUqqyfetDwvwz4=">
-          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_title',value=${multitenant.title})">Tenant Title Field</div>
-          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_identifier',value=${multitenant.identifier})">Tenant Identifier Field</div>
-          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_databaseUsername',value=${multitenant.databaseUsername})">Tenant Database Username Field</div>
-          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_databasePassword',value=${multitenant.databasePassword})">Tenant Database Password Field</div>
-          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_databaseUrl',value=${multitenant.databaseUrl})">Tenant Database Url Field</div>
-          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_adminEmail',value=${multitenant.adminEmail})">Tenant Admin Email Field</div>
-          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_ownerEmail',value=${multitenant.ownerEmail})">Tenant Owner Email Field</div>
-        </page:show>
+        <form th:object="${multitenant}">
+          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_title',field='title')">Tenant Title Field</div>
+          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_identifier',field='identifier')">Tenant Identifier Field</div>
+          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_databaseUsername',field='databaseUsername')">Tenant Database Username Field</div>
+          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_databasePassword',field='databasePassword')">Tenant Database Password Field</div>
+          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_databaseUrl',field='databaseUrl')">Tenant Database Url Field</div>
+          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_adminEmail',field='adminEmail')">Tenant Admin Email Field</div>
+          <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_ownerEmail',field='ownerEmail')">Tenant Owner Email Field</div>
+        </form>
     </section>
   </div>
   </div>

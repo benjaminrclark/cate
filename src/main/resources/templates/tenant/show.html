@@ -18,10 +18,10 @@
     <div class="row">
       <div class="span12">
         <section>
-          <div class="form-horizontal">
-            <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_title',value=${tenant.title})">Tenant Title Field</div>
-            <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_identifier',value=${tenant.identifier})">Tenant Identifier Field</div>
-          </div>
+          <form class="form-horizontal" th:object="${tenant}">
+            <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_title',field='title')">Tenant Title Field</div>
+            <div th:replace="fragments/form :: display(id='org_cateproject_multitenant_domain_tenant_identifier',field='identifier')">Tenant Identifier Field</div>
+          </form>
         </section>
       </div>
     </div>

@@ -2,7 +2,6 @@ package org.cateproject.multitenant;
 
 import javax.sql.DataSource;
 
-import org.cateproject.multitenant.jdbc.repository.MultitenantRepositoryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

@@ -1,0 +1,23 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head(title=#{edit_title(${#themes.code('tenant_name')})})">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css" />
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js"><!-- required for FF3 and Opera --></script>
+</head>
+<body>
+	<div class="container">
+	  <div id="header" class="navbar navbar-fixed-top navbar-inverse"	th:replace="fragments/header :: header">Header Goes Here</div>
+		<div class="container">
+		  <div class="row">
+			<div class="span3">
+			  <ul id="edit_menu" class="well nav nav-list">
+			    <li id="list_org_cateproject_domain_Taxon">
+                  <a th:href="@{/edit/taxon}" href="./taxon/list.html" th:title="#{entity_list_all(#{label_org_cateproject_domain_taxon_plural})}" th:text="#{entity_list_all(#{label_org_cateproject_domain_taxon_plural})}">List Taxons</a>
+                </li>
+			  </ul>
+			</div>
+		  </div>
+		</div>
+	</div>
+</body>
+</html>

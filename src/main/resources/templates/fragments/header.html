@@ -71,9 +71,10 @@
 					</ul>
 					<ul class="nav">
 						<!--<ff4j:enable featureid="login">-->
-							<li sec:authorize="!isAuthenticated()"><a th:href="@{/login}" th:text="#{signin_or_signup}">Sign-in or Sign Up</a></li>	
-							<li sec:authorize="isAuthenticated()" class="dropdown" id="menuUser">
-								  <a href="#menuUser" class="dropdown-toggle" data-toggle="dropdown"> 
+							<li sec:authorize="!isAuthenticated()" class="dropdown" id="signin_menu">
+							      <a href="../login.html" th:href="@{/login}" ><span th:text="#{signin_or_signup}">Sign-in or Sign Up</span></a></li>	
+							<li sec:authorize="isAuthenticated()" class="dropdown" id="user_menu">
+								  <a href="#user_menu" class="dropdown-toggle" data-toggle="dropdown"> 
 								    <i class="icon-cog icon-white"><!--  --></i>&#160;
 								    <span sec:authentication="principal.username">Principal Username</span> 
 								    <b class="caret"><!-- --></b>
@@ -85,15 +86,15 @@
 											</a></li>
 										<!--</ff4j:enable>-->
 										<!--<ff4j:enable featureid="edit">-->
-											<li sec:authorize="hasRole('PERMISSION_EDIT')"><a th:href="@{/edit/}"><i class="icon-pencil"><!--  --></i>&#160;<span th:text="#{edit_label}">Edit</span></a></li>
+											<li sec:authorize="hasRole('PERMISSION_EDIT')"><a th:href="@{/edit}" href="../edit/show.html"><i class="icon-pencil"><!--  --></i>&#160;<span th:text="#{edit_label}">Edit</span></a></li>
 										<!--</ff4j:enable>-->
 										<!--<ff4j:enable featureid="administrate">-->
-											<li sec:authorize="hasRole('PERMISSION_ADMINISTRATE')"><a th:href="@{/admin/}"><i class="icon-wrench"><!--  --></i>&#160;<span th:text="#{admin_label(${#themes.code('tenant_name')})}">Administrate CATE</span></a></li>
+											<li sec:authorize="hasRole('PERMISSION_ADMINISTRATE')"><a th:href="@{/admin}" href="../admin/show.html"><i class="icon-wrench"><!--  --></i>&#160;<span th:text="#{admin_label(${#themes.code('tenant_name')})}">Administrate CATE</span></a></li>
 										<!--</ff4j:enable>-->
 										<!--<ff4j:enable featureid="registry">-->
-											<li sec:authorize="hasRole('PERMISSION_CONFIGURE_TENANTS')"><a th:href="@{/multitenant/}"><i class="icon-wrench"><!--  --></i>&#160;<span th:text="#{superuser_label}">Configure Tenants</span></a></li>
+											<li sec:authorize="hasRole('PERMISSION_CONFIGURE_TENANTS')"><a th:href="@{/multitenant/}" href="../multitenant/list.html"><i class="icon-wrench"><!--  --></i>&#160;<span th:text="#{superuser_label}">Configure Tenants</span></a></li>
 										<!--</ff4j:enable>-->
-										<li><a th:href="@{/logout}"> <i class="icon-off"><!--  --></i>&#160;<span th:text="#{logout}"	>Logout</span></a></li>
+										<li><a th:href="@{/logout}"> <i class="icon-off"><!--  --></i>&#160;<span th:text="#{logout}">Logout</span></a></li>
 									</ul></li>
 						<!--</ff4j:enable>-->
 					</ul>

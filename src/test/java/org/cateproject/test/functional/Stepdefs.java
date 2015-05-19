@@ -1,6 +1,7 @@
 package org.cateproject.test.functional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import javax.servlet.Filter;
 
@@ -99,22 +100,42 @@ public class Stepdefs {
 
 	@Given("^there is one tenant \"([^\"]*)\"$")
 	public void there_is_one_tenant(String tenant) {
+		
 		MultitenantContextHolder.getContext().setTenantId("localhost");
-		assertEquals(tenantRepository.count(), 0);
-		assertEquals(multitenantRepository.count(), 0);
+		if(tenantRepository.count() == 0 && multitenantRepository.count() == 0) {
+		    assertEquals(tenantRepository.count(), 0);
+		    assertEquals(multitenantRepository.count(), 0);
 
-		Multitenant multitenant = new Multitenant();
-		multitenant.setIdentifier(tenant);
-		multitenant.setAdminEmail("admin");
-		multitenant.setAdminPassword("admin");
-		multitenant.setOwnerEmail("owner");
-		multitenant.setOwnerPassword("owner");
-		multitenant.setDatabasePassword("");
-		multitenant.setDatabaseUrl("jdbc:h2:mem:test");
-		multitenant.setDriverClassName("org.h2.Driver");
-		multitenant.setDatabaseUsername("sa");
+		    Multitenant multitenant = new Multitenant();
+		    multitenant.setTitle("CATE");
+		    multitenant.setIdentifier(tenant);
+		    multitenant.setAdminEmail("admin@example.com");
+		    multitenant.setAdminPassword("admin");
+		    multitenant.setOwnerEmail("owner");
+		    multitenant.setOwnerPassword("owner@example.com	");
+		    multitenant.setDatabasePassword("");
+		    multitenant.setDatabaseUrl("jdbc:h2:mem:test");
+		    multitenant.setDriverClassName("org.h2.Driver");
+		    multitenant.setDatabaseUsername("sa");
 
-		multitenantManager.save(multitenant, true);
+		    multitenantManager.save(multitenant, true);
+		}
+	}
+	
+	@Given("^I am logged in to CATE as ([^\"]*) with password ([^\"]*)$")
+	public void i_am_logged_in_to_CATE_as_with_password(String username, String password) {
+		if(this.current == null) {
+			i_go_to_the_index_page();
+		}
+		if(this.current.loggedIn()) {
+			if(!this.current.loggedIn(username)) {
+			    this.current.logout();
+			    this.current.logIn(username, password);
+			}		
+		} else {
+			this.current.logIn(username, password);
+		}
+		
 	}
 
 	@When("^I go to the index page$")
@@ -131,11 +152,21 @@ public class Stepdefs {
 		}
 		multitenantStatus.setInitialized(false);
 	}
+	@When("^I select the (.*) link from the (.*?) menu$")
+	public void	i_select_the_link_from_the_menu(String link, String menu) {
+		current.selectMenuLink(menu, link);
+	}
 
 	@When("^I enter the following information in the (.*) form$")
 	public void i_enter_the_following_information_in_the_form(String formId, DataTable data) {
 		current.enterFormData(formId, data.asMap(String.class, String.class));
 	}
+	
+	@When("^I click the (.*?) button$")
+    public void i_click_the_button(String button) throws Throwable {
+        current.clickButton(button);
+    }
+
 	
 	@When("^I am not logged in to CATE$")
 	public void i_am_not_logged_in_to_CATE() {
@@ -171,6 +202,22 @@ public class Stepdefs {
 	@Then("^a success alert should say \"(.*?)\"$")
 	public void a_success_alert_should_say(String message) throws Throwable {
 		assertEquals(message, current.getSuccessAlert());
+	}
+	
+	@Then("^there should be (\\d+) result[s]? in the (.*?) table$")
+	public void there_should_be_results_in_the_table(int results, String table) {
+		assertEquals(results, current.countRowsInTable(table));
+	}
+	
+	@Then("^the following data about the (.*?) should be displayed$")
+	public void the_following_data_about_the_should_be_displayed(String prefix, DataTable expected) {
+		DataTable actual = current.getFields(prefix, expected.asMap(String.class, String.class).keySet());
+		expected.diff(actual);
+	}
+	
+	@Then("^the (.*?) dropdown is visible$")
+	public void the_dropdown_is_visible(String menu) {
+		assertTrue(current.isDropdownVisible(menu));
 	}
 
 }

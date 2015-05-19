@@ -1,6 +1,11 @@
  package org.cateproject.test.functional.pages;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
@@ -9,6 +14,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.Select;
+
+import cucumber.api.DataTable;
 
 public class Page {
 	
@@ -76,8 +84,13 @@ public class Page {
 		WebElement formElement = webDriver.findElement(By.name(form));
 		for(String name : data.keySet()) {
 			WebElement inputElement = formElement.findElement(By.name(name));
-		    inputElement.clear();
-		    inputElement.sendKeys(data.get(name));
+			if(inputElement.getTagName().equals("select")) {
+				Select select = new Select(inputElement);
+				select.selectByValue(data.get(name));
+			} else {
+		        inputElement.clear();
+		        inputElement.sendKeys(data.get(name));
+			}
 		}
 	}
 
@@ -95,5 +108,55 @@ public class Page {
         if (cookie != null) {
             webDriver.manage().deleteCookie(cookie);
         }
+	}
+
+	public boolean loggedIn() {
+		return !webDriver.findElements(By.id("user_menu")).isEmpty();
+	}
+	
+	public boolean loggedIn(String username) {
+		return webDriver.findElement(By.id("user_menu")).findElement(By.tagName("a")).getText().contains(username);
+	}
+
+	public void logout() {
+		webDriver.findElement(By.id("user_menu")).findElement(By.xpath("ul/li/a[text() = 'Logout']")).click();;
+	}
+
+	public void logIn(String username, String password) {
+		webDriver.findElement(By.id("signin_menu")).findElement(By.tagName("a")).click();
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("username", username);
+		data.put("password", password);
+		enterFormData("login", data);
+		submitForm("login");
+		
+	}
+
+	public void selectMenuLink(String menu, String linkText) {
+		webDriver.findElement(By.id(menu)).findElement(By.partialLinkText(linkText)).click();
+	}
+	
+	public void clickButton(String button) {
+		webDriver.findElement(By.name(button)).submit();
+	}
+
+	public int countRowsInTable(String table) {
+		return webDriver.findElement(By.id(table)).findElements(By.xpath("tbody/tr")).size();
+	}
+	
+	public DataTable getFields(String prefix, Set<String> fields) {
+		List<List<String>> rows = new ArrayList<List<String>>();
+		for(String field : fields) {
+			List<String> row = new ArrayList<String>();
+			row.add(field);
+			row.add(webDriver.findElement(By.id(prefix.toLowerCase() + "_" + field.toLowerCase() + "_id")).getText());
+			rows.add(row);
+		}
+		DataTable actual = DataTable.create(rows);
+		return actual;
+	}
+
+	public boolean isDropdownVisible(String menu) {
+		return webDriver.findElement(By.id(menu)).getAttribute("class").contains("open");
 	}
 }

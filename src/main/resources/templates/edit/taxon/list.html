@@ -17,7 +17,7 @@
   <div class="row">
   <div class="span12">
     <section>
-    <table class="table table-condensed">
+    <table id="list_org_cateproject_domain_Taxon" class="table table-condensed">
       <thead>
         <tr>
           <th></th>
@@ -101,7 +101,7 @@
     </table>
     <span class="pull-left">
         <form action="create.html" th:action="@{/edit/taxon?form=true}" method="POST">
-          <button id="create" class="btn btn-mini btn-primary" th:title="#{entity_create(#{label_org_cateproject_domain_taxon})}">
+          <button id="create_new_taxon_id" name="create_new_taxon" class="btn btn-mini btn-primary" th:title="#{entity_create(#{label_org_cateproject_domain_taxon})}">
             <i class="icon-plus-sign icon-white"><!----></i>
           </button>
         </form>

@@ -13,14 +13,14 @@ Publisher (~IPT)
 Editor (~CATE 2)
 Base
   User
-    User & Group domain model
-    User Manager
+    User & Group domain model #
+    User Manager #
     Edit user details
     One time activation / reset
    / Regsitration / Security
-  One time init
-  Multi-Tenancy
-  Domain
+  One time init #
+  Multi-Tenancy #
+  Domain #
   Search
     General Search & Faceting
     Spatial Search
@@ -42,11 +42,12 @@ Base
     Audit
   Remoting / Resilience
   Look & Feel
-    Static Resource Serving
-    Theme Source
+    Static Resource Serving #
+    Theme Source #
     LESS -> CSS Conversion
   Integration
   Batch
+  	Job Launch Request
     Jobs
       Job Execution
         Step Execution
@@ -55,6 +56,11 @@ Base
     Scheduled Job
   OAuth Client
   OAuth Server
+  Registry
+  	Organisation
+  	Installation
+  	Dataset
+  Harvester
 
 
 ResourceSync

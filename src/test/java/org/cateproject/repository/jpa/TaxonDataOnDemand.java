@@ -297,4 +297,9 @@ public class TaxonDataOnDemand {
             data.add(obj);
         }
     }
+    
+    public void tearDown() {
+    	taxonRepository.delete(taxonRepository.findAll());
+    	data = new ArrayList<Taxon>();
+    }
 }

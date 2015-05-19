@@ -7,6 +7,7 @@ import javax.validation.ConstraintViolationException;
 
 import org.cateproject.Application;
 import org.cateproject.domain.VernacularName;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -125,5 +126,10 @@ public class VernacularNameRepositoryIntegrationTest {
         vernacularNameRepository.delete(obj);
         vernacularNameRepository.flush();
         Assert.assertNull("Failed to remove 'VernacularName' with identifier '" + id + "'", vernacularNameRepository.findOne(id));
+    }
+    
+    @After
+    public void tearDown() {
+    	dod.tearDown();
     }
 }

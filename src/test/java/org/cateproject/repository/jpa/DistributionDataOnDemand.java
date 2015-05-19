@@ -194,4 +194,10 @@ public class DistributionDataOnDemand {
             data.add(obj);
         }
     }
+    
+    public void tearDown() {
+    	distributionRepository.delete(distributionRepository.findAll());
+    	data = new ArrayList<Distribution>();
+    	taxonDataOnDemand.tearDown();
+    }
 }

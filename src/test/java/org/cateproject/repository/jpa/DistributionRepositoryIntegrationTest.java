@@ -7,6 +7,7 @@ import javax.validation.ConstraintViolationException;
 
 import org.cateproject.Application;
 import org.cateproject.domain.Distribution;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -125,5 +126,10 @@ public class DistributionRepositoryIntegrationTest {
         distributionRepository.delete(obj);
         distributionRepository.flush();
         Assert.assertNull("Failed to remove 'Distribution' with identifier '" + id + "'", distributionRepository.findOne(id));
+    }
+    
+    @After
+    public void tearDown() {
+    	dod.tearDown();
     }
 }

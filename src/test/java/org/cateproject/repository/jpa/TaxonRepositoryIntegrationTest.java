@@ -7,6 +7,7 @@ import javax.validation.ConstraintViolationException;
 
 import org.cateproject.Application;
 import org.cateproject.domain.Taxon;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -125,5 +126,10 @@ public class TaxonRepositoryIntegrationTest {
 	        taxonRepository.delete(obj);
 	        taxonRepository.flush();
 	        Assert.assertNull("Failed to remove 'Taxon' with identifier '" + id + "'", taxonRepository.findOne(id));
+	    }
+	    
+	    @After
+	    public void tearDown() {
+	    	dod.tearDown();
 	    }
 }

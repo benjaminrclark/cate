@@ -231,4 +231,10 @@ private Random rnd = new SecureRandom();
         Taxon taxon = taxonDataOnDemand.getRandomTaxon();
         obj.setTaxon(taxon);
     }
+	
+    public void tearDown() {
+    	vernacularNameRepository.delete(vernacularNameRepository.findAll());
+    	data = new ArrayList<VernacularName>();
+    	taxonDataOnDemand.tearDown();
+    }
 }

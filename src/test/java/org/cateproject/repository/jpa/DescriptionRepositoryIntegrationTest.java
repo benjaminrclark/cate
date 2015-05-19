@@ -7,6 +7,7 @@ import javax.validation.ConstraintViolationException;
 
 import org.cateproject.Application;
 import org.cateproject.domain.Description;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -125,5 +126,10 @@ public class DescriptionRepositoryIntegrationTest {
         descriptionRepository.delete(obj);
         descriptionRepository.flush();
         Assert.assertNull("Failed to remove 'Description' with identifier '" + id + "'", descriptionRepository.findOne(id));
+    }
+    
+    @After
+    public void tearDown() {
+    	dod.tearDown();
     }
 }

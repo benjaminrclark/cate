@@ -180,4 +180,10 @@ public class DescriptionDataOnDemand {
             data.add(obj);
         }
     }
+    
+    public void tearDown() {
+    	descriptionRepository.delete(descriptionRepository.findAll());
+    	data = new ArrayList<Description>();
+    	taxonDataOnDemand.tearDown();
+    }
 }

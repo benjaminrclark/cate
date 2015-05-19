@@ -195,4 +195,10 @@ public class MeasurementOrFactDataOnDemand {
         
         obj.setTaxon(taxon);
     }
+	
+    public void tearDown() {
+    	measurementOrFactRepository.delete(measurementOrFactRepository.findAll());
+    	data = new ArrayList<MeasurementOrFact>();
+    	taxonDataOnDemand.tearDown();
+    }
 }

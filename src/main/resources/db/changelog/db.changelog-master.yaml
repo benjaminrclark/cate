@@ -3169,4 +3169,128 @@ databaseChangeLog:
                 type: TIMESTAMP
             - column:
                 name: REVTYPE
-                type: TINYINT                
+                type: TINYINT
+  - changeSet:
+      author: ben
+      id: 2014-04-03_01
+      changes:
+        - createTable:
+            tableName: ff4j_features
+            columns:
+            - column:
+                name: uid
+                type: VARCHAR(50)
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: enable
+                type: INTEGER
+                constraints:
+                  nullable: false
+            - column:
+                name: description
+                type: VARCHAR(255)
+            - column:
+                name: strategy
+                type: VARCHAR(255)
+            - column:
+                name: expression
+                type: VARCHAR(255)
+            - column:
+                name: groupname
+                type: VARCHAR(255)
+  - changeSet:
+      author: ben
+      id: 2014-04-03_02
+      changes:
+        - createTable:
+            tableName: ff4j_roles
+            columns:
+            - column:
+                name: feat_uid
+                type: VARCHAR(50)
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: role_name
+                type: VARCHAR(50)
+                constraints:
+                  nullable: false
+                  primaryKey: true
+  - changeSet:
+      author: ben
+      id: 2014-04-03_03
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: feat_uid
+            baseTableName: ff4j_roles
+            constraintName: ff4j_roles_feat_uid_FK
+            referencedColumnNames: uid
+            referencedTableName: ff4j_features
+  - changeSet:
+      author: ben
+      id: 2014-04-16_01
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('key',0,'Identification Key');
+  - changeSet:
+      author: ben
+      id: 2014-04-16_02
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('search',0,'Search');
+  - changeSet:
+      author: ben
+      id: 2014-04-16_03
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('search.map',0,'Map Search');
+  - changeSet:
+      author: ben
+      id: 2014-04-16_04
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('search.analyse',0,'Analyse Data');
+  - changeSet:
+      author: ben
+      id: 2014-04-16_05
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('classify.tree',0,'Classification Tree');
+  - changeSet:
+      author: ben
+      id: 2014-04-16_06
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('taxon',0,'Taxon Page');
+  - changeSet:
+      author: ben
+      id: 2014-04-16_07
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('search.autocomplete',0,'Autocomplete');
+  - changeSet:
+      author: ben
+      id: 2014-04-16_08
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('download',0,'download');
+  - changeSet:
+      author: ben
+      id: 2014-04-19_01
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('home.page',0,'Home Page');
+  - changeSet:
+      author: ben
+      id: 2014-04-19_02
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('login',0,'Login');
+  - changeSet:
+      author: ben
+      id: 2014-04-19_03
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('edit',0,'Edit');
+  - changeSet:
+      author: ben
+      id: 2014-04-19_04
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('administrate',0,'Administrate');
+  - changeSet:
+      author: ben
+      id: 2014-04-19_05
+      changes:
+        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('registry',0,'Registry');

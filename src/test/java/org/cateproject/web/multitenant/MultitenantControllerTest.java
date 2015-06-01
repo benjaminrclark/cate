@@ -46,7 +46,7 @@ public class MultitenantControllerTest {
 		
 		EasyMock.expect(bindingResult.hasErrors()).andReturn(true);
 		EasyMock.replay(bindingResult, multitenantRepository);
-		assertEquals("create should return 'multitenant/create' when bindingResult.hasErrors", "multitenant/create", multitenantController.create(multitenant, bindingResult, uiModel, request));
+		assertEquals("create should return 'system/multitenant/create' when bindingResult.hasErrors", "system/multitenant/create", multitenantController.create(multitenant, bindingResult, uiModel, request));
 		assertEquals("uiModel should contain the submitted multitenant with binding errors",uiModel.asMap().get("multitenant"), multitenant);
 		EasyMock.verify(bindingResult, multitenantRepository);
 	}
@@ -69,7 +69,7 @@ public class MultitenantControllerTest {
 					}					
 				});
 		EasyMock.replay(bindingResult, multitenantRepository);
-		assertEquals("create should return 'redirect:/multitenant/1234' when create is successful", "redirect:/multitenant/1234", multitenantController.create(multitenant, bindingResult, uiModel, request));
+		assertEquals("create should return 'redirect:/system/multitenant/1234' when create is successful", "redirect:/system/multitenant/1234", multitenantController.create(multitenant, bindingResult, uiModel, request));
 		assertTrue("uiModel should be cleared when create is successful", uiModel.asMap().isEmpty());
 		
 		EasyMock.verify(bindingResult, multitenantRepository);
@@ -80,7 +80,7 @@ public class MultitenantControllerTest {
 		Model uiModel = new ExtendedModelMap();
 		
 		EasyMock.replay(multitenantRepository);
-		assertEquals("createForm should return 'multitenant/create'", "multitenant/create", multitenantController.createForm(uiModel));
+		assertEquals("createForm should return 'system/multitenant/create'", "system/multitenant/create", multitenantController.createForm(uiModel));
 		EasyMock.verify(multitenantRepository);
 		assertNotNull("uiModel should contain a multitenant",uiModel.asMap().get("multitenant"));
 	}
@@ -92,7 +92,7 @@ public class MultitenantControllerTest {
 		EasyMock.expect(multitenantRepository.findOne(EasyMock.eq(1L))).andReturn(multitenant);
 		
 		EasyMock.replay(multitenantRepository);
-		assertEquals("show should return 'multitenant/show'", "multitenant/show", multitenantController.show(1L, uiModel));
+		assertEquals("show should return 'system/multitenant/show'", "system/multitenant/show", multitenantController.show(1L, uiModel));
 		EasyMock.verify(multitenantRepository);
 		assertEquals("uiModel should contain the multitenant",uiModel.asMap().get("multitenant"), multitenant);
 		assertEquals("uiModel should contain the id",uiModel.asMap().get("itemId"), 1L);
@@ -106,7 +106,7 @@ public class MultitenantControllerTest {
 		EasyMock.expect(multitenantRepository.findAll(EasyMock.eq(pageable))).andReturn(multitenants);
 		
 		EasyMock.replay(multitenantRepository);
-		assertEquals("list should return 'multitenant/list'", "multitenant/list", multitenantController.list(pageable, uiModel));
+		assertEquals("list should return 'system/multitenant/list'", "system/multitenant/list", multitenantController.list(pageable, uiModel));
 		assertEquals("uiModel should contain the list", uiModel.asMap().get("multitenants"), multitenants);
 		EasyMock.verify(multitenantRepository);
 	}
@@ -120,7 +120,7 @@ public class MultitenantControllerTest {
 		
 		EasyMock.expect(bindingResult.hasErrors()).andReturn(true);
 		EasyMock.replay(bindingResult, multitenantRepository);
-		assertEquals("create should return 'multitenant/update' when bindingResult.hasErrors", "multitenant/update", multitenantController.update(multitenant, bindingResult, uiModel, request));
+		assertEquals("create should return 'system/multitenant/update' when bindingResult.hasErrors", "system/multitenant/update", multitenantController.update(multitenant, bindingResult, uiModel, request));
 		assertEquals("uiModel should contain the submitted multitenant with binding errors",uiModel.asMap().get("multitenant"), multitenant);
 		EasyMock.verify(bindingResult, multitenantRepository);
 	}
@@ -143,7 +143,7 @@ public class MultitenantControllerTest {
 					}					
 				});
 		EasyMock.replay(bindingResult, multitenantRepository);
-		assertEquals("update should return 'redirect:/multitenant/4321' when update is successful", "redirect:/multitenant/4321", multitenantController.update(multitenant, bindingResult, uiModel, request));
+		assertEquals("update should return 'redirect:/system/multitenant/4321' when update is successful", "redirect:/system/multitenant/4321", multitenantController.update(multitenant, bindingResult, uiModel, request));
 		assertTrue("uiModel should be cleared when update is successful", uiModel.asMap().isEmpty());
 		
 		EasyMock.verify(bindingResult, multitenantRepository);
@@ -156,7 +156,7 @@ public class MultitenantControllerTest {
 		EasyMock.expect(multitenantRepository.findOne(EasyMock.eq(1L))).andReturn(multitenant);
 		
 		EasyMock.replay(multitenantRepository);
-		assertEquals("updateForm should return 'multitenant/update'", "multitenant/update", multitenantController.updateForm(1L, uiModel));
+		assertEquals("updateForm should return 'system/multitenant/update'", "system/multitenant/update", multitenantController.updateForm(1L, uiModel));
 		EasyMock.verify(multitenantRepository);
 		assertEquals("uiModel should contain the multitenant",uiModel.asMap().get("multitenant"), multitenant);
 	}
@@ -169,7 +169,7 @@ public class MultitenantControllerTest {
 		multitenantRepository.delete(EasyMock.eq(multitenant));
 		
 		EasyMock.replay(multitenantRepository);
-		assertEquals("delete should return 'redirect:/multitenant'", "redirect:/multitenant", multitenantController.delete(1L, 2, 20, uiModel));
+		assertEquals("delete should return 'redirect:/system/multitenant'", "redirect:/system/multitenant", multitenantController.delete(1L, 2, 20, uiModel));
 		assertEquals("uiModel should contain the page", uiModel.asMap().get("page"), "2");
 		assertEquals("uiModel should contain the page size", uiModel.asMap().get("size"), "20");
 		EasyMock.verify(multitenantRepository);

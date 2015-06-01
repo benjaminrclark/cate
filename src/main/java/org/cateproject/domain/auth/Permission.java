@@ -7,7 +7,7 @@ public enum Permission implements GrantedAuthority {
 
     PERMISSION_ADMINISTRATE,
     PERMISSION_EDIT,
-    PERMISSION_CONFIGURE_TENANTS;
+    PERMISSION_CONFIGURE_SYSTEM;
     
     public String getAuthority() {
         return this.name();

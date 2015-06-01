@@ -1,12 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/head :: head(title=#{welcome_h3(${#themes.code('tenant_name')})})">
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css" />
-<script type="text/javascript"
-	src="https://code.jquery.com/jquery-1.8.2.min.js">
-<!-- required for FF3 and Opera -->
-	
-</script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css" />
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
 <script type="text/javascript"
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js">
 <!-- required for FF3 and Opera -->
@@ -21,38 +16,33 @@
 			<div class="container">
 				<div class="row">
 					<h1 class="span12" th:text="${#themes.code('hero_title')}">
-						Hero Title
-					</h1>
+						Hero Title</h1>
 				</div>
 				<div class="row">
 					<p class="lead span12" th:text="${#themes.code('hero_message')}">
-						Hero Message
-					</p>
+						Hero Message</p>
 				</div>
-				<div class="row">
-					<ff4j:enable featureid="search">
-						<ff4j:enable featureid="search.autocomplete">
-							<script type="text/javascript">
-								$(document).ready(function() {
-									$("input#query").autocomplete({
-										source : "autocomplete",
-										minLength : 2
-									});
-								});
-							</script>
-						</ff4j:enable>
-						<form class="form-search" th:action="@{/explore}" action="/explore.html" method="GET">
-							<div class="offset2">
-								<div class="input">
-									<input id="query" name="query" class="span6 search-query" type="text" value="" th:placeholder="#{search.placeholder}" placeholder="Search Placeholder" />
-									<button type="submit" class="btn btn-primary" th:text="#{search}">
-										<i class="icon-search icon-white">&#160;</i>
-										Search
-									</button>
-								</div>
+				<div class="row" th:if="${@ff4j.check('search')}">
+					<script th:if="${@ff4j.check('search.autocomplete')}"
+						type="text/javascript">
+						$(document).ready(function() {
+							$("input#query").autocomplete({
+								source : "autocomplete",
+								minLength : 2
+							});
+						});
+					</script>
+					<form class="form-search" th:action="@{/explore}" action="/explore.html" method="GET">
+						<div class="offset2">
+							<div class="input">
+								<input id="query" name="query" class="span6 search-query" type="text" value="" th:placeholder="#{search.placeholder}"
+									placeholder="Search Placeholder" />
+								<button type="submit" class="btn btn-primary" th:text="#{search}">
+									<i class="icon-search icon-white">&#160;</i> Search
+								</button>
 							</div>
-						</form>
-					</ff4j:enable>
+						</div>
+					</form>
 				</div>
 			</div>
 		</header>

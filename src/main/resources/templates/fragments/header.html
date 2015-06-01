@@ -33,45 +33,31 @@
 						    <b class="caret"><!-- --></b>
 						  </a>
 						  <ul class="dropdown-menu">
-								<!--  <ff4j:enable featureid="key">-->
-								  <li th:if="${#themes.code('primary_key') != 0}">
+								  <li th:if="${@ff4j.check('key') and #themes.code('primary_key') != 0}">
 									<a th:href="@{/key/#themes.code('primary_key')}" th:text="${#themes.code('primary_key_title')}"> Primary Key Title</a>
 								</li>
-								<!--</ff4j:enable>-->
-								<!--<ff4j:enable featureid="search">-->
-									<li><a th:href="@{/explore?filterQuery=base.class_s:org.cateproject.domain.IdentificationKey}" th:text="#{search.for.keys}">Search For Keys</a></li>
-									<li><a th:href="@{/explore?filterQuery=base.class_s:org.cateproject.domain.Image}" th:text="#{browse.images}">Browse Images</a></li>
-									<li><a th:href="@{/explore?filterQuery=base.class_s:org.cateproject.domain.Term}" th:text="#{glossary}">Glossary</a></li>
-								<!--</ff4j:enable>-->
+							    <li th:if="${@ff4j.check('search')}"><a th:href="@{/explore?filterQuery=base.class_s:org.cateproject.domain.IdentificationKey}" th:text="#{search.for.keys}">Search For Keys</a></li>
+								<li th:if="${@ff4j.check('search')}"><a th:href="@{/explore?filterQuery=base.class_s:org.cateproject.domain.Image}" th:text="#{browse.images}">Browse Images</a></li>
+								<li th:if="${@ff4j.check('search')}"><a th:href="@{/explore?filterQuery=base.class_s:org.cateproject.domain.Term}" th:text="#{glossary}">Glossary</a></li>
+		
 							</ul>
 					    </li>
-						<!--<ff4j:enable featureid="classify.tree">-->
-							<li>
-							  <a th:href="@{/classification}" th:text="#{classify.title}"> Classify</a>
-							</li>
-						<!--</ff4j:enable>-->
+						<li th:if="${@ff4j.check('classify.tree')}">
+						  <a th:href="@{/classification}" th:text="#{classify.title}"> Classify</a>
+						</li>
 						<li class="dropdown" id="menuExplore">
 						  <a href="#menuExplore" class="dropdown-toggle" data-toggle="dropdown" th:text="#{explore.title}">Explore 
 							<b class="caret"><!-- --></b>
 						  </a>
 						  <ul class="dropdown-menu">
-								<!--<ff4j:enable featureid="search">-->
-									<li>
-									  <a th:href="@{/explore}" th:text="#{search}"> <i class="icon-search"><!--  --></i>&#160;Search</a>
-									</li>
-								<!--</ff4j:enable>-->
-								<!--<ff4j:enable featureid="search.map">-->
-									<li><a th:href="@{/spatial}" th:text="#{map.search}"> <i class="icon-globe"><!--  --></i>&#160;Map Search</a></li>
-								<!--</ff4j:enable>-->
-								<!--<ff4j:enable featureid="search.analyse">-->
-									<li> <a th:href="@{/analyse}" th:text="#{explore.data}"> <i class="icon-signal"><!--  --></i>&#160;Explore Data</a></li>
-								<!--</ff4j:enable>-->
+								<li  th:if="${@ff4j.check('search')}"><a th:href="@{/explore}" th:text="#{search}"> <i class="icon-search"><!--  --></i>&#160;Search</a></li>
+								<li th:if="${@ff4j.check('search.map')}"><a th:href="@{/spatial}" th:text="#{map.search}"> <i class="icon-globe"><!--  --></i>&#160;Map Search</a></li>
+								<li th:if="${@ff4j.check('search.map')}"> <a th:href="@{/analyse}" th:text="#{explore.data}"> <i class="icon-signal"><!--  --></i>&#160;Explore Data</a></li>
 						  </ul>
 					  </li>
 					</ul>
 					<ul class="nav">
-						<!--<ff4j:enable featureid="login">-->
-							<li sec:authorize="!isAuthenticated()" class="dropdown" id="signin_menu">
+							<li th:if="${@ff4j.check('login')}" sec:authorize="!isAuthenticated()" class="dropdown" id="signin_menu">
 							      <a href="../login.html" th:href="@{/login}" ><span th:text="#{signin_or_signup}">Sign-in or Sign Up</span></a></li>	
 							<li sec:authorize="isAuthenticated()" class="dropdown" id="user_menu">
 								  <a href="#user_menu" class="dropdown-toggle" data-toggle="dropdown"> 
@@ -80,23 +66,14 @@
 								    <b class="caret"><!-- --></b>
 								  </a>
 									<ul class="dropdown-menu">
-										<!--<ff4j:enable featureid="home.page">-->
-											<li><a th:href="@{/home}">
-											  <i class="icon-home"><!-- --></i>&#160;<span th:text="#{user_account_label}">Home</span>
-											</a></li>
-										<!--</ff4j:enable>-->
-										<!--<ff4j:enable featureid="edit">-->
-											<li sec:authorize="hasRole('PERMISSION_EDIT')"><a th:href="@{/edit}" href="../edit/show.html"><i class="icon-pencil"><!--  --></i>&#160;<span th:text="#{edit_label}">Edit</span></a></li>
-										<!--</ff4j:enable>-->
-										<!--<ff4j:enable featureid="administrate">-->
-											<li sec:authorize="hasRole('PERMISSION_ADMINISTRATE')"><a th:href="@{/admin}" href="../admin/show.html"><i class="icon-wrench"><!--  --></i>&#160;<span th:text="#{admin_label(${#themes.code('tenant_name')})}">Administrate CATE</span></a></li>
-										<!--</ff4j:enable>-->
-										<!--<ff4j:enable featureid="registry">-->
-											<li sec:authorize="hasRole('PERMISSION_CONFIGURE_TENANTS')"><a th:href="@{/multitenant/}" href="../multitenant/list.html"><i class="icon-wrench"><!--  --></i>&#160;<span th:text="#{superuser_label}">Configure Tenants</span></a></li>
-										<!--</ff4j:enable>-->
+										<li th:if="${@ff4j.check('home.page')}"><a th:href="@{/home}">
+										  <i class="icon-home"><!-- --></i>&#160;<span th:text="#{user_account_label}">Home</span>
+										</a></li>
+										<li th:if="${@ff4j.check('edit')}" sec:authorize="hasRole('PERMISSION_EDIT')"><a th:href="@{/edit}" href="../edit/show.html"><i class="icon-pencil"><!--  --></i>&#160;<span th:text="#{edit_label}">Edit</span></a></li>
+										<li th:if="${@ff4j.check('administrate')}" sec:authorize="hasRole('PERMISSION_ADMINISTRATE')"><a th:href="@{/admin}" href="../admin/show.html"><i class="icon-wrench"><!--  --></i>&#160;<span th:text="#{admin_label(${#themes.code('tenant_name')})}">Administrate CATE</span></a></li>										
+										<li th:if="${@ff4j.check('system')}" sec:authorize="hasRole('PERMISSION_CONFIGURE_SYSTEM')"><a th:href="@{/system}" href="../system/show.html"><i class="icon-wrench"><!--  --></i>&#160;<span th:text="#{system_user_label}">Configure System</span></a></li>
 										<li><a th:href="@{/logout}"> <i class="icon-off"><!--  --></i>&#160;<span th:text="#{logout}">Logout</span></a></li>
 									</ul></li>
-						<!--</ff4j:enable>-->
 					</ul>
 				</div>
 			</div>

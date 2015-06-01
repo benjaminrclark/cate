@@ -19,7 +19,7 @@ import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
 @Controller
-@RequestMapping("/multitenant")
+@RequestMapping("/system/multitenant")
 public class MultitenantController {
 	@Autowired
     MultitenantRepository multitenantRepository;
@@ -32,47 +32,47 @@ public class MultitenantController {
     public String create(@Valid Multitenant multitenant, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, multitenant);
-            return "multitenant/create";
+            return "system/multitenant/create";
         }
         uiModel.asMap().clear();
         multitenantRepository.save(multitenant);
-        return "redirect:/multitenant/" + encodeUrlPathSegment(multitenant.getId().toString(), httpServletRequest);
+        return "redirect:/system/multitenant/" + encodeUrlPathSegment(multitenant.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String createForm(Model uiModel) {
         populateEditForm(uiModel, new Multitenant());
-        return "multitenant/create";
+        return "system/multitenant/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("multitenant", multitenantRepository.findOne(id));
         uiModel.addAttribute("itemId", id);
-        return "multitenant/show";
+        return "system/multitenant/show";
     }
     
     @RequestMapping(produces = "text/html")
     public String list(Pageable pageable, Model uiModel) {
        uiModel.addAttribute("multitenants", multitenantRepository.findAll(pageable));
-       return "multitenant/list";
+       return "system/multitenant/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String update(@Valid Multitenant multitenant, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, multitenant);
-            return "multitenant/update";
+            return "system/multitenant/update";
         }
         uiModel.asMap().clear();
         multitenantRepository.save(multitenant);
-        return "redirect:/multitenant/" + encodeUrlPathSegment(multitenant.getId().toString(), httpServletRequest);
+        return "redirect:/system/multitenant/" + encodeUrlPathSegment(multitenant.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, multitenantRepository.findOne(id));
-        return "multitenant/update";
+        return "system/multitenant/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -82,7 +82,7 @@ public class MultitenantController {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", page.toString());
         uiModel.addAttribute("size", size.toString());
-        return "redirect:/multitenant";
+        return "redirect:/system/multitenant";
     }
     
     void populateEditForm(Model uiModel, Multitenant multitenant) {

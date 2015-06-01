@@ -3,7 +3,8 @@ package org.cateproject.features;
 import javax.sql.DataSource;
 
 import org.ff4j.FF4j;
-import org.ff4j.store.JdbcFeatureStore;
+import org.ff4j.core.FeatureStore;
+import org.ff4j.store.FeatureStoreSpringJDBC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -14,10 +15,10 @@ import org.springframework.context.annotation.DependsOn;
 public class FeaturesConfiguration {
 
 	@Autowired
-	@Qualifier("dataSource")
+	@Qualifier("multitenantDataSource")
 	private DataSource dataSource;
 
-	/*@Bean
+	@Bean
 	public FF4j ff4j() {
 		FF4j ff4j = new FF4j();
 		ff4j.setFeatureStore(featureStore());
@@ -25,11 +26,11 @@ public class FeaturesConfiguration {
 	}
 
 	@Bean
-	@DependsOn("springLiquibase")
-	public JdbcFeatureStore featureStore() {
-		JdbcFeatureStore jdbcFeatureStore = new JdbcFeatureStore();
-		jdbcFeatureStore.setDataSource(dataSource);
-		return jdbcFeatureStore;
-	}*/
+	@DependsOn("liquibase")
+	public FeatureStore featureStore() {
+		FeatureStoreSpringJDBC featureStore = new FeatureStoreSpringJDBC();
+		featureStore.setDataSource(dataSource);
+		return featureStore;
+	}
 
 }

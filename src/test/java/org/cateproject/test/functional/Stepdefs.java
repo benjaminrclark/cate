@@ -17,6 +17,7 @@ import org.cateproject.test.functional.mockmvc.MockMvcWebConnection;
 import org.cateproject.test.functional.pages.IndexPage;
 import org.cateproject.test.functional.pages.Page;
 import org.cateproject.web.multitenant.MultitenantFilter;
+import org.ff4j.FF4j;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,9 @@ public class Stepdefs {
 
 	@Autowired
 	private TenantRepository tenantRepository;
+	
+	@Autowired
+	private FF4j ff4j;
 	
 	@Autowired
 	private Filter springSecurityFilterChain;
@@ -136,6 +140,12 @@ public class Stepdefs {
 			this.current.logIn(username, password);
 		}
 		
+	}
+	
+	@Given("^the ([^\"]*) feature is enabled$")
+	public void the_feature_is_enabled(String feature) {
+		ff4j.enable(feature);
+		i_go_to_the_index_page();
 	}
 
 	@When("^I go to the index page$")

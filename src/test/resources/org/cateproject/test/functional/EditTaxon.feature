@@ -10,6 +10,7 @@ Scenario: Create a taxon
   taxonomic group
   Given there is one tenant "localhost"
   And I am logged in to CATE as admin@example.com with password admin
+  And the edit feature is enabled
   When I select the admin link from the user_menu menu
   Then the user_menu dropdown is visible
   When I select the Edit link from the user_menu menu

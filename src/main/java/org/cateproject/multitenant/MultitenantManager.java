@@ -102,7 +102,7 @@ public class MultitenantManager {
 		admin.setCredentialsNonExpired(true);
 		admin.setEnabled(true);
 		admin.getPermissions().add(Permission.PERMISSION_ADMINISTRATE);
-		admin.getPermissions().add(Permission.PERMISSION_CONFIGURE_TENANTS);
+		admin.getPermissions().add(Permission.PERMISSION_CONFIGURE_SYSTEM);
 		admin.getPermissions().add(Permission.PERMISSION_EDIT);
 		
 		if(isDefault) {		  

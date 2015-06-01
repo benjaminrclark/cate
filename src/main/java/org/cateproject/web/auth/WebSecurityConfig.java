@@ -1,7 +1,6 @@
-package org.cateproject.web;
+package org.cateproject.web.auth;
 
 import org.cateproject.repository.jpa.auth.UserAccountRepository;
-import org.cateproject.web.auth.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +11,7 @@ import org.springframework.security.config.annotation.web.servlet.configuration.
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebMvcSecurity
@@ -26,14 +26,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	.authorizeRequests()
 	//.expressionHandler(new TenantWebExpressionHandler())
         .antMatchers("/", "/index", "/init","/health","/static/**","/webjars/**").permitAll()
+        .antMatchers("/system").hasAnyAuthority("PERMISSION_CONFIGURE_SYSTEM")
+        .antMatchers("/admin").hasAnyAuthority("PERMISSION_ADMINISTRATE")
+        .antMatchers("/edit").hasAnyAuthority("PERMISSION_EDIT")
         .anyRequest().authenticated()
     //.hasAuthority("isAuthenticated() and tenantAllowed")
         .and()
     .formLogin()
         .loginPage("/login")
         .permitAll()
-        .and()
-    .logout().logoutSuccessUrl("/").permitAll();
+        .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")).logoutSuccessUrl("/").permitAll();
 	}
 	
 	@Bean

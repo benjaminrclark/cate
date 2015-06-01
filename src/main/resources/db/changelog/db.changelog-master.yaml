@@ -3175,46 +3175,46 @@ databaseChangeLog:
       id: 2014-04-03_01
       changes:
         - createTable:
-            tableName: ff4j_features
+            tableName: FF4J_FEATURES
             columns:
             - column:
-                name: uid
+                name: FEAT_UID
                 type: VARCHAR(50)
                 constraints:
                   nullable: false
                   primaryKey: true
             - column:
-                name: enable
+                name: ENABLE
                 type: INTEGER
                 constraints:
                   nullable: false
             - column:
-                name: description
+                name: DESCRIPTION
                 type: VARCHAR(255)
             - column:
-                name: strategy
+                name: STRATEGY
                 type: VARCHAR(255)
             - column:
-                name: expression
+                name: EXPRESSION
                 type: VARCHAR(255)
             - column:
-                name: groupname
+                name: GROUPNAME
                 type: VARCHAR(255)
   - changeSet:
       author: ben
       id: 2014-04-03_02
       changes:
         - createTable:
-            tableName: ff4j_roles
+            tableName: FF4J_ROLES
             columns:
             - column:
-                name: feat_uid
+                name: FEAT_UID
                 type: VARCHAR(50)
                 constraints:
                   nullable: false
                   primaryKey: true
             - column:
-                name: role_name
+                name: ROLE_NAME
                 type: VARCHAR(50)
                 constraints:
                   nullable: false
@@ -3224,73 +3224,143 @@ databaseChangeLog:
       id: 2014-04-03_03
       changes:
         - addForeignKeyConstraint:
-            baseColumnNames: feat_uid
-            baseTableName: ff4j_roles
-            constraintName: ff4j_roles_feat_uid_FK
-            referencedColumnNames: uid
-            referencedTableName: ff4j_features
+            baseColumnNames: FEAT_UID
+            baseTableName: FF4J_ROLES
+            constraintName: FF4J_ROLES_FEAT_UID_FK
+            referencedColumnNames: FEAT_UID
+            referencedTableName: FF4J_FEATURES
+  - changeSet:
+      author: ben
+      id: 2015-05-21_01
+      changes:
+        - createTable:
+            tableName: FF4J_CUSTOM_PROPERTIES
+            columns:
+            - column:
+                name: PROPERTY_ID
+                type: VARCHAR(100)
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: CLAZZ
+                type: VARCHAR(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: CURRENTVALUE
+                type: VARCHAR(255)
+            - column:
+                name: FIXEDVALUES
+                type: VARCHAR(1000)
+            - column:
+                name: FEAT_UID
+                type: VARCHAR(50)
+                constraints:
+                  nullable: false
+                  primaryKey: true
+  - changeSet:
+      author: ben
+      id: 2015-05-21_02
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: FEAT_UID
+            baseTableName: FF4J_CUSTOM_PROPERTIES
+            constraintName: FF4J_CUSTOM_PROPERTIES_FEAT_UID_FK
+            referencedColumnNames: FEAT_UID
+            referencedTableName: FF4J_FEATURES
+  - changeSet:
+      author: ben
+      id: 2015-05-21_03
+      changes:
+        - createTable:
+            tableName: FF4J_PROPERTIES
+            columns:
+            - column:
+                name: PROPERTY_ID
+                type: VARCHAR(100)
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: CLAZZ
+                type: VARCHAR(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: CURRENTVALUE
+                type: VARCHAR(255)
+            - column:
+                name: FIXEDVALUES
+                type: VARCHAR(1000)
   - changeSet:
       author: ben
       id: 2014-04-16_01
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('key',0,'Identification Key');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('key',0,'Identification Key');
   - changeSet:
       author: ben
       id: 2014-04-16_02
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('search',0,'Search');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('search',0,'Search');
   - changeSet:
       author: ben
       id: 2014-04-16_03
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('search.map',0,'Map Search');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('search.map',0,'Map Search');
   - changeSet:
       author: ben
       id: 2014-04-16_04
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('search.analyse',0,'Analyse Data');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('search.analyse',0,'Analyse Data');
   - changeSet:
       author: ben
       id: 2014-04-16_05
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('classify.tree',0,'Classification Tree');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('classify.tree',0,'Classification Tree');
   - changeSet:
       author: ben
       id: 2014-04-16_06
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('taxon',0,'Taxon Page');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('taxon',0,'Taxon Page');
   - changeSet:
       author: ben
       id: 2014-04-16_07
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('search.autocomplete',0,'Autocomplete');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('search.autocomplete',0,'Autocomplete');
   - changeSet:
       author: ben
       id: 2014-04-16_08
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('download',0,'download');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('download',0,'download');
   - changeSet:
       author: ben
       id: 2014-04-19_01
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('home.page',0,'Home Page');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('home.page',0,'Home Page');
   - changeSet:
       author: ben
       id: 2014-04-19_02
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('login',0,'Login');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('login',1,'Login');
   - changeSet:
       author: ben
       id: 2014-04-19_03
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('edit',0,'Edit');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('edit',0,'Edit');
   - changeSet:
       author: ben
       id: 2014-04-19_04
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('administrate',0,'Administrate');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('administrate',0,'Administrate System');
   - changeSet:
       author: ben
       id: 2014-04-19_05
       changes:
-        - sql: insert into FF4J_FEATURES (UID, ENABLE, DESCRIPTION) values ('registry',0,'Registry');
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('registry',0,'Registry');
+  - changeSet:
+      author: ben
+      id: 2014-04-19_06
+      changes:
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('system',1,'Configure System');
+        

@@ -29,6 +29,7 @@ public class MultitenantWebConfiguration extends WebMvcConfigurerAdapter {
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/static/images/**").addResourceLocations("classpath:/static/images/").resourceChain(false).addResolver(imagesResourceResolver()).addResolver(new PathResourceResolver());
 		registry.addResourceHandler("/static/styles/**").addResourceLocations("classpath:/static/styles/").resourceChain(false).addResolver(stylesResourceResolver()).addResolver(new PathResourceResolver());
+		registry.addResourceHandler("/static/scripts/**").addResourceLocations("classpath:/static/scripts/").resourceChain(false).addResolver(stylesResourceResolver()).addResolver(new PathResourceResolver());
 		if (!registry.hasMappingForPattern("/webjars/**")) {
 	        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 	    }

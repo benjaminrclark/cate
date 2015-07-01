@@ -29,7 +29,7 @@ Scenario: Create a taxon
   Then the page title should be "Show Taxon"
   And a success alert should say "Taxon<NEW_IDENTIFIER> created"
   And the following data about the org_cateproject_domain_Taxon should be displayed 
-    | taxonId                     | NEW_IDENTIFIER    |
     | scientificName              | Arum italicum     |
     | scientificNameAuthorship    | L.                | 
+    | taxonId                     | NEW_IDENTIFIER    |
     | taxonRank                   | SPECIES           |

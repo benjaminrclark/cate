@@ -72,6 +72,7 @@ dependencies {
     exclude group: "xerces"
   }
   compile("org.springframework.cloud:spring-cloud-aws-context:1.0.1.RELEASE")
+  compile("org.springframework.cloud:spring-cloud-aws-messaging:1.0.1.RELEASE")
   compile("org.springframework.session:spring-session:1.0.1.RELEASE")
   testCompile("org.springframework.boot:spring-boot-starter-test")
   testCompile("org.easymock:easymock:3.3")

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.TreeSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,7 +26,7 @@ public class Page {
 	private String baseUri;
 	
 	@FindBy(how = How.TAG_NAME, using = "body")
-    private WebElement body;
+        private WebElement body;
 
 	public void setWebDriver(WebDriver webDriver) {
 		this.webDriver = webDriver;
@@ -146,7 +147,7 @@ public class Page {
 	
 	public DataTable getFields(String prefix, Set<String> fields) {
 		List<List<String>> rows = new ArrayList<List<String>>();
-		for(String field : fields) {
+		for(String field : new TreeSet<String>(fields)) {
 			List<String> row = new ArrayList<String>();
 			row.add(field);
 			row.add(webDriver.findElement(By.id(prefix.toLowerCase() + "_" + field.toLowerCase() + "_id")).getText());

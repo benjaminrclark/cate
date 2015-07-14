@@ -2,6 +2,9 @@ package org.cateproject.multitenant;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,5 +63,13 @@ public class MultitenantContextImplTest {
 		tenantContextImpl.clearContextProperties();
 		assertNull("TenantContextImpl.clearContextProperties should clear the context properties", tenantContextImpl.getContextProperty("dwcArchiveDir"));
 	}
+
+        @Test
+        public void testCopyContextProperties() {
+                Map<String, Object> expected = new HashMap<String, Object>();
+                expected.put("dwcArchiveDir", "DWC_ARCHIVE_DIR");
+                expected.put("processingImageFile", Boolean.FALSE);
+                assertEquals("TenantContextImpl.copyContextProperties should return a copy of the context properties", tenantContextImpl.copyContextProperties(), expected);
+        }
 }
 	

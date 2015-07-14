@@ -1,5 +1,7 @@
 package org.cateproject.multitenant;
 
+import java.util.Map;
+
 public interface MultitenantContext {
 	
 	String getTenantId();
@@ -10,5 +12,7 @@ public interface MultitenantContext {
 	
 	Object putContextProperty(String propertyName, Object property);
 	
-    void clearContextProperties();
+        void clearContextProperties();
+
+        Map<String, Object> copyContextProperties();
 }

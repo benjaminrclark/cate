@@ -67,6 +67,15 @@ public class MultitenantContextImpl implements MultitenantContext {
 		return property;
 	}
 
+        @Override
+        public Map<String, Object> copyContextProperties() {
+                Map<String, Object> copy = new HashMap<String, Object>();
+                for(String key : contextProperties.keySet()) {
+                    copy.put(key, contextProperties.get(key));
+                }
+                return copy;
+        }
+
 	@Override
 	public void clearContextProperties() {
 		contextProperties.clear();

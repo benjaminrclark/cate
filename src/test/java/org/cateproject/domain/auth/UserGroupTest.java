@@ -22,7 +22,7 @@ public class UserGroupTest {
 	@Before
 	public void setUp() throws Exception {
 		permissions = new HashSet<Permission>();
-		permissions.add(Permission.PERMISSION_ADMINISTRATE);
+		permissions.add(Permission.ROLE_ADMINISTRATE);
 		members = new ArrayList<UserAccount>();
 		userGroup = new UserGroup();
 		userGroup.setName("NAME");
@@ -42,8 +42,8 @@ public class UserGroupTest {
 	@Test
 	public void testGetGrantedAuthorities() {
 		Set<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>();
-		grantedAuthorities.add(Permission.PERMISSION_ADMINISTRATE);
-		assertEquals("grantedAuthorities should equal ('PERMISSION_ADMINISTRATE')", grantedAuthorities, userGroup.getGrantedAuthorities());
+		grantedAuthorities.add(Permission.ROLE_ADMINISTRATE);
+		assertEquals("grantedAuthorities should equal ('ROLE_ADMINISTRATE')", grantedAuthorities, userGroup.getGrantedAuthorities());
 	}
 
 	@Test

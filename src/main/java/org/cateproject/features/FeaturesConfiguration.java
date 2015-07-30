@@ -4,7 +4,6 @@ import javax.sql.DataSource;
 
 import org.ff4j.FF4j;
 import org.ff4j.core.FeatureStore;
-import org.ff4j.store.FeatureStoreSpringJDBC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

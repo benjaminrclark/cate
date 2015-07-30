@@ -10,6 +10,8 @@ import javax.sql.DataSource;
 import liquibase.exception.LiquibaseException;
 import liquibase.integration.spring.SpringLiquibase;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.cateproject.multitenant.MultitenantRepository;
 import org.cateproject.multitenant.NoSuchTenantException;
 import org.cateproject.multitenant.domain.Multitenant;
@@ -25,7 +27,8 @@ import org.springframework.data.domain.PageRequest;
 
 public class MultitenantDataSourceMap implements Map<String, DataSource>, InitializingBean, MultitenantEventAwareService {
 	
-    private Logger logger = LoggerFactory.getLogger(MultitenantDataSourceMap.class);
+    private static final Logger logger = LoggerFactory.getLogger(MultitenantDataSourceMap.class);
+    private static final Log log = LogFactory.getLog(MultitenantDataSourceMap.class);
 
     private MultitenantRepository tenantRepository;
     
@@ -35,11 +38,11 @@ public class MultitenantDataSourceMap implements Map<String, DataSource>, Initia
 	
     private Map<String, DataSource> dataSources = new HashMap<String, DataSource>();
 
-	private LiquibaseProperties liquibaseProperties;
+    private LiquibaseProperties liquibaseProperties;
 		
     public void setLiquibaseProperties(LiquibaseProperties liquibaseProperties) {
-		this.liquibaseProperties = liquibaseProperties;	
-	}
+	this.liquibaseProperties = liquibaseProperties;	
+    }
     
     public void setDataSourceBuilder(DataSourceBuilder dataSourceBuilder) {
     	this.dataSourceBuilder = dataSourceBuilder;
@@ -77,14 +80,17 @@ public class MultitenantDataSourceMap implements Map<String, DataSource>, Initia
 		dataSourceBuilder.url(tenant.getDatabaseUrl());
 		dataSourceBuilder.username(tenant.getDatabaseUsername());
 		DataSource dataSource = dataSourceBuilder.build();
-        dataSources.put(tenant.getIdentifier(), dataSource);
-        logger.info("Datasource for " + tenant.getIdentifier() + " created successfully ");
+                dataSources.put(tenant.getIdentifier(), dataSource);
+                logger.info("Datasource for " + tenant.getIdentifier() + " created successfully ");
        
 	    try {
 			liquibase.setDataSource(dataSource);
 			liquibase.afterPropertiesSet();
 		} catch (LiquibaseException e) {
 			logger.error("Unable to successfully upgrade tenant " + tenant.getIdentifier() + " nested exception is:  " + e.getMessage());
+                        for(StackTraceElement ste : e.getStackTrace()) {
+                           logger.error(ste.toString());
+                        }
 		}
 	}
 	

@@ -101,9 +101,9 @@ public class MultitenantManager {
 		admin.setAccountNonLocked(true);
 		admin.setCredentialsNonExpired(true);
 		admin.setEnabled(true);
-		admin.getPermissions().add(Permission.PERMISSION_ADMINISTRATE);
-		admin.getPermissions().add(Permission.PERMISSION_CONFIGURE_SYSTEM);
-		admin.getPermissions().add(Permission.PERMISSION_EDIT);
+		admin.getPermissions().add(Permission.ROLE_ADMINISTRATE);
+		admin.getPermissions().add(Permission.ROLE_CONFIGURE_SYSTEM);
+		admin.getPermissions().add(Permission.ROLE_EDIT);
 		
 		if(isDefault) {		  
 		  admin.setEmail(tenant.getAdminEmail());
@@ -129,8 +129,8 @@ public class MultitenantManager {
 		owner.setAccountNonLocked(true);
 		owner.setCredentialsNonExpired(true);
 		owner.setEnabled(true);
-		owner.getPermissions().add(Permission.PERMISSION_ADMINISTRATE);
-		owner.getPermissions().add(Permission.PERMISSION_EDIT);
+		owner.getPermissions().add(Permission.ROLE_ADMINISTRATE);
+		owner.getPermissions().add(Permission.ROLE_EDIT);
 		userAccountRepository.save(owner);
 		MultitenantContextHolder.getContext().setTenantId(originalTenantId);
 	}

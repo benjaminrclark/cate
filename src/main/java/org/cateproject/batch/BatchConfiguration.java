@@ -1,5 +1,8 @@
 package org.cateproject.batch;
 
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
+
 import javax.sql.DataSource;
 
 import org.cateproject.multitenant.batch.MultitenantAwareJobLauncher;
@@ -35,6 +38,7 @@ public class BatchConfiguration {
         ThreadPoolTaskExecutor batchTaskExecutor = new ThreadPoolTaskExecutor();
         batchTaskExecutor.setMaxPoolSize(1);
         batchTaskExecutor.setQueueCapacity(0);    
+        batchTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         return batchTaskExecutor;
 }
 

@@ -1,4 +1,4 @@
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css"/>
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
@@ -17,6 +17,7 @@
 	<div th:fragment="header" id="header" class="navbar navbar-fixed-top navbar-inverse">
 		<div class="navbar-inner">
 			<div class="container">
+
 				<a th:href="@{/}" class="brand" th:name="#{button_home}" th:title="#{button_home}"> 
 				  <span th:text="${#themes.code('tenant_name')}">Tenant Name</span>
 				</a>
@@ -69,9 +70,9 @@
 										<li th:if="${@ff4j.check('home.page')}"><a th:href="@{/home}">
 										  <i class="icon-home"><!-- --></i>&#160;<span th:text="#{user_account_label}">Home</span>
 										</a></li>
-										<li th:if="${@ff4j.check('edit')}" sec:authorize="hasRole('PERMISSION_EDIT')"><a th:href="@{/edit}" href="../edit/show.html"><i class="icon-pencil"><!--  --></i>&#160;<span th:text="#{edit_label}">Edit</span></a></li>
-										<li th:if="${@ff4j.check('administrate')}" sec:authorize="hasRole('PERMISSION_ADMINISTRATE')"><a th:href="@{/admin}" href="../admin/show.html"><i class="icon-wrench"><!--  --></i>&#160;<span th:text="#{admin_label(${#themes.code('tenant_name')})}">Administrate CATE</span></a></li>										
-										<li th:if="${@ff4j.check('system')}" sec:authorize="hasRole('PERMISSION_CONFIGURE_SYSTEM')"><a th:href="@{/system}" href="../system/show.html"><i class="icon-wrench"><!--  --></i>&#160;<span th:text="#{system_user_label}">Configure System</span></a></li>
+										<li th:if="${@ff4j.check('edit')}" sec:authorize="hasRole('ROLE_EDIT')"><a th:href="@{/edit}" href="../edit/show.html"><i class="icon-pencil"><!--  --></i>&#160;<span th:text="#{edit_label}">Edit</span></a></li>
+										<li th:if="${@ff4j.check('administrate')}" sec:authorize="hasRole('ROLE_ADMINISTRATE')"><a th:href="@{/admin}" href="../admin/show.html"><i class="icon-wrench"><!--  --></i>&#160;<span th:text="#{admin_label(${#themes.code('tenant_name')})}">Administrate CATE</span></a></li>										
+										<li th:if="${@ff4j.check('system')}" sec:authorize="hasRole('ROLE_CONFIGURE_SYSTEM')"><a th:href="@{/system}" href="../system/show.html"><i class="icon-wrench"><!--  --></i>&#160;<span th:text="#{system_user_label}">Configure System</span></a></li>
 										<li><a th:href="@{/logout}"> <i class="icon-off"><!--  --></i>&#160;<span th:text="#{logout}">Logout</span></a></li>
 									</ul></li>
 					</ul>

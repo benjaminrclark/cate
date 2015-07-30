@@ -27,11 +27,11 @@ public class UserAccountTest {
 	@Before
 	public void setUp() {
 		UserGroup userGroup = new UserGroup();
-		userGroup.getPermissions().add(Permission.PERMISSION_ADMINISTRATE);
+		userGroup.getPermissions().add(Permission.ROLE_ADMINISTRATE);
 		groups = new ArrayList<UserGroup>();
 		groups.add(userGroup);
 		permissions = new HashSet<Permission>();
-		permissions.add(Permission.PERMISSION_EDIT);
+		permissions.add(Permission.ROLE_EDIT);
 		passwordEncoder = NoOpPasswordEncoder.getInstance();
 		
 		userAccount = new UserAccount();
@@ -114,9 +114,9 @@ public class UserAccountTest {
 	@Test
 	public void testGetAuthorities() {
 		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-		authorities.add(Permission.PERMISSION_ADMINISTRATE);
-		authorities.add(Permission.PERMISSION_EDIT);
-		assertEquals("authorities should equal ('PERMISSION_ADMINISTRATE','PERMISSION_EDIT')", authorities, userAccount.getAuthorities());
+		authorities.add(Permission.ROLE_ADMINISTRATE);
+		authorities.add(Permission.ROLE_EDIT);
+		assertEquals("authorities should equal ('ROLE_ADMINISTRATE','ROLE_EDIT')", authorities, userAccount.getAuthorities());
 	}
 
 	@Test

@@ -7,7 +7,6 @@
 	</appender>
 	<root level="error">
 		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
 	</root>
 	<logger name="org.cateproject" level="DEBUG" />
 </configuration>

@@ -8,6 +8,6 @@ public class PermissionTest {
 
 	@Test
 	public void testGetAuthority() {
-		assertEquals("authority is based on the enum name",Permission.PERMISSION_ADMINISTRATE.getAuthority(), "PERMISSION_ADMINISTRATE");
+		assertEquals("authority is based on the enum name",Permission.ROLE_ADMINISTRATE.getAuthority(), "ROLE_ADMINISTRATE");
 	}
 }

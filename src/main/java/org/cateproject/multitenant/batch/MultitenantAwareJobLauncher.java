@@ -103,7 +103,7 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
                 final String originalTenantId = MultitenantContextHolder.getContext().getTenantId();
                 final Map<String, Object> originalProperties = MultitenantContextHolder.getContext().copyContextProperties();
                 final String tenantId = jobParameters.getString("tenantId");
-                final Map<String, Object> properties = (Map<String, Object>)conversionService.convert(jobParameters.getString("properties"), Map.class);
+                final Map<String, Object> properties = (Map<String, Object>)conversionService.convert(jobParameters.getString("tenantProperties"), Map.class);
                 logger.info("Tenant ID is " + tenantId);
 		try {
 			taskExecutor.execute(new Runnable() {
@@ -112,6 +112,7 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
 					try {
 						logger.info("Setting Tenant ID to " + tenantId);
 						MultitenantContextHolder.getContext().setTenantId(tenantId);
+                                                MultitenantContextHolder.getContext().clearContextProperties();
                                                 for(String propertyName : properties.keySet()) {
                                                     MultitenantContextHolder.getContext().putContextProperty(propertyName, properties.get(propertyName));
                                                 }
@@ -127,9 +128,9 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
 						rethrow(t);
 					} finally {
 						MultitenantContextHolder.getContext().setTenantId(originalTenantId);
-
+                                                MultitenantContextHolder.getContext().clearContextProperties();
                                                 for(String propertyName : originalProperties.keySet()) {
-                                                    MultitenantContextHolder.getContext().putContextProperty(propertyName, properties.get(propertyName));
+                                                    MultitenantContextHolder.getContext().putContextProperty(propertyName, originalProperties.get(propertyName));
                                                 }
                                         }
 				}
@@ -137,15 +138,13 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
 				private void rethrow(Throwable t) {
 					if (t instanceof RuntimeException) {
 						throw (RuntimeException) t;
-					}
-					else if (t instanceof Error) {
+					} else if (t instanceof Error) {
 						throw (Error) t;
 					}
 					throw new IllegalStateException(t);
 				}
 			});
-		}
-		catch (TaskRejectedException e) {
+		} catch (TaskRejectedException e) {
 			jobExecution.upgradeStatus(BatchStatus.FAILED);
 			if (jobExecution.getExitStatus().equals(ExitStatus.UNKNOWN)) {
 				jobExecution.setExitStatus(ExitStatus.FAILED.addExitDescription(e));

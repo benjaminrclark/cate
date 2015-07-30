@@ -5,9 +5,9 @@ import org.springframework.security.core.GrantedAuthority;
 
 public enum Permission implements GrantedAuthority {
 
-    PERMISSION_ADMINISTRATE,
-    PERMISSION_EDIT,
-    PERMISSION_CONFIGURE_SYSTEM;
+    ROLE_ADMINISTRATE,
+    ROLE_EDIT,
+    ROLE_CONFIGURE_SYSTEM;
     
     public String getAuthority() {
         return this.name();

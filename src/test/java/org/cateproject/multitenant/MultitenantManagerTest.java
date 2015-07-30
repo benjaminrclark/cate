@@ -155,9 +155,9 @@ public class MultitenantManagerTest {
 		assertTrue("Admin account should not be expired", capturedAdmin.getValue().isAccountNonExpired());
 		assertTrue("Admin account should not be locked", capturedAdmin.getValue().isAccountNonLocked());
 		assertTrue("Admin credentials should not be expired", capturedAdmin.getValue().isCredentialsNonExpired());
-		assertTrue("Admin should be able to administrate", capturedAdmin.getValue().getPermissions().contains(Permission.PERMISSION_ADMINISTRATE));
-		assertTrue("Admin should be able to configure tenants", capturedAdmin.getValue().getPermissions().contains(Permission.PERMISSION_CONFIGURE_SYSTEM));
-		assertTrue("Admin should be able to edit", capturedAdmin.getValue().getPermissions().contains(Permission.PERMISSION_EDIT));
+		assertTrue("Admin should be able to administrate", capturedAdmin.getValue().getPermissions().contains(Permission.ROLE_ADMINISTRATE));
+		assertTrue("Admin should be able to configure tenants", capturedAdmin.getValue().getPermissions().contains(Permission.ROLE_CONFIGURE_SYSTEM));
+		assertTrue("Admin should be able to edit", capturedAdmin.getValue().getPermissions().contains(Permission.ROLE_EDIT));
 		
 		assertEquals("Owner account should have the correct email address", capturedOwner.getValue().getEmail(), "OWNER_EMAIL");
 		assertEquals("Owner account should have the correct username", capturedOwner.getValue().getUsername(), "OWNER_EMAIL");
@@ -166,9 +166,9 @@ public class MultitenantManagerTest {
 		assertTrue("Owner account should not be expired", capturedOwner.getValue().isAccountNonExpired());
 		assertTrue("Owner account should not be locked", capturedOwner.getValue().isAccountNonLocked());
 		assertTrue("Owner credentials should not be expired", capturedOwner.getValue().isCredentialsNonExpired());
-		assertTrue("Owner should be able to administrate", capturedOwner.getValue().getPermissions().contains(Permission.PERMISSION_ADMINISTRATE));
-		assertFalse("Owner should not be able to configure tenants", capturedOwner.getValue().getPermissions().contains(Permission.PERMISSION_CONFIGURE_SYSTEM));
-		assertTrue("Owner should be able to edit", capturedOwner.getValue().getPermissions().contains(Permission.PERMISSION_EDIT));
+		assertTrue("Owner should be able to administrate", capturedOwner.getValue().getPermissions().contains(Permission.ROLE_ADMINISTRATE));
+		assertFalse("Owner should not be able to configure tenants", capturedOwner.getValue().getPermissions().contains(Permission.ROLE_CONFIGURE_SYSTEM));
+		assertTrue("Owner should be able to edit", capturedOwner.getValue().getPermissions().contains(Permission.ROLE_EDIT));
 	}
 	
 	@Test
@@ -204,9 +204,9 @@ public class MultitenantManagerTest {
 		assertTrue("Admin account should not be expired", capturedAdmin.getValue().isAccountNonExpired());
 		assertTrue("Admin account should not be locked", capturedAdmin.getValue().isAccountNonLocked());
 		assertTrue("Admin credentials should not be expired", capturedAdmin.getValue().isCredentialsNonExpired());
-		assertTrue("Admin should be able to administrate", capturedAdmin.getValue().getPermissions().contains(Permission.PERMISSION_ADMINISTRATE));
-		assertTrue("Admin should be able to configure tenants", capturedAdmin.getValue().getPermissions().contains(Permission.PERMISSION_CONFIGURE_SYSTEM));
-		assertTrue("Admin should be able to edit", capturedAdmin.getValue().getPermissions().contains(Permission.PERMISSION_EDIT));
+		assertTrue("Admin should be able to administrate", capturedAdmin.getValue().getPermissions().contains(Permission.ROLE_ADMINISTRATE));
+		assertTrue("Admin should be able to configure tenants", capturedAdmin.getValue().getPermissions().contains(Permission.ROLE_CONFIGURE_SYSTEM));
+		assertTrue("Admin should be able to edit", capturedAdmin.getValue().getPermissions().contains(Permission.ROLE_EDIT));
 		
 		assertEquals("Owner account should have the correct email address", capturedOwner.getValue().getEmail(), "OWNER_EMAIL");
 		assertEquals("Owner account should have the correct username", capturedOwner.getValue().getUsername(), "OWNER_EMAIL");
@@ -215,9 +215,9 @@ public class MultitenantManagerTest {
 		assertTrue("Owner account should not be expired", capturedOwner.getValue().isAccountNonExpired());
 		assertTrue("Owner account should not be locked", capturedOwner.getValue().isAccountNonLocked());
 		assertTrue("Owner credentials should not be expired", capturedOwner.getValue().isCredentialsNonExpired());
-		assertTrue("Owner should be able to administrate", capturedOwner.getValue().getPermissions().contains(Permission.PERMISSION_ADMINISTRATE));
-		assertFalse("Owner should not be able to configure tenants", capturedOwner.getValue().getPermissions().contains(Permission.PERMISSION_CONFIGURE_SYSTEM));
-		assertTrue("Owner should be able to edit", capturedOwner.getValue().getPermissions().contains(Permission.PERMISSION_EDIT));
+		assertTrue("Owner should be able to administrate", capturedOwner.getValue().getPermissions().contains(Permission.ROLE_ADMINISTRATE));
+		assertFalse("Owner should not be able to configure tenants", capturedOwner.getValue().getPermissions().contains(Permission.ROLE_CONFIGURE_SYSTEM));
+		assertTrue("Owner should be able to edit", capturedOwner.getValue().getPermissions().contains(Permission.ROLE_EDIT));
 	}
 	
 	@Test

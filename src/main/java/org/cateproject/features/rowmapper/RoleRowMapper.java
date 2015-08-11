@@ -60,5 +60,12 @@ public class RoleRowMapper implements RowMapper<Integer>, JdbcStoreConstants {
         return roles;
     }
 
+    public void setRoles(Map<String, Set<String>> roles) {
+        this.roles.clear();
+        for(String featId : roles.keySet()) {
+            this.roles.put(featId, roles.get(featId));
+        }
+    }
+
 }
 

@@ -7,8 +7,10 @@ import javax.validation.ConstraintViolationException;
 
 import org.cateproject.Application;
 import org.cateproject.domain.Taxon;
+import org.cateproject.multitenant.MultitenantContextHolder;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,11 @@ public class TaxonRepositoryIntegrationTest {
 	    @Autowired
 	    TaxonRepository taxonRepository;
 	    
+            @Before
+            public void setUp() {
+                MultitenantContextHolder.getContext().setTenantId(null);
+            }
+
 	    @Test
 	    public void testCount() {
 	        Assert.assertNotNull("Data on demand for 'Taxon' failed to initialize correctly", dod.getRandomTaxon());

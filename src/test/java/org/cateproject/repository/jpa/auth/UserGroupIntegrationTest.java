@@ -8,7 +8,9 @@ import javax.validation.ConstraintViolationException;
 import org.cateproject.Application;
 import org.cateproject.domain.auth.UserGroup;
 import org.cateproject.domain.auth.UserGroupDataOnDemand;
+import org.cateproject.multitenant.MultitenantContextHolder;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @IntegrationTest
 public class UserGroupIntegrationTest {
 
-	@Autowired
+    @Autowired
     UserGroupDataOnDemand dod;
     
     @Autowired
     UserGroupRepository userGroupRepository;
     
+    @Before
+    public void setUp() {
+        MultitenantContextHolder.getContext().setTenantId(null);
+    }
+
     @Test
     public void testCount() {
         Assert.assertNotNull("Data on demand for 'UserGroup' failed to initialize correctly", dod.getRandomUserGroup());

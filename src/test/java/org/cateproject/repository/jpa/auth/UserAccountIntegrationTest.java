@@ -8,7 +8,9 @@ import javax.validation.ConstraintViolationException;
 import org.cateproject.Application;
 import org.cateproject.domain.auth.UserAccount;
 import org.cateproject.domain.auth.UserAccountDataOnDemand;
+import org.cateproject.multitenant.MultitenantContextHolder;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @IntegrationTest
 public class UserAccountIntegrationTest {
 
-	@Autowired
+    @Autowired
     UserAccountDataOnDemand dod;
     
     @Autowired
     UserAccountRepository userAccountRepository;
     
+    @Before
+    public void setUp() {
+        MultitenantContextHolder.getContext().setTenantId(null);
+    }
+
     @Test
     public void testCount() {
         Assert.assertNotNull("Data on demand for 'UserAccount' failed to initialize correctly", dod.getRandomUserAccount());

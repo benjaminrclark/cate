@@ -7,7 +7,9 @@ import javax.validation.ConstraintViolationException;
 
 import org.cateproject.Application;
 import org.cateproject.domain.Node;
+import org.cateproject.multitenant.MultitenantContextHolder;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +22,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @IntegrationTest
 public class NodeRepositoryIntegrationTest {
 
-	@Autowired
+    @Autowired
     NodeDataOnDemand dod;
     
     @Autowired
     NodeRepository nodeRepository;
     
+    @Before
+    public void setUp() {
+        MultitenantContextHolder.getContext().setTenantId(null);
+    }
+
     @Test
     public void testCount() {
         Assert.assertNotNull("Data on demand for 'Node' failed to initialize correctly", dod.getRandomNode());

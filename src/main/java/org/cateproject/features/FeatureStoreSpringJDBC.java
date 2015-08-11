@@ -45,7 +45,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class FeatureStoreSpringJDBC extends AbstractFeatureStore implements JdbcStoreConstants {
 	private static final Log logger =
 		LogFactory.getLog(FeatureStoreSpringJDBC.class);
+    private boolean cached = false;
 
+    private String cacheProvider = null;
+ 
+    private String cachedTargetStore = null;
 
     /** Row Mapper for FlipPoint. */
     private static final FeatureRowMapper MAPPER = new FeatureRowMapper();
@@ -365,12 +369,16 @@ public class FeatureStoreSpringJDBC extends AbstractFeatureStore implements Jdbc
         this.dataSource = dataSource;
     }
 
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     /** {@inheritDoc} */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("{");
         sb.append("\"type\":\"" + this.getClass().getCanonicalName() + "\"");
-        sb.append("\"datasource\":\"" + this.dataSource.getClass() + "\"");
+        sb.append(",\"datasource\":\"" + this.dataSource.getClass() + "\"");
         Set<String> myFeatures = readAll().keySet();
         sb.append(",\"numberOfFeatures\":" + myFeatures.size());
         sb.append(",\"cached\":" + this.isCached());
@@ -419,23 +427,34 @@ public class FeatureStoreSpringJDBC extends AbstractFeatureStore implements Jdbc
     }
 
     // -------- Overrided in cache proxy --------------
+    public void setCached(boolean cached) {
+        this.cached = cached;
+    }
 
     /** {@inheritDoc} */
     @Override
     public boolean isCached() {
-        return false;
+        return cached;
+    }
+
+    public void setCacheProvider(String cacheProvider) {
+        this.cacheProvider = cacheProvider;
     }
 
     /** {@inheritDoc} */
     @Override
     public String getCacheProvider() {
-        return null;
+        return cacheProvider;
+    }
+
+    public void setCachedTargetStore(String cachedTargetStore) {
+        this.cachedTargetStore = cachedTargetStore;
     }
 
     /** {@inheritDoc} */
     @Override
     public String getCachedTargetStore() {
-        return null;
+        return cachedTargetStore;
     }
 
 }

@@ -7,8 +7,10 @@ import javax.validation.ConstraintViolationException;
 
 import org.cateproject.Application;
 import org.cateproject.domain.Description;
+import org.cateproject.multitenant.MultitenantContextHolder;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,11 @@ public class DescriptionRepositoryIntegrationTest {
     
     @Autowired
     DescriptionRepository descriptionRepository;
+
+    @Before
+    public void setUp() {
+        MultitenantContextHolder.getContext().setTenantId(null);
+    }
     
     @Test
     public void testCount() {

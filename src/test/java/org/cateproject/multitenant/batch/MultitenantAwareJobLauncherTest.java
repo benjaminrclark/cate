@@ -84,7 +84,7 @@ public class MultitenantAwareJobLauncherTest {
         tenantProperties.put("PROPERTY_2", "PROPERTY_2_VALUE");
         parameters.put("tenantId", new JobParameter("TENANT_ID"));
         parameters.put("tenantProperties", new JobParameter("TENANT_PROPERTIES")); 
-        Capture<Runnable> runnable = new Capture<Runnable>();
+        final Capture<Runnable> runnable = new Capture<Runnable>();
         JobParameters jobParameters = new JobParameters(parameters);
         EasyMock.expect(job.getName()).andReturn("JOB_NAME").anyTimes();
         EasyMock.expect(jobRepository.getLastJobExecution(EasyMock.eq("JOB_NAME"), EasyMock.eq(jobParameters))).andReturn(null);
@@ -141,7 +141,7 @@ public class MultitenantAwareJobLauncherTest {
         tenantProperties.put("PROPERTY_2", "PROPERTY_2_VALUE");
         parameters.put("tenantId", new JobParameter("TENANT_ID"));
         parameters.put("tenantProperties", new JobParameter("TENANT_PROPERTIES")); 
-        Capture<Runnable> runnable = new Capture<Runnable>();
+        final Capture<Runnable> runnable = new Capture<Runnable>();
         JobParameters jobParameters = new JobParameters(parameters);
         EasyMock.expect(job.getName()).andReturn("JOB_NAME").anyTimes();
         EasyMock.expect(jobRepository.getLastJobExecution(EasyMock.eq("JOB_NAME"), EasyMock.eq(jobParameters))).andReturn(lastJobExecution);
@@ -177,7 +177,7 @@ public class MultitenantAwareJobLauncherTest {
         tenantProperties.put("PROPERTY_2", "PROPERTY_2_VALUE");
         parameters.put("tenantId", new JobParameter("TENANT_ID"));
         parameters.put("tenantProperties", new JobParameter("TENANT_PROPERTIES")); 
-        Capture<Runnable> runnable = new Capture<Runnable>();
+        final Capture<Runnable> runnable = new Capture<Runnable>();
         JobParameters jobParameters = new JobParameters(parameters);
         RuntimeException runtimeException = new RuntimeException("RUNTIME_EXCEPTION");
 
@@ -218,7 +218,7 @@ public class MultitenantAwareJobLauncherTest {
         tenantProperties.put("PROPERTY_2", "PROPERTY_2_VALUE");
         parameters.put("tenantId", new JobParameter("TENANT_ID"));
         parameters.put("tenantProperties", new JobParameter("TENANT_PROPERTIES")); 
-        Capture<Runnable> runnable = new Capture<Runnable>();
+        final Capture<Runnable> runnable = new Capture<Runnable>();
         JobParameters jobParameters = new JobParameters(parameters);
         Error error = new Error("ERROR");
 

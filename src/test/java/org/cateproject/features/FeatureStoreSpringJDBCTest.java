@@ -593,18 +593,18 @@ public class FeatureStoreSpringJDBCTest {
         expectedPermissions.add("ROLE_1");
         expectedPermissions.add("ROLE_2");
 
-        Map<String, Set<String>> roleMap = new HashMap<String, Set<String>>();
+        final Map<String, Set<String>> roleMap = new HashMap<String, Set<String>>();
         roleMap.put("FEATURE_UID", expectedPermissions);
         roleMap.put("MISSING_FEATURE", new HashSet<String>());
 
-        Capture<RoleRowMapper> captureRoleMapper = new Capture<RoleRowMapper>();
+        final Capture<RoleRowMapper> captureRoleMapper = new Capture<RoleRowMapper>();
  
         Feature feature1 = new Feature("FEATURE_UID");
         Feature feature2 = new Feature("FEATURE_UID2");
         List<Feature> features = new ArrayList<Feature>();
         features.add(feature1);
         features.add(feature2);
-        List<Integer> roles = new ArrayList<Integer>();
+        final List<Integer> roles = new ArrayList<Integer>();
         Map<String, Feature> expected = new HashMap<String, Feature>();
         expected.put("FEATURE_UID", feature1);
         expected.put("FEATURE_UID2",feature2);
@@ -725,11 +725,11 @@ public class FeatureStoreSpringJDBCTest {
         expectedPermissions.add("ROLE_1");
         expectedPermissions.add("ROLE_2");
 
-        Map<String, Set<String>> roleMap = new HashMap<String, Set<String>>();
+        final Map<String, Set<String>> roleMap = new HashMap<String, Set<String>>();
         roleMap.put("FEATURE_UID", expectedPermissions);
 
-        Capture<RoleRowMapper> captureRoleMapper = new Capture<RoleRowMapper>();
-        List<Integer> roles = new ArrayList<Integer>();
+        final Capture<RoleRowMapper> captureRoleMapper = new Capture<RoleRowMapper>();
+        final List<Integer> roles = new ArrayList<Integer>();
 
         List<Feature> features = new ArrayList<Feature>();
         features.add(new Feature("FEATURE_UID"));
@@ -762,11 +762,11 @@ public class FeatureStoreSpringJDBCTest {
         expectedPermissions.add("ROLE_1");
         expectedPermissions.add("ROLE_2");
 
-        Map<String, Set<String>> roleMap = new HashMap<String, Set<String>>();
+        final Map<String, Set<String>> roleMap = new HashMap<String, Set<String>>();
         roleMap.put("FEATURE_UID", expectedPermissions);
 
-        Capture<RoleRowMapper> captureRoleMapper = new Capture<RoleRowMapper>();
-        List<Integer> roles = new ArrayList<Integer>();
+        final Capture<RoleRowMapper> captureRoleMapper = new Capture<RoleRowMapper>();
+        final List<Integer> roles = new ArrayList<Integer>();
 
         List<Feature> features = new ArrayList<Feature>();
         features.add(new Feature("FEATURE_UID"));

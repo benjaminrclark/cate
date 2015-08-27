@@ -40,7 +40,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 @ContextConfiguration(classes = Application.class, loader = SpringApplicationContextLoader.class)
-@WebIntegrationTest
+@WebIntegrationTest({"solr.home=build/tmp/solr/"})
 public class Stepdefs {
 
 	private static Logger logger = LoggerFactory.getLogger(Stepdefs.class);
@@ -116,7 +116,7 @@ public class Stepdefs {
 		    multitenant.setAdminEmail("admin@example.com");
 		    multitenant.setAdminPassword("admin");
 		    multitenant.setOwnerEmail("owner");
-		    multitenant.setOwnerPassword("owner@example.com	");
+		    multitenant.setOwnerPassword("owner@example.com");
 		    multitenant.setDatabasePassword("");
 		    multitenant.setDatabaseUrl("jdbc:h2:mem:test");
 		    multitenant.setDriverClassName("org.h2.Driver");
@@ -173,9 +173,9 @@ public class Stepdefs {
 	}
 	
 	@When("^I click the (.*?) button$")
-    public void i_click_the_button(String button) throws Throwable {
-        current.clickButton(button);
-    }
+        public void i_click_the_button(String button) throws Throwable {
+            current.clickButton(button);
+        }
 
 	
 	@When("^I am not logged in to CATE$")
@@ -206,7 +206,7 @@ public class Stepdefs {
 
 	@Then("^the page title should be \"(.*)\"$")
 	public void the_page_title_should_be(String title) throws Throwable {
-		assertEquals(current.getTitle(), title);
+	    assertEquals(current.getTitle(), title);
 	}
 
 	@Then("^a success alert should say \"(.*?)\"$")

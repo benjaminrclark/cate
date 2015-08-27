@@ -8,6 +8,7 @@ import javax.validation.ConstraintViolationException;
 import org.cateproject.Application;
 import org.cateproject.domain.Taxon;
 import org.cateproject.multitenant.MultitenantContextHolder;
+import org.cateproject.multitenant.solr.MultitenantAwareSolrServer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,6 +29,9 @@ public class TaxonRepositoryIntegrationTest {
 	    
 	    @Autowired
 	    TaxonRepository taxonRepository;
+
+            @Autowired
+            MultitenantAwareSolrServer solrServer;
 	    
             @Before
             public void setUp() {

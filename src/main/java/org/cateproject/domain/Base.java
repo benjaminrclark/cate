@@ -6,20 +6,36 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
+import javax.persistence.PreRemove;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.cateproject.repository.search.BaseRepository;
+import org.cateproject.repository.search.BaseRepositoryImpl;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.proxy.HibernateProxyHelper;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 @MappedSuperclass
 @Audited
+@Configurable 
 public abstract class Base {
+
+    private static Logger logger = LoggerFactory.getLogger(Base.class);
 	
-	@Id
+    @Autowired
+    @Transient
+    private transient BaseRepository baseRepository;
+  
+    @Id
     @GeneratedValue(generator = "table-hilo", strategy = GenerationType.TABLE)
     @Column(name = "id")
     private Long id;
@@ -187,5 +203,16 @@ public abstract class Base {
     @Override
     public String toString() {
             return this.getClass().getSimpleName() + "<" + this.getIdentifier() + ">";
+    }
+    
+    @PostPersist
+    @PostUpdate
+    private void addToIndex() {
+        baseRepository.save(this);
+    }
+
+    @PreRemove
+    private void removeFromIndex() {
+        baseRepository.delete(this);
     }
 }

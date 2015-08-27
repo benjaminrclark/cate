@@ -42,10 +42,10 @@ public class MultiTenantConnectionProvider extends AbstractDataSourceBasedMultiT
 	
 	@Override
 	public DataSource selectDataSource(String tenantIdentifier) {
-		if(tenantIdentifier.equals(defaultTenantIdentifier )) {
-		  return defaultDataSource;	
-		} else {
-	      return dataSources.get(tenantIdentifier);
-		}
+	    if(tenantIdentifier.equals(defaultTenantIdentifier )) {
+	        return defaultDataSource;	
+	    } else {
+               return dataSources.get(tenantIdentifier);
+	    }
 	}
 }

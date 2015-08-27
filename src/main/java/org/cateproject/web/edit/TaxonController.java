@@ -13,6 +13,8 @@ import org.gbif.ecat.voc.NomenclaturalCode;
 import org.gbif.ecat.voc.NomenclaturalStatus;
 import org.gbif.ecat.voc.Rank;
 import org.gbif.ecat.voc.TaxonomicStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +43,8 @@ import org.springframework.web.util.WebUtils;
 
 @RequestMapping("/edit/taxon")
 public class TaxonController {
+
+    private static Logger logger = LoggerFactory.getLogger(TaxonController.class);
 	
     @Autowired
     TaxonRepository taxonRepository;
@@ -89,7 +95,7 @@ public class TaxonController {
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
     public String create(@Valid Taxon result, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest, RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
+        if(bindingResult.hasErrors()) {
             populateEditForm(uiModel, result);
             String[] codes = new String[] { "entity_create_error" };
     		Object[] args = new Object[] { result.toString()};

@@ -30,7 +30,7 @@ public class FacetableRepositoryImpl<T extends Object> extends SimpleSolrReposit
 		return solrOperations.queryForFacetPage(facetQuery, entityClass);
 	}
 	
-	private QueryResponse execute(final SolrQuery solrQuery, Pageable pageable) {
+	protected QueryResponse execute(final SolrQuery solrQuery, Pageable pageable) {
 		SolrOperations solrOperations = this.getSolrOperations();		
 	        return solrOperations.execute(new SolrCallback<QueryResponse> () {
 			@Override
@@ -62,7 +62,6 @@ public class FacetableRepositoryImpl<T extends Object> extends SimpleSolrReposit
 	    QueryResponse queryResponse = execute(solrQuery, pageable);
 		
 	    List<Match> results = new ArrayList<Match>();
-            Map<String,Match> matchMap = new HashMap<String,Match>();
 
             for(GroupCommand groupCommand : queryResponse.getGroupResponse().getValues()) {
                 for (Group group : groupCommand.getValues()) {
@@ -70,7 +69,6 @@ public class FacetableRepositoryImpl<T extends Object> extends SimpleSolrReposit
 		        Match match = new Match();
 			match.setText((String) solrDocument.get("autocomplete"));
 			match.setValue(solrDocument.get("base.id_l"));
-			matchMap.put((String) solrDocument.get("id"), match);
 			results.add(match);
 		    }
 		}

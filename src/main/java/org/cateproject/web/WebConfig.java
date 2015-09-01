@@ -35,6 +35,18 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
         @Autowired
         private ReferenceRepository referenceRepository;
+
+        public void setTaxonRepository(TaxonRepository taxonRepository) {
+            this.taxonRepository = taxonRepository;
+        }
+
+        public void setReferenceRepository(ReferenceRepository referenceRepository) {
+            this.referenceRepository = referenceRepository;
+        }
+
+        public void setDatasetRepository(DatasetRepository datasetRepository) {
+            this.datasetRepository = datasetRepository;
+        }
 	
 	@Bean
 	public TaxonController editTaxonController() {
@@ -82,7 +94,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             argumentResolvers.add(sortResolver());
         }
 
-	private Converter<Long, Taxon> getLongToTaxonConverter() {
+	public Converter<Long, Taxon> getLongToTaxonConverter() {
 	    return new org.springframework.core.convert.converter.Converter<java.lang.Long, org.cateproject.domain.Taxon>() {
                 public org.cateproject.domain.Taxon convert(java.lang.Long id) {
                     return taxonRepository.findOne(id);
@@ -90,7 +102,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             };
 	}
 	
-	private Converter<String, Taxon> getStringToTaxonConverter() {
+	public Converter<String, Taxon> getStringToTaxonConverter() {
 	    return new org.springframework.core.convert.converter.Converter<java.lang.String, org.cateproject.domain.Taxon>() {
                 public org.cateproject.domain.Taxon convert(java.lang.String id) {
                     if(id == null || id.isEmpty()) {
@@ -102,7 +114,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             };
 	}
 
-	private Converter<Long, Dataset> getLongToDatasetConverter() {
+	public Converter<Long, Dataset> getLongToDatasetConverter() {
 	    return new org.springframework.core.convert.converter.Converter<java.lang.Long, org.cateproject.domain.Dataset>() {
                 public org.cateproject.domain.Dataset convert(java.lang.Long id) {
                     return datasetRepository.findOne(id);
@@ -110,7 +122,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             };
 	}
 	
-	private Converter<String, Dataset> getStringToDatasetConverter() {
+	public Converter<String, Dataset> getStringToDatasetConverter() {
 	    return new org.springframework.core.convert.converter.Converter<java.lang.String, org.cateproject.domain.Dataset>() {
                 public org.cateproject.domain.Dataset convert(java.lang.String id) {
                     if(id == null || id.isEmpty()) {
@@ -122,7 +134,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             };
 	}
 
-	private Converter<Long, Reference> getLongToReferenceConverter() {
+	public Converter<Long, Reference> getLongToReferenceConverter() {
 	    return new org.springframework.core.convert.converter.Converter<java.lang.Long, org.cateproject.domain.Reference>() {
                 public org.cateproject.domain.Reference convert(java.lang.Long id) {
                     return referenceRepository.findOne(id);
@@ -130,7 +142,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             };
 	}
 	
-	private Converter<String, Reference> getStringToReferenceConverter() {
+	public Converter<String, Reference> getStringToReferenceConverter() {
 	    return new org.springframework.core.convert.converter.Converter<java.lang.String, org.cateproject.domain.Reference>() {
                 public org.cateproject.domain.Reference convert(java.lang.String id) {
                     if(id == null || id.isEmpty()) {

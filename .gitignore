@@ -4,6 +4,5 @@ build/
 .classpath
 .settings/
 bin/
-solr/
 *~
 *.swp

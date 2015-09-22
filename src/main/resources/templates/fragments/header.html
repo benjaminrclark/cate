@@ -38,7 +38,7 @@
 									<a th:href="@{/key/#themes.code('primary_key')}" th:text="${#themes.code('primary_key_title')}"> Primary Key Title</a>
 								</li>
 							    <li th:if="${@ff4j.check('search')}"><a th:href="@{/explore?filterQuery=base.class_s:org.cateproject.domain.IdentificationKey}" th:text="#{search.for.keys}">Search For Keys</a></li>
-								<li th:if="${@ff4j.check('search')}"><a th:href="@{/explore?filterQuery=base.class_s:org.cateproject.domain.Image}" th:text="#{browse.images}">Browse Images</a></li>
+								<li th:if="${@ff4j.check('search')}"><a th:href="@{/explore?filterQuery=base.class_s:org.cateproject.domain.Multimedia}" th:text="#{browse.images}">Browse Images</a></li>
 								<li th:if="${@ff4j.check('search')}"><a th:href="@{/explore?filterQuery=base.class_s:org.cateproject.domain.Term}" th:text="#{glossary}">Glossary</a></li>
 		
 							</ul>

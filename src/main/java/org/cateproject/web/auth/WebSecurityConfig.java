@@ -25,7 +25,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	http.userDetailsService(userManager())
 	.authorizeRequests()
 	//.expressionHandler(new TenantWebExpressionHandler())
-        .antMatchers("/", "/index", "/init","/health","/static/**","/webjars/**").permitAll()
+        .antMatchers("/", "/index", "/init","/health","/explore","/static/**","/webjars/**").permitAll()
         .antMatchers("/system").hasAnyAuthority("ROLE_CONFIGURE_SYSTEM")
         .antMatchers("/admin").hasAnyAuthority("ROLE_ADMINISTRATE")
         .antMatchers("/edit").hasAnyAuthority("ROLE_EDIT")

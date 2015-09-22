@@ -1,0 +1,171 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js"><!-- required for FF3 and Opera --></script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="span3">
+        <span th:fragment="facet (url,result,facetName)" th:with="selectedFacet=${@viewUtils.getSelectedFacet(param.filterQuery,facetName,result)}" th:remove="tag">
+        <li th:id="'_' + '__${facetName}__' + '_facet_id'" class="nav-header facet" th:text="${@messageSource.getMessage('facet_title_'+'__${facetName}__','','facet_title_'+'__${facetName}__',__${springRequestContext.getLocale()}__)}">Facet Name</li>
+      <li th:if="${selectedFacet != null}" th:id="'_'+${selectedFacet.field.name}+'_'+${selectedFacet.value} + '_value_id'" class="facet-value facet-checked" th:classappend="${facetName} + ' ' + ${selectedFacet.value}">
+	<a  th:href="@{__${url}__} + ${@viewUtils.facetParams(#httpServletRequest,null,'__${selectedFacet.field.name}__:&quot;__${selectedFacet.value}__&quot;',null,null,result,0,null)}">
+		  <i class="halflings-icon check"><!----></i> <span th:text="${@messageSource.getMessage('facet_label_'+'__${selectedFacet.value}__','','__${selectedFacet.value}__',__${springRequestContext.getLocale()}__)}">Selected Facet</span>
+	</a>
+      </li>
+        <span th:unless="${selectedFacet != null}" th:remove="tag">
+            <li th:each="facet,facetIterator : ${result.getFacetResultPage(facetName).getContent()}" th:if="${facetIterator.index} lt 10" th:id="'_' + ${facet.field.name} + '_' + ${facet.value} + '_value_id'" th:classappend="${facet.field.name} + ' ' + ${facet.value}" class="facet-value facet-unchecked">
+                <a th:if="${facet.valueCount == 0}"><i class="halflings-icon unchecked"><!----></i> <span th:text="${@messageSource.getMessage('facet_label_'+'__${facet.value}__','','__${facet.value}__',__${springRequestContext.getLocale()}__)}">Facet Value</span></a>
+	        <a th:unless="${facet.valueCount == 0}" th:href="@{__${url}__} + ${@viewUtils.facetParams(#httpServletRequest,'__${facetName}__:&quot;__${facet.value}__&quot;',null,null,null,result,0,null)}">
+	            <i class="halflings-icon unchecked"><!----></i> <span th:text="${@messageSource.getMessage('facet_label_'+'__${facet.value}__','','__${facet.value}__',__${springRequestContext.getLocale()}__)}" >Facet Value</span>
+	            <span class="facetCount" th:text="'[__${facet.valueCount}__]'"> [10]</span>
+	        </a>
+            </li>
+		  <div th:if="${values != null and values.length gt 10}">
+                    <div th:id="${sec_facetName}-collapse" class="collapse">
+				<li th:each="facet,facetIterator : ${result.getFacetResultPage(facetName).getContent()}"  th:if="${facetIterator.index} ge 10" th:id="'_' + ${selectedFacet.name} + '_' + ${selectedFacet.value} + '_value_id'" th:classappend="${selectedFacet.name} ${selectedFacet.value}" class="facet-value facet-unchecked"> 
+							<a th:if="${facet.count == 0}" href="#"><i class="halflings-icon unchecked"><!----></i> <span th:text="${@messageSource.getMessage('facet_label_'+'__${facet.value}__','','__${facet.value}__',__${springRequestContext.getLocale()}__)}" >Facet Value</span></a>
+						  <a th:unless="${facet.count == 0}"  th:href="@{__${url}__} + ${@viewUtils.facetParams(#httpServletRequest,'__${facetName}__:&quot;__${facet.value}__&quot;',null,null,null,result,0,null)}">
+				            <i class="halflings-icon unchecked"><!----></i> <span th:text="${@messageSource.getMessage('facet_label_'+'__${facet.value}__','','__${facet.value}__',__${springRequestContext.getLocale()}__)}" >Facet Value</span>
+				            <span class="facetCount" th:text="'[__${facet.valueCount}__]'"> [10]</span>
+				          </a>
+					</li>
+			</div>
+			<a th:id="${selectedFacet.name}+'-collapse-link'" data-toggle="collapse" data-th-target="'#' + ${selectedFacet.name} + '-collapse'" class="label" style="display: none" th:text="${values.length - 10} + ' ' + #{more}">10 more</a>
+			<script th:inline="javascript">
+                       /*<![CDATA[*/ 
+                           var link = /*[[${selectedFacet.name} + '-collapse-link']]*/ 'selectedFacetName-collapse-link';
+                           var collapse = /*[['#' + ${selectedFacet.name} + '-collapse']]*/ '#selectedFacetName-collapse';
+                           var less =  /*[[#{less}]]*/ 'less';
+                           var more =  /*[[${values.length} + ' ' + #{more}]]*/ '10 more';
+			   document.getElementById ( link ).style.display = "inline";
+				$(collapse).on('hidden', function () {
+					$(link).html(more);
+				}).on('shown', function () {
+					$(link).html(less);
+				});
+                        /*]]>*/
+			</script></div>
+        </span>
+      </span>
+      </div>
+      <div class="span9">
+        <div th:fragment="sort (url,result,sortItems)" class="btn-group">
+	  <a class="btn" href="#" th:text="#{sort_by_label}">Sort by</a>
+	  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret">&#160;</span></a>
+	  <ul class="dropdown-menu" >
+	    <li th:each="sort : ${#strings.listSplit(sortItems,' ')}" th:with="sortIcon=${@messageSource.getMessage('sort_'+'__${sort}__'+'_icon','','sort_'+'__${sort}__'+'_icon',__${springRequestContext.getLocale()}__)},sortLabel=${@messageSource.getMessage('sort_'+'__${sort}__'+'_label','','sort_'+'__${sort}__'+'_label',__${springRequestContext.getLocale()}__)}" th:classappend="${(param.sort != null and param.sort[0] == sort) or (param.sort == null and sort eq 'relevance')}? 'disabled'">
+              <a th:unless="${(param.sort != null and param.sort[0] eq sort) or (param.sort == null and sort eq 'relevance')}" th:href="@{__${url}__} + ${@viewUtils.facetParams(#httpServletRequest,null,null,sort,null,result,null,null)}"><i th:classappend="${sortIcon}" class="halflings-icon"><!-- --></i> <span th:text="${sortLabel}">Sort Label</span></a>
+              <a th:if="${(param.sort != null and param.sort[0] eq sort) or (param.sort == null and sort eq 'relevance')}"><i th:classappend="${sortIcon}" class="halflings-icon"><!-- --></i> <span th:text="${sortLabel}">Sort Label</span></a>
+            </li>
+            <li th:remove="all">
+              <a href="explore.html">
+                <i class="halflings-icon sort-by-alphabet"></i>
+                <span>Title A-Z</span>
+              </a>
+            </li>
+            <li th:remove="all">
+              <a href="explore.html">
+                <i class="halflings-icon sort-by-order"></i>
+                <span>Most recent</span>
+             </a>
+           </li>
+           <li th:remove="all" class="disabled">
+             <a>
+               <i class="halflings-icon sort-by-attributes-alt"></i>
+               <span>Most relevant</span>
+             </a>
+           </li>
+	  </ul>
+        </div>
+
+        <span th:fragment="results (first, last, total, query)" id="_results_id">
+	  <span th:if="${total != 0}" th:text="#{pager_message(${first},${last},${total})}">Showing 1 to 10 of 23 results</span>
+	  <span th:if="${total == 0 and (query == null)}" th:text="#{pager_no_results}">No results</span>
+	  <span th:if="${total == 0 and (query != null)}" th:text="#{pager_no_results_matching_query(${query})}">No results matching 'query'</span>
+      </span>
+      <span th:fragment="download (url,result)">
+	<a th:href="@{__${url}__} + ${@viewUtils.facetParams(#httpServletRequest,null,null,null,null,result,null,null)}" class="btn pull-left">
+	  <i class="icon-download-alt"><!--  --></i>
+	</a>
+      </span>
+      <div th:fragment="view (url,result)" class="btn-group">
+	<a th:each="view : ${#strings.listSplit('list,simple,grid',',')}" th:href="@{__${url}__} + ${@viewUtils.facetParams(#httpServletRequest,null,null,null,view,result,null,null)}" th:title="${@messageSource.getMessage('view_'+'__${view}__'+'_label','','view_'+'__${view}__'+'_label',__${springRequestContext.getLocale()}__)}" th:classappend="${(param.view != null and param.view[0] == view) or (view == 'list' and param.view == null)} ? 'disabled'" class="btn">
+	  <i th:if="${view == 'list'}" class="icon-th-list">&#160;</i>
+	  <i th:if="${view == 'grid'}" class="icon-th">&#160;</i>
+	  <i th:unless="${view == 'list' or view == 'grid'}" class="icon-align-justify">&#160;</i>
+	</a>
+      </div>
+      <div th:fragment="pagination (url,result)" class="pagination">
+        <ul>
+	  <li th:classappend="${not result.hasPrevious()} ? 'disabled'" class="prev">
+	    <a th:href="${url}" th:text="#{pagination_label_previous}"/>
+	  </li>
+	  <li class="active">
+            <a href="#" th:text="${#numbers.formatInteger((result.number * result.size) + 1,1)} + ' - ' +  ${#numbers.formatInteger((result.number * result.size) + result.numberOfElements,1)}"></a>
+          </li>
+          <li th:classappend="${not result.hasNext()} ? 'disabled'" class="prev">
+	    <a th:href="${url}" page="${result.nextPageable().getPageNumber()}" size="${result.nextPageable().getPageSize()}" th:text="#{pagination_label_next}"/>
+	  </li>
+	</ul>
+      </div>
+     </div>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <table>
+          <tbody>
+            <tr>
+             <td th:fragment="image (multimedia, imageUrl)">
+               <span th:if="${multimedia != null and not #lists.isEmpty(multimedia)}" th:remove="tag">
+                 <span th:with="media=${multimedia[0]}" th:remove="tag">
+
+		  <a class="slideshow" th:href="@{/images/large/__${media.localFileName}__}" data-th-link="@{/image/__${media.id}__}" data-icon="icon-white icon-picture" 
+		    data-th-creator="${media.creator}" data-th-license="${@messageSource.getMessage('license_label_'+'__${media.license}__','','__${media.license}__',__${springRequestContext.getLocale()}__)}" th:title="${media.title}">
+		    <img class="thumbnail pull-right" th:src="@{/images/thumbnails/${media.localFileName}}" th:title="${media.title}"/>
+		  </a>
+                  </span>
+                </span>
+		<span th:if="${not #strings.isEmpty(imageUrl)}" th:remove="tag">
+		  <img class="thumbnail pull-right" src="${imageUrl}"/>
+		</span>
+		<span th:unless="${(multimedia != null or #lists.isEmpty(multimedia)) and not #strings.isEmpty(imageUrl)}" th:remove="tag">
+		  <img class="thumbnail pull-right" th:src="@{/static/styles/images/no_image_available.jpg}" th:title="#{no.image.available}"/>
+		</span>
+	      </td>
+            </tr>
+          </tbody>
+        </table>
+        <ul class="thumbnails">
+          <li th:fragment="grid (multimedia,image,link,title,icon)" th:remove="tag">
+            <span th:if="${multimedia != null and not #lists.isEmpty(multimedia)}" th:remove="tag">
+              <span th:with="media=${multimedia[0]}" th:remove="tag">
+			<a class="slideshow" th:href="@{/images/large/__${media.localFileName}__}" 
+				data-th-link="@{__${link}__" data-th-icon="icon-white ${icon}" 
+                                data-th-license="${@messageSource.getMessage('license_label_'+'__${media.license}__','','__${media.license}__',__${springRequestContext.getLocale()}__)}"
+				data-th-creator="${media.creator}" th:title="${title}">
+				<img class="thumbnail" th:src="@{/images/thumbnails/__${media.localFileName}__}" th:title="${media.title}"/>
+			</a>
+              </span>
+            </span>
+            <span th:if="${(multimedia == null or #lists.isEmpty(multimedia)) and image != null}" th:remove="tag">
+		<a class="slideshow" th:href="@{/images/large/__${image.localFileName}__}" 
+			data-th-link="@{__${link}__" data-th-icon="icon-white ${icon}" 
+                        data-th-license="${@messageSource.getMessage('license_label_'+'__${image.license}__','','__${image.license}__',__${springRequestContext.getLocale()}__)}"
+	    	        data-th-creator="${image.creator}" th:title="${title}">
+			<img class="thumbnail" th:src="@{/images/thumbnails/__${image.localFileName}__}" th:title="${image.title}"/>
+		</a>
+            </span>
+	    <a th:if="${(multimedia == null or #lists.isEmpty(multimedia)) and image == null}" th:href="@{__${link}__}" th:title="${title}">
+		<img class="thumbnail" th:src="@{/static/styles/images/no_image_available.jpg}" th:title="${title}"/>
+	    </a>
+
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

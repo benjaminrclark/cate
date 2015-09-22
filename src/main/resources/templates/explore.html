@@ -1,0 +1,241 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head(title=#{explore_title(${#themes.code('tenant_name')})})">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js"><!-- required for FF3 and Opera --></script>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="500">
+<div class="container">
+  <div id="header" class="navbar navbar-fixed-top navbar-inverse"
+			th:replace="fragments/header :: header">Header Goes Here</div>
+  <header class="page-header">
+  <div class="container">
+    <div class="row">
+      <h1 id="page-title" class="span6">
+        <i class="glyphicons-icon search"><!----></i> <span th:text="#{explore_title(${#themes.code('tenant_name')})}">Explore CATE</span>
+      </h1>
+		  <script th:if="${@ff4j.check('search.autocomplete')}" type="text/javascript">
+		        $(document).ready(function() {
+                                $("input#query").autocomplete({
+                                        source: "autocomplete",
+                 	                minLength: 2
+	                        });
+	                });
+	  </script>
+	  <form id="search.form" class="pull-right form-search" accept-charset="UTF-8" method="GET" th:action="@{/explore}">
+	    <input class="search-query span4" th:placeholder="#{search.placeholder}" th:value="${param.query != null}? ${param.query[0]}" type="text" name="query" id="query"/>
+	    <input type="hidden" id="x1" name="x1" th:value="${param.x1 != null} ? ${param.x1}"/>
+		<input type="hidden" id="y1" name="y1" th:value="${param.y1 != null} ? ${param.y1}"/>
+		<input type="hidden" id="x2" name="x2" th:value="${param.x2 != null} ? ${param.x2}"/>
+		<input type="hidden" id="y2" name="y2" th:value="${param.y2 != null} ? ${param.y2}"/>		
+		<input type="hidden" name="size" th:value="${result.size != null} ? ${result.size}" />
+		<input type="hidden" name="page" value="0" />			
+		<button class="btn btn-primary"><i class="icon-search icon-white"><!--  --></i><span th:text="#{search}">search</span></button>
+	  </form>
+	</div>
+    <div class="row">
+      <a th:href="@{/explore}" class="btn pull-right" id="reset"><i class="icon-refresh"><!--  --></i><span th:text="#{reset_search}">reset search</span></a>
+    </div>
+  </div>
+</header>
+  <div class="row">
+    <div class="span3">
+      <ul id="facets" class="well nav nav-list">
+        <div th:each="facetName : ${result.facetFields}" th:remove="tag">
+          <li th:replace="fragments/search :: facet(url='/explore',result=${result},facetName=${facetName})">
+            facet
+          </li>
+        </div>
+      </ul>
+    </div>
+    <div class="span9">
+      <section>
+        <div class="row">
+          <div class="span8 pull-left">
+
+            <div th:replace="fragments/search :: sort(url='/explore',result=${result},sortItems='base.label_sort,asc base.created_dt,asc relevance')">sort</div>
+            <div th:if="${@ff4j.check('download')}">
+               <div th:replace="fragments/search :: download(url='/download',result=${result})" >download</div>
+            </div>
+            <div th:replace="fragments/search :: view(url='/explore', result=${result})">view</div>
+            <span th:replace="fragments/search :: results(first=${(result.number * result.size) + 1}, last=${(result.number * result.size) + result.numberOfElements}, total=${result.numberOfElements}, query=${param.query})"/>
+          </div>
+        </div>      
+        <div th:with="view=${param.view != null} ? ${param.view[0]} : 'list'" th:switch="${view}" th:remove="tag">
+          <ul th:case="'grid'" class="thumbnails">
+            <span th:each="item : ${result.content}" th:switch="${item.class.name}" th:remove="tag">
+		<li th:case="'org.cateproject.domain.Taxon'">
+			<a th:replace="fragments/search :: grid(multimedia=${item.multimedia},image=null,title=${item.scientificName} + ' ' + ${item.scientificNameAuthorship},icon='leaf',link='/taxon/' + ${item.id})"/>
+		</li>
+		<li th:case="'org.cateproject.domain.Multimedia'">
+	    	  <a th:replace="fragments/search :: grid(multimedia=null,image=${item},title=${item.title},icon='picture',link='/multimedia/' + ${item.id})"/>
+		</li>
+		<li th:case="'org.cateproject.domain.IdentificationKey'">
+	    	    <a th:replace="fragments/search :: grid(multimedia=null,image=null,title=${item.title},icon='keys',link='/key/' + ${item.id})"/>
+		</li>
+		<li th:case="'org.cateproject.domain.Reference'">
+	    	    <a th:replace="fragments/search :: grid(multimedia=null,image=null,title=${item.bibliographicCitation},icon='book',link='/reference/' + ${item.id})"/>
+		</li>
+                <li th:case="*" th:text="'Unknown Class ' + ${item.class.name}">Unknown Class</li>
+            </span>
+          </ul>
+          <table th:case="'simple'" class="table table-condensed">
+		<tbody>
+                  <div th:each="item : ${result.content}" th:switch="${item.class.name}" th:remove="tag">
+		    <tr th:case="'org.cateproject.domain.Taxon'">
+	              <td>
+		        <i class="glyphicons-icon leaf"><!--  --></i>
+	              </td>
+	              <td>
+		        <a th:href="@{/taxon/__${item.id}__}" th:title="${item.scientificName}">
+			  <h4 th:if="${item.taxonomicStatus eq T(org.gbif.ecat.voc.TaxonomicStatus).Accepted}"><strong><em th:text="${item.scientificName}">Scientific name</em> <span th:text="${item.scientificNameAuthorship}">Scientific Name Authorship</span></strong></h4>
+			  <h4 th:unless="${item.taxonomicStatus eq T(org.gbif.ecat.voc.TaxonomicStatus).Accepted}"><em th:text="${item.scientificName}">Scientific name</em> <span th:text="${item.scientificNameAuthorship}">Scientific Name Authorship</span></h4>
+		        </a>
+	              </td>
+                    </tr>
+                    <tr th:case="'org.cateproject.domain.Multimedia'">
+	              <td>
+		        <i class="glyphicons-icon picture"><!--  --></i>
+	              </td>
+	              <td>
+		        <a th:href="@{/multimedia/__${item.id}__}" th:title="${item.title}">
+			  <h4 th:text="${item.title}">Title</h4>
+		        </a>
+	              </td>
+                    </tr>
+                    <tr th:case="'org.cateproject.domain.IdentificationKey'">
+	              <td>
+		        <i class="glyphicons-icon key"><!--  --></i>
+	              </td>
+	              <td>
+		        <a th:href="@{/key/__${item.id}__}" th:title="${item.title}">
+			  <h4 th:text="${item.title}">Title</h4>
+		        </a>
+	              </td>
+                    </tr>
+                    <tr th:case="'org.cateproject.domain.Reference'">
+	              <td>
+		        <i class="glyphicons-icon book"><!--  --></i>
+	              </td>
+	              <td>
+		        <a th:href="@{/reference/__${item.id}__}" th:title="${item.bibliographicCitation}">
+			  <h4 th:text="${item.bibliographicCitation}">Bibliographic Citation</h4>
+		        </a>
+	              </td>
+                     </tr>
+                     <tr th:case="*">
+	              <td>
+		        <i class="glyphicons-icon"><!--  --></i>
+	              </td>
+	              <td>
+			  <h4>Unknown Item</h4>
+	              </td>
+                    </tr>
+                  </div>
+		</tbody>
+	</table>
+	  <table th:case="*" class="table">
+            <tbody>
+              <div th:each="item : ${result.content}" th:switch="${item.class.name}" th:remove="tag">
+		<tr th:case="${'org.cateproject.domain.Taxon'}">
+                 <td>
+		   <i class="glyphicons-icon leaf" alt="Taxon"><!--  --></i>
+	         </td>
+                 <td>
+		   <a href="/taxon.html" th:href="@{/taxon/__${item.id}__}" title="Scientific name" th:title="${item.scientificName}">
+		     <h4 th:if="${item.taxonomicStatus eq T(org.gbif.ecat.voc.TaxonomicStatus).Accepted}"><strong><em th:text="${item.scientificName}">Scientific name</em>	<span th:text="${item.scientificNameAuthorship}">Scientific Name Authorship</span></strong></h4>
+		     <h4 th:unless="${item.taxonomicStatus eq T(org.gbif.ecat.voc.TaxonomicStatus).Accepted}"><em th:text="${item.scientificName}">Scientific name</em>	<span th:text="${item.scientificNameAuthorship}">Scientific Name Authorship</span></h4>
+	          </a>
+		  <br/>
+		  <span th:text="${item.namePublishedInString}">Name published in string</span>
+		  <div>
+		  <em th:text="#{label_org_cateproject_domain_taxon_taxonomicstatus} + ':'">Taxonomic Status: </em>
+		  <span th:if="${item.acceptedNameUsage != null}" th:with="taxonomicStatus=${@messageSource.getMessage('taxonomic_status_label_'+'__${item.taxonomicStatus}__','','__${item.taxonomicStatus}__',__${springRequestContext.getLocale()}__)}" th:remove="tag">
+		    <span th:text="#{results_synoynm_of(taxonomicStatus)}">Synonym of</span>
+		      <a th:href="@{/taxon/__${item.acceptedNameUsage.id}__}" href="taxon.html">	<em th:text="${item.acceptedNameUsage.scientificName}">Accepted name usage</em> <span th:text="${item.acceptedNameUsage.scientificNameAuthorship}">Accepted Name Authorship</span>
+		      </a>
+		  </span>
+	          <span th:unless="${item.acceptedNameUsage != null}" th:remove="tag">
+			<span th:text="${@messageSource.getMessage('taxonomic_status_label_'+'__${item.taxonomicStatus}__','','__${item.taxonomicStatus}__',__${springRequestContext.getLocale()}__)}">Taxonomic Status</span>
+		  </span>
+		</div>
+		<div>
+		  <em th:text="#{label_org_cateproject_domain_taxon_taxonrank} + ':'">Taxon Rank:</em>
+		  <span th:text="${@messageSource.getMessage('taxonomic_rank_label_'+'__${item.taxonRank}__','','__${item.taxonRank}__',__${springRequestContext.getLocale()}__)}">Taxon Rank</span>
+		</div>
+		<div th:if="${not #strings.isEmpty(item.family)}">
+		  <em th:text="#{label_org_cateproject_domain_taxon_family} + ':'">Family:</em><span th:text="${item.family}">Family</span> 
+		</div>
+		<div th:if="${not #strings.isEmpty(item.order)}">
+		  <em th:text="#{label_org_cateproject_domain_taxon_order} + ':'">Order:</em><span th:text="${item.order}">Order</span>
+		</div>
+              </td>
+              <td th:replace="fragments/search :: image(multimedia=${item.multimedia},imageUrl='')">Image</td>
+	    </tr>
+	    <tr th:case="${'org.cateproject.domain.Multimedia'}"> 
+              <td>
+	        <i class="glyphicons-icon picture" alt="Multimedia"><!--  --></i>
+	      </td>
+              <td>
+		<a th:href="@{/multimedia/__${item.id}__}" th:title="${item.title}">
+		  <h4 th:text="${item.title}">Title</h4>
+		</a>
+		<br />
+		<div th:if="item.taxa != null and not #lists.isEmpty(item.taxa)" th:with="taxon=${item.taxa[0]}">
+		  <em th:text="#{label_org_cateproject_domain_multimedia_taxon} + ':'">Taxon:</em> 
+		  <a href="@{/taxon/__${taxon.id}__}"><em th:text="${taxon.scientificName}">Scientific name</em> <span th:text="${taxon.scientificNameAuthorship}">Scientific Name Authorship</span></a>
+		</div>
+		<div th:if="${not #strings.isEmpty(item.creator)}">
+		  <em th:text="#{label_org_cateproject_domain_multimedia_creator} + ':'">Creator:</em> <span th:text="${item.creator}">Creator</span>
+		</div>
+		<div th:if="${not #strings.isEmpty(item.locality)}">
+		  <em th:text="#{label_org_cateproject_domain_multimedia_locality} + ':'">Locality:</em> <span th:text="${item.locality}">Locality</span>
+		</div>
+          </td>
+          <td></td>
+	</tr>
+	<tr th:case="${'org.cateproject.domain.IdentificationKey'}">
+	  <td>
+	    <i class="glyphicons-icon keys" alt="Identification Key"><!--  --></i>
+	  </td>
+          <td>
+   	    <a th:href="@{/key/__${item.id}__}" th:title="${item.title}">
+	      <h4 th:text="${item.title}">Title</h4>
+	    </a>
+          </td>
+          <td></td>
+	</tr>
+	<tr th:case="${'org.cateproject.domain.Reference'}">
+	  <td>
+	    <i class="glyphicons-icon book" alt="Reference"><!--  --></i>
+	  </td>
+          <td>
+            <a th:href="@{/reference/__${item.id}__}" th:title="${item.bibliographicCitation}">
+              <h4 th:text="${item.bibliographicCitation}">Bibliographic Citation</h4>
+	    </a>
+          </td>
+        </tr>
+        <tr th:case="${cate:instanceOf(item,'org.cateproject.domain.Term')}">
+	  <td>
+	    <i class="glyphicons-icon book_open" alt="Term"><!--  --></i>
+	  </td>
+          <td>
+	    <a th:href="@{/term/__${item.id}__}" th:title="${item.title}">
+              <h4 th:text="${item.title}">Title</h4>
+            </a>
+         </td>
+        </tr>
+	<tr th:case="*">
+	  <td>	 Unknown class <span th:text="${item.class.name}">Item Class Name</span></td> 
+	</tr>
+      </div>
+    </tbody>
+  </table>
+</div>
+<div th:replace="fragments/search :: pagination(url='/explore',result=${result})"/>
+	</section>
+    </div>
+  </div>
+</div>
+</body>
+</html>

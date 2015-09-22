@@ -9,6 +9,7 @@ import org.cateproject.repository.jpa.DatasetRepository;
 import org.cateproject.repository.jpa.ReferenceRepository;
 import org.cateproject.repository.jpa.TaxonRepository;
 import org.cateproject.web.edit.TaxonController;
+import org.cateproject.web.format.FilterQueryAnnotationFormatterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -65,6 +66,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		super.addFormatters(registry);
+                registry.addFormatterForFieldAnnotation(new FilterQueryAnnotationFormatterFactory()); 
                 registry.addFormatter(DistanceFormatter.INSTANCE);
                 registry.addFormatter(PointFormatter.INSTANCE);
 		registry.addConverter(getLongToTaxonConverter());

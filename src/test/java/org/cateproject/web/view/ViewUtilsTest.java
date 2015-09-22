@@ -71,10 +71,10 @@ public class ViewUtilsTest {
             MockHttpServletRequest emptyRequest = new MockHttpServletRequest();
             SolrResultPage<Base> facetPage = new SolrResultPage<Base>(new ArrayList<Base>(), new PageRequest(0,10),10L, 1.0f);
 
-            assertEquals("facetParams should return the expected string",viewUtils.facetParams(request, null, null, null, null,facetPage,null,null),"?OTHER=OTHER_VALUE&view=PARAM_VIEW&size=10&page=0&sort=PARAM_SORT&filterQuery=EXCLUDE_FACET");
-            assertEquals("facetParams should return the expected string",viewUtils.facetParams(request, "INCLUDE_FACET", "EXCLUDE_FACET", "SORT", "VIEW",facetPage,1,2),"?OTHER=OTHER_VALUE&view=VIEW&size=2&page=1&sort=SORT&filterQuery=INCLUDE_FACET");
-            assertEquals("facetParams should return the expected string",viewUtils.facetParams(request, "INCLUDE_FACET", "EXCLUDE_FACET", "relevance", "VIEW",facetPage,1,2),"?OTHER=OTHER_VALUE&view=VIEW&size=2&page=1&filterQuery=INCLUDE_FACET");
-            assertEquals("facetParams should return the expected string",viewUtils.facetParams(request, "INCLUDE_FACET", "EXCLUDE_FACET", null, null,facetPage,1,2),"?OTHER=OTHER_VALUE&view=PARAM_VIEW&size=2&page=1&sort=PARAM_SORT&filterQuery=INCLUDE_FACET");
-            assertEquals("facetParams should return the expected string",viewUtils.facetParams(emptyRequest, null , null, null, null,facetPage,1,2),"?size=2&page=1");
+            assertEquals("facetParams should return the expected string",viewUtils.facetParams(request, null, null, null, null,facetPage,null,null),"?OTHER=OTHER_VALUE&filterQuery=EXCLUDE_FACET&page=0&size=10&sort=PARAM_SORT&view=PARAM_VIEW");
+            assertEquals("facetParams should return the expected string",viewUtils.facetParams(request, "INCLUDE_FACET", "EXCLUDE_FACET", "SORT", "VIEW",facetPage,1,2),"?OTHER=OTHER_VALUE&filterQuery=INCLUDE_FACET&page=1&size=2&sort=SORT&view=VIEW");
+            assertEquals("facetParams should return the expected string",viewUtils.facetParams(request, "INCLUDE_FACET", "EXCLUDE_FACET", "relevance", "VIEW",facetPage,1,2),"?OTHER=OTHER_VALUE&filterQuery=INCLUDE_FACET&page=1&size=2&view=VIEW");
+            assertEquals("facetParams should return the expected string",viewUtils.facetParams(request, "INCLUDE_FACET", "EXCLUDE_FACET", null, null,facetPage,1,2),"?OTHER=OTHER_VALUE&filterQuery=INCLUDE_FACET&page=1&size=2&sort=PARAM_SORT&view=PARAM_VIEW");
+            assertEquals("facetParams should return the expected string",viewUtils.facetParams(emptyRequest, null , null, null, null,facetPage,1,2),"?page=1&size=2");
         }
 }

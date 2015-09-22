@@ -5,6 +5,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -72,7 +74,8 @@ public class ViewUtils {
         boolean first = true;
         StringBuilder params = new StringBuilder();
         params.append("?");
-        for(String parameter : parameters.keySet()) {
+        SortedSet<String> sortedParameters = new TreeSet<String>(parameters.keySet());
+        for(String parameter : sortedParameters) {
             for(Object value : parameters.get(parameter)) {
                 if(!first) {
                     params.append("&");

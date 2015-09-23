@@ -1,3 +1,6 @@
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+
 buildscript {
   repositories {
       jcenter()
@@ -20,6 +23,33 @@ project.ext {
     aspectjVersion = "1.8.4"
 }
 
+def getReleaseTag = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()   
+}
+
+def getVersionName = { ->
+    def tags = getReleaseTag() 
+    if (tags.indexOf('-') < 0) {
+        return tags
+    } else {
+        return tags.substring(0,tags.indexOf('-'))
+    }
+}
+
+def getReleaseName = { ->
+    def tags = getReleaseTag() 
+    if (tags.indexOf('-') < 0) {
+        return null 
+    } else {
+        return tags.substring(tags.indexOf('-') + 1, tags.length())
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'aspectj'
 apply plugin: 'jacoco'
@@ -28,8 +58,24 @@ apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
 apply plugin: 'os-package'
 
+def releaseTag = getReleaseTag()
+version = getVersionName()
+def release = getReleaseName()
+
+task updateDplCfg {
+    def file = new File("dpl.cfg")
+    def dpl = new JsonSlurper().parse(file)
+    dpl.version.name = releaseTag
+    dpl.version.vcs_tag = releaseTag
+    dpl.version.released = new Date().format("yyyy-MM-dd")
+    def jsonOutput = new JsonOutput()
+    file.write( jsonOutput.prettyPrint( jsonOutput.toJson(dpl) ) )
+}
+
+
+
 jar {
-  version =  '0.0.1-SNAPSHOT'
+  version =  release != '' ? version + '-' + release : version
 }
 
 task wrapper(type: Wrapper) {
@@ -119,8 +165,8 @@ jacocoTestReport {
 }
 
 ospackage {
-  release = '2'
-  version = '0.0.1'
+  release = release 
+  version = version 
   os = LINUX
   packageName = 'cate'
   arch = I386
@@ -139,7 +185,7 @@ ospackage {
   }   
 }
 
-task buildrpm(type: Rpm, dependsOn: build) {
+task buildrpm(type: Rpm, dependsOn: [build, updateDplCfg]) {
   requires('java', '1.5', GREATER | EQUAL)
   requires('ImageMagick')
 }

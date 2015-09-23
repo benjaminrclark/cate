@@ -8,6 +8,8 @@ after_success:
 before_deploy:
 - "./gradlew buildrpm"
 deploy:
+  on:
+    all_branches: true
   provider: bintray
   file: "dpl.cfg"
   user: "benjaminrclark"

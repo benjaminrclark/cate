@@ -13,4 +13,3 @@ deploy:
   user: "benjaminrclark"
   key: 
     secure: aggUwHyAwWf8Qc7zAWUsf+wolTCE5VkKllt5CvPelM7/10e3p6QaucJm7XxwM9lETOr4sEp3ZEWUGQwRed+z8Mpx24CAWgs36yG18DIneVSLCvFQf4qztL9CCXTWg0DVfMXs2Eww4hEUSg1GUkSCSLjsKg5eHljkkfzr5GYIQaM=
-  dry-run: "true"

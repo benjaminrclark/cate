@@ -11,7 +11,8 @@ deploy:
   on:
     all_branches: true
   provider: bintray
-  file: "dpl.cfg"
-  user: "benjaminrclark"
-  key: 
-    secure: aggUwHyAwWf8Qc7zAWUsf+wolTCE5VkKllt5CvPelM7/10e3p6QaucJm7XxwM9lETOr4sEp3ZEWUGQwRed+z8Mpx24CAWgs36yG18DIneVSLCvFQf4qztL9CCXTWg0DVfMXs2Eww4hEUSg1GUkSCSLjsKg5eHljkkfzr5GYIQaM=
+  file: dpl.cfg
+  user: benjaminrclark
+  key: $BINTRAY-API-KEY
+6d41a78d23bac6bc151fd8a334ea17ed21f89494:
+  secure: E2zYb2FZJsZE2L6PNl6c7acqav8oj0Y1aQpqMhg+4I65IqPIrRkLYHUJWZIR/H0n1D6+SGEt8N262v8LfmoKPzz63svlPC09ebYi7ieYj3dbhvY9Si3F9d9X+9SHe9Mkw6hpUMSBoUM2V9kEV3yeEqu+okRqqIeliQA0DEG2iQo=

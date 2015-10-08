@@ -1,7 +1,9 @@
 package org.cateproject.domain;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -9,9 +11,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.cateproject.domain.constants.DCMIType;
+import org.cateproject.domain.util.MultimediaFile;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
@@ -66,6 +70,17 @@ public class Multimedia extends NonOwnedEntity {
     @ManyToOne
     private Term term;
     
+    @Transient
+    private Set<MultimediaFile> multimediaFiles = new HashSet<MultimediaFile>();
+
+    public void setMultimediaFiles(Set<MultimediaFile> multimediaFiles) {
+        this.multimediaFiles = multimediaFiles;
+    }
+
+    public Set<MultimediaFile> getMultimediaFiles() {
+        return multimediaFiles;
+    }
+
     public String getIdentifier() {
         return this.identifier;
     }

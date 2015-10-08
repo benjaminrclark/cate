@@ -3407,6 +3407,9 @@ databaseChangeLog:
             - column:
                 name: LAST_UPDATED
                 type: DATETIME
+            - column:
+                name: JOB_CONFIGURATION_LOCATION
+                type: VARCHAR(2500)
   - changeSet:
       author: ben
       id: 1344022313991-2

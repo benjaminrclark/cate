@@ -20,7 +20,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.htmlunit.geb.GebSpecTestExecutionListener;
 import org.springframework.util.Assert;
 
 import com.gargoylesoftware.htmlunit.CookieManager;

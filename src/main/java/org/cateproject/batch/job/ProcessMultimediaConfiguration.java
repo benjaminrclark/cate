@@ -8,6 +8,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.cateproject.batch.BatchListener;
 import org.cateproject.batch.ParameterConvertingTasklet;
+import org.cateproject.batch.multimedia.MultimediaFetchingProcessor;
 import org.cateproject.batch.multimedia.MultimediaFileService;
 import org.cateproject.domain.Base;
 import org.cateproject.domain.Multimedia;
@@ -32,7 +33,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.OptimisticLockingFailureException;
 
 @Configuration
-public class ProcessImageConfiguration {
+public class ProcessMultimediaConfiguration {
    
     @Autowired
     private JobBuilderFactory jobs;
@@ -44,8 +45,8 @@ public class ProcessImageConfiguration {
     private EntityManagerFactory entityManagerFactory;
 
     @Bean
-    public Job processImage() {
-        return jobs.get("ProcessImage").start(convertBatchParams()).next(processSingleImage()).next(cleanUpResources()).listener(batchListener()).build();
+    public Job processMultimedia() {
+        return jobs.get("ProcessMultimedia").start(convertBatchParams()).next(processSingleMultimedia()).next(cleanUpResources()).listener(batchListener()).build();
     }
 
     @Bean
@@ -86,7 +87,7 @@ public class ProcessImageConfiguration {
 
     @Bean
     public ItemProcessor<Multimedia,Multimedia> multimediaFetchingProcessor() {
-        return null;
+        return new MultimediaFetchingProcessor();
     }
 
     @Bean
@@ -120,8 +121,8 @@ public class ProcessImageConfiguration {
     }
 
     @Bean
-    public Step processSingleImage() {
-       return steps.get("processSingleImage").<Multimedia,Multimedia> chunk(1).faultTolerant().retryLimit(5).retry(OptimisticLockingFailureException.class)
+    public Step processSingleMultimedia() {
+       return steps.get("processSingleMultimedia").<Multimedia,Multimedia> chunk(1).faultTolerant().retryLimit(5).retry(OptimisticLockingFailureException.class)
                    .reader(multimediaFileReader(null, null))
                    .processor(multimediaFileProcessor())
                    .writer(multimediaFileWriter()).listener(batchListener()).build();

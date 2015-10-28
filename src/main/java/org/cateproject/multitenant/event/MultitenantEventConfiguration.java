@@ -11,7 +11,7 @@ import org.springframework.messaging.MessageChannel;
 
 @Configuration
 @EnableIntegration
-@IntegrationComponentScan({"org.cateproject.multitenant"})
+@IntegrationComponentScan({"org.cateproject.multitenant","org.cateproject.batch"})
 public class MultitenantEventConfiguration {
 	
 	@Bean

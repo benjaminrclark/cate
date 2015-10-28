@@ -1129,6 +1129,9 @@ databaseChangeLog:
                 name: width
                 type: INT
             - column:
+                name: duration
+                type: DOUBLE
+            - column:
                 name: height
                 type: INT
             - column:
@@ -1245,6 +1248,9 @@ databaseChangeLog:
             - column:
                 name: height
                 type: INT
+            - column:
+                name: duration
+                type: DOUBLE
             - column:
                 name: size
                 type: BIGINT

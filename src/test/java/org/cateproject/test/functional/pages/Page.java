@@ -134,7 +134,8 @@ public class Page {
 	}
 
 	public void selectMenuLink(String menu, String linkText) {
-		webDriver.findElement(By.id(menu)).findElement(By.partialLinkText(linkText)).click();
+                //throw new RuntimeException("''" + webDriver.getPageSource()+ "''");
+		webDriver.findElement(By.id(menu)).findElement(By.xpath("..")).findElement(By.partialLinkText(linkText)).click();
 	}
 	
 	public void clickButton(String button) {

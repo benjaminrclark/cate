@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 
 import cucumber.api.DataTable;
@@ -77,7 +78,7 @@ public class Stepdefs {
 	public void setup() throws Exception {
 
 		final MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).addFilters(multitenantFilter, springSecurityFilterChain).build();
-		webDriver = new MockMvcHtmlUnitDriver(mockMvc, true) {
+		webDriver = new MockMvcHtmlUnitDriver(mockMvc, BrowserVersion.FIREFOX_24) {
 
 			@Override
 			protected WebClient modifyWebClient(WebClient client) {

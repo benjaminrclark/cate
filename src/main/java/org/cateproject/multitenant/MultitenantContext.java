@@ -9,6 +9,8 @@ public interface MultitenantContext {
 	void setTenantId(String tenantId);
 	
 	Object getContextProperty(String propertyName);
+
+        boolean getContextBoolean(String propertyName);
 	
 	Object putContextProperty(String propertyName, Object property);
 	

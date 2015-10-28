@@ -1,5 +1,6 @@
 package org.cateproject.domain;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,15 +12,24 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.cateproject.batch.multimedia.MultimediaFileService;
 import org.cateproject.domain.constants.DCMIType;
+import org.cateproject.domain.constants.MultimediaFileType;
 import org.cateproject.domain.util.MultimediaFile;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
 @Audited
 @Entity
@@ -50,7 +60,9 @@ public class Multimedia extends NonOwnedEntity {
     private Integer width;
     
     private Integer height;
-    
+   
+    private Double duration;
+ 
     @Enumerated
     private DCMIType type;
     
@@ -72,6 +84,38 @@ public class Multimedia extends NonOwnedEntity {
     
     @Transient
     private Set<MultimediaFile> multimediaFiles = new HashSet<MultimediaFile>();
+
+    @Transient
+    @Autowired
+    private MultimediaFileService multimediaFileService;
+
+    @Transient
+    private transient MultipartFile multipartFile;
+
+    @Transient
+    public void setMultipartFile(MultipartFile multipartFile) {
+        this.multipartFile = multipartFile;
+    }
+
+    @Transient
+    public MultipartFile getMultipartFile() {
+        return multipartFile;
+    }
+
+    @Transient
+    public File getOriginalFile() {
+        for(MultimediaFile multimediaFile : multimediaFiles) {
+            if(multimediaFile.getType().equals(MultimediaFileType.original)) {
+                return multimediaFile.getFile();
+            }
+        }
+        return null;
+    }
+
+    @Transient
+    public void setOriginalFile(File originalFile) {
+        multimediaFiles.add(new MultimediaFile(this, originalFile, MultimediaFileType.original));
+    }
 
     public void setMultimediaFiles(Set<MultimediaFile> multimediaFiles) {
         this.multimediaFiles = multimediaFiles;
@@ -161,6 +205,14 @@ public class Multimedia extends NonOwnedEntity {
         this.audience = audience;
     }
     
+    public Double getDuration() {
+        return this.duration;
+    }
+
+    public void setDuration(Double duration) {
+        this.duration = duration;
+    }
+
     public Integer getWidth() {
         return this.width;
     }
@@ -225,11 +277,36 @@ public class Multimedia extends NonOwnedEntity {
     	return this.fileLastModified;
     }
 
-	public DCMIType getType() {
-		return type;
-	}
+    public DCMIType getType() {
+        return type;
+    }
 
-	public void setType(DCMIType type) {
-		this.type = type;
-	}
+    public void setType(DCMIType type) {
+	this.type = type;
+    }
+    
+    @PostRemove
+    private void postRemove() {
+        multimediaFileService.postRemove(this);
+    }
+
+    @PrePersist
+    private void prePersist() {
+        multimediaFileService.prePersist(this);
+    }
+    
+    @PreUpdate
+    private void preUpdate() {
+        multimediaFileService.prePersist(this);	
+    }
+    
+    @PostPersist
+    private void postPersist() {
+        multimediaFileService.postPersist(this);
+    }
+    
+    @PostUpdate
+    private void postUpdate() {
+        multimediaFileService.postUpdate(this);
+    }
 }

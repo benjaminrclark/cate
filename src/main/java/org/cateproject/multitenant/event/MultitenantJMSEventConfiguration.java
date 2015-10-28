@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.jms.ConnectionFactory;
 
+import org.springframework.batch.integration.launch.JobLaunchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,6 +49,7 @@ public class MultitenantJMSEventConfiguration {
 		messageConverter.setTypeIdPropertyName("javaType");
 		Map<String, Class<?>> typeIdMappings = new HashMap<String, Class<?>>();
 		typeIdMappings.put("MultitenantEvent", MultitenantEvent.class);
+                typeIdMappings.put("JobLaunchRequest", JobLaunchRequest.class);
 		messageConverter.setTypeIdMappings(typeIdMappings);
 		return messageConverter;
 	}

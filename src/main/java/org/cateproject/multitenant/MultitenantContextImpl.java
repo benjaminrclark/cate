@@ -61,6 +61,15 @@ public class MultitenantContextImpl implements MultitenantContext {
 		return contextProperties.get(propertyName);
 	}
 
+        @Override
+        public boolean getContextBoolean(String propertyName) {
+            if(contextProperties.containsKey(propertyName)) {
+                return (Boolean)contextProperties.get(propertyName);
+            } else {
+                return false;
+            }
+        }
+
 	@Override
 	public Object putContextProperty(String propertyName, Object property) {
 		contextProperties.put(propertyName, property);

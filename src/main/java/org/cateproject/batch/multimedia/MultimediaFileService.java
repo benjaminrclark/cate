@@ -107,7 +107,7 @@ public class MultimediaFileService {
 	        byte[] buffer = new byte[255 * 3];
 	        int read = fileInputStream.read(buffer);
 	        multimedia.setHash(new String(buffer,Charset.forName("UTF-8")));
-	        multimedia.setLocalFileName(UUID.randomUUID().toString() + "." + getExtension(mime));
+	        //multimedia.setLocalFileName(UUID.randomUUID().toString() + "." + getExtension(mime));
 	        fileInputStream.close();
 	    } catch (FileNotFoundException fnfe) {
 	        logger.error(fnfe.getMessage());

@@ -78,7 +78,7 @@ public class Stepdefs {
 	public void setup() throws Exception {
 
 		final MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).addFilters(multitenantFilter, springSecurityFilterChain).build();
-		webDriver = new MockMvcHtmlUnitDriver(mockMvc, BrowserVersion.FIREFOX_24) {
+		webDriver = new MockMvcHtmlUnitDriver(mockMvc, true) {
 
 			@Override
 			protected WebClient modifyWebClient(WebClient client) {

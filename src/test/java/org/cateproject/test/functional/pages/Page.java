@@ -134,8 +134,14 @@ public class Page {
 	}
 
 	public void selectMenuLink(String menu, String linkText) {
-                //throw new RuntimeException("''" + webDriver.getPageSource()+ "''");
-		webDriver.findElement(By.id(menu)).findElement(By.xpath("..")).findElement(By.partialLinkText(linkText)).click();
+            /**
+             * NOTE: Not entirely sure what the root cause is but the HTML as seen by 
+             * HTMLUnit is broken in comparison to what is served - some of the links in the menus are outside of the enclosing ul, 
+             * within the parent element. So the findElement(By.xpath("..")) should be unneccessary, but isn't.
+             * Probably a dependency issue
+             * 
+             */
+            webDriver.findElement(By.id(menu)).findElement(By.xpath("..")).findElement(By.partialLinkText(linkText)).click();
 	}
 	
 	public void clickButton(String button) {

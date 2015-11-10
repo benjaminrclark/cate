@@ -136,7 +136,7 @@ dependencies {
   }
   compile("org.springframework.cloud:spring-cloud-aws-context:1.0.1.RELEASE")
   compile("org.springframework.cloud:spring-cloud-aws-messaging:1.0.1.RELEASE")
-//  compile("org.springframework.session:spring-session:1.0.1.RELEASE")
+  //compile("org.springframework.session:spring-session:1.0.2.RELEASE")
   compile("org.apache.solr:solr-core:4.10.4") {
     exclude group: 'org.eclipse.jetty' 
     exclude group: 'org.eclipse.jetty.orbit' 

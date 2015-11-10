@@ -3,6 +3,8 @@ package org.cateproject.batch;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
@@ -27,6 +29,7 @@ public class ParameterConvertingTasklet implements Tasklet {
     }
 
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+        logger.debug("jobParameters = {}", new Object[]{jobParameters});
     	if(jobParameters.containsKey("dwca.fieldsTerminatedBy")) {
     		fieldSeparator = jobParameters.get("dwca.fieldsTerminatedBy");
     	}

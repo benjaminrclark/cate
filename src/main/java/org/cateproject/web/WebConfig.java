@@ -8,6 +8,7 @@ import org.cateproject.domain.Taxon;
 import org.cateproject.repository.jpa.DatasetRepository;
 import org.cateproject.repository.jpa.ReferenceRepository;
 import org.cateproject.repository.jpa.TaxonRepository;
+import org.cateproject.web.edit.MultimediaController;
 import org.cateproject.web.edit.TaxonController;
 import org.cateproject.web.format.FilterQueryAnnotationFormatterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	public TaxonController editTaxonController() {
 		return new TaxonController();
 	}
+ 
+        @Bean
+        public MultimediaController editMultimediaController() {
+                return new MultimediaController();
+        }
 
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {

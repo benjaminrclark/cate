@@ -1,0 +1,59 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head(title=#{entity_show(#{label_org_cateproject_domain_multimedia})})">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js"><!-- required for FF3 and Opera --></script>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="500">
+<div id="header" class="navbar navbar-fixed-top navbar-inverse" th:replace="fragments/header :: header">Header Goes Here</div>
+<div class="container">
+  <div class="row">
+    <div class="span12">
+	  <th:block th:if="${success != null}">
+		<div th:replace="fragments/alert :: alert(id='success_alert_id',cssClass='alert-success',iconClass='',title=#{alert_success_title},message=${success}, alert=null)">Success Alert</div>
+	  </th:block>
+	</div>
+  </div>
+  <div class="row">
+  <div class="span12">
+    <section>
+    <form id="show_org_cateproject_domain_Multimedia"  name="show_org_cateproject_domain_Multimedia" class="form form-horizontal" th:object="${result}">
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_identifier',field='identifier')">Identifier Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_title',field='title')">Title Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_references',field='references')">References Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_description',field='description')">Description Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_spatial',field='spatial')">Spatial Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_latitude',field='latitude')">Latitude Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_longitude',field='longitude')">Longitude Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_format',field='format')">Format Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_publisher',field='publisher')">Publisher Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_audience',field='audience')">Audience Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_type',field='type')">Type Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_creator',field='creator')">Creator Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_accessrights',field='accessRights')">Access Rights Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_created',field='created')">Created Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_modified',field='modified')">Modified Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_license',field='license')">License Field</div>
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_rights',field='rights')">Rights Field</div>
+     </form>
+     <span>       
+       <form th:action="@{/edit/multimedia/__${result.id}__}" method="DELETE">
+         <button id="delete" class="btn btn-mini btn-warning" th:title="#{entity_delete(#{label_org_cateproject_domain_multimedia})}" ><i class="icon-remove-sign"><!-- --></i></button>
+       </form>
+     </span>
+     <span>  
+       <a th:href="@{/edit/multimedia/__${result.id}__?form=true}" th:alt="#{entity_update(#{label_org_cateproject_domain_multimedia})}" th:title="#{entity_update(#{label_org_cateproject_domain_multimedia})}">
+         <i class="icon-pencil"><!--  --></i>
+       </a>      
+     </span>
+     <span>
+       <a th:href="@{/edit/multimedia?form=true}" th:alt="#{entity_create(#{label_org_cateproject_domain_multimedia})}" th:title="#{entity_create(#{label_org_cateproject_domain_multimedia})}">
+         <i class="icon-plus-sign"><!--  --></i>
+       </a>
+     </span>
+    </section>
+  </div>
+  </div>
+  </div>
+</body>
+</html>

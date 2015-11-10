@@ -44,6 +44,6 @@ public class MultimediaFile {
     }
 
     public String toString() {
-        return"static://images/" + type + "/" + multimedia.getLocalFileName(); 
+        return"static://" + multimedia.getType() +"/" + type + "/" + multimedia.getLocalFileName(); 
     }
 }

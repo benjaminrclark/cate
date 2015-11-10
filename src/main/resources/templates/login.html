@@ -58,14 +58,9 @@
 							</div>
 						</form>
 						<hr />
-						<spring:url value="" var="signin_twitter_url" />
-						<form name="signin_twitter" action="/signin/twitter"
-							th:action="@{/signin/twitter}" method="POST">
-							<button id="signin_twitter_btn" class="btn btn-primary"
-								th:text="#{signin_with_twitter}">
-								<img src="/styles/images/glyphicons_391_twitter_t.png"
-									th:src="@{/styles/images/glyphicons_391_twitter_t.png}" />Sign
-								in with Twitter
+						<form th:if="${@ff4j.check('login.twitter')}" name="signin_twitter" action="signin/twitter.html" th:action="@{/signin/twitter}" method="POST">
+							<button id="signin_twitter_btn" class="btn btn-primary"	th:text="#{signin_with_twitter}">
+								<img src="/styles/images/glyphicons_391_twitter_t.png"	th:src="@{/styles/images/glyphicons_391_twitter_t.png}" />Sign	in with Twitter
 							</button>
 						</form>
 					</section>

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 
 public class MultimediaFetchingProcessor implements ItemProcessor<Multimedia, Multimedia> {
@@ -30,12 +31,11 @@ public class MultimediaFetchingProcessor implements ItemProcessor<Multimedia, Mu
         @Autowired
         private MultimediaFileService multimediaFileService;
 	
-	@Autowired
-	@Qualifier("temporaryFileDirectory")
+        @Value("${temporary.file.directory:#{systemProperties['java.io.tmpdir']}}")
 	private FileSystemResource temporaryFileDirectory;
 	
 	private String uploadedFile;
-	
+
 	public void setUploadedFile(String uploadedFile) {
 		this.uploadedFile = uploadedFile;
 	}

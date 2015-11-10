@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.handler.ServiceActivatingHandler;
 import org.springframework.messaging.MessageHandler;
@@ -25,9 +26,12 @@ public class MultitenantWebConfiguration extends WebMvcConfigurerAdapter {
 	@Value("tenant.default.identifier")
 	private String defaultTenantIdentifier;
 	
+        @Value("${static.file.directory:#{'./static/'}}")
+	private FileSystemResource staticFileDirectory;
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/static/images/**").addResourceLocations("classpath:/static/images/").resourceChain(false).addResolver(imagesResourceResolver()).addResolver(new PathResourceResolver());
+		registry.addResourceHandler("/static/StillImage/**").addResourceLocations("classpath:/static/StillImage/").resourceChain(false).addResolver(imagesResourceResolver()).addResolver(new PathResourceResolver());
 		registry.addResourceHandler("/static/styles/**").addResourceLocations("classpath:/static/styles/").resourceChain(false).addResolver(stylesResourceResolver()).addResolver(new PathResourceResolver());
 		registry.addResourceHandler("/static/scripts/**").addResourceLocations("classpath:/static/scripts/").resourceChain(false).addResolver(stylesResourceResolver()).addResolver(new PathResourceResolver());
 		if (!registry.hasMappingForPattern("/webjars/**")) {
@@ -41,7 +45,7 @@ public class MultitenantWebConfiguration extends WebMvcConfigurerAdapter {
 		imagesResourceResolver.setMultitenantRepository(multitenantRepository);
 		imagesResourceResolver.setDefaultTenantIdentifier(defaultTenantIdentifier);
 		List<String> resourcePatterns = new ArrayList<String>();
-		resourcePatterns.add("file:/var/www/html/cate/%{tenant}/images/");
+		resourcePatterns.add("file:" + staticFileDirectory.getFile().getAbsolutePath() + "/%{tenant}/StillImage/");
 		imagesResourceResolver.setResourcePatterns(resourcePatterns);
 		return imagesResourceResolver;
 	}
@@ -64,7 +68,7 @@ public class MultitenantWebConfiguration extends WebMvcConfigurerAdapter {
 		stylesResourceResolver.setMultitenantRepository(multitenantRepository);
 		stylesResourceResolver.setDefaultTenantIdentifier(defaultTenantIdentifier);
 		List<String> resourcePatterns = new ArrayList<String>();
-		resourcePatterns.add("file:/var/www/html/cate/%{tenant}/styles/");
+		resourcePatterns.add("file:" + staticFileDirectory.getFile().getAbsolutePath() + "/%{tenant}/styles/");
 		stylesResourceResolver.setResourcePatterns(resourcePatterns);
 		return stylesResourceResolver;
 	}

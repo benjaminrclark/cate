@@ -1,0 +1,100 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head(title=#{entity_list_all(#{label_org_cateproject_domain_multimedia_plural})})">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js"><!-- required for FF3 and Opera --></script>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="500">
+<div id="header" class="navbar navbar-fixed-top navbar-inverse" th:replace="fragments/header :: header">Header Goes Here</div>
+<div class="container">
+  <div class="row">
+    <div class="span12">
+	  <th:block th:if="${success != null}">
+		<div th:replace="fragments/alert :: alert(id='success_alert_id',cssClass='alert-success',iconClass='',title=#{alert_success_title},message=${success}, alert=null)">Success Alert</div>
+	  </th:block>
+	</div>
+  </div>
+  <div class="row">
+  <div class="span12">
+    <section>
+    <table id="list_org_cateproject_domain_Multimedia" class="table table-condensed">
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_identifier}">Identifier</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_title}">Title</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_references}">References</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_description}">Description</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_spatial}">Spatial</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_latitude}">Latitude</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_longitude}">Longitude</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_format}">Format</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_publisher}">Publisher</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_audience}">Audience</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_width}">Width</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_height}">Height</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_duration}">Duration</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_type}">Type</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_size}">Size</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_filelastmodified}">File Last Modified</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_creator}">Creator</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_accessrights}">Access Rights</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_created}">Created</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_modified}">Modified</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_license}">License</th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_rights}">Rights</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr th:each="result : ${results}">
+        <td>
+          <form th:action="@{/edit/multimedia/__${result.id}__}" method="DELETE">
+            <button id="delete" class="btn btn-mini btn-warning" th:title="#{entity_delete(#{label_org_cateproject_domain_multimedia})}" ><i class="icon-remove-sign"><!-- --></i></button>
+          </form>
+        </td>
+        <td>
+          <a th:href="@{/edit/multimedia/__${result.id}__?form=true}" th:alt="#{entity_update(#{label_org_cateproject_domain_multimedia})}" th:title="#{entity_update(#{label_org_cateproject_domain_multimedia})}">
+             <i class="icon-pencil"><!--  --></i>
+          </a>
+        </td>
+        <td></td>
+        <td th:text="${result.identifier}">culcasiaorientalisK000047959.jpg</td>
+        <td th:text="${result.title}">Culcasia orientalis K000047959</td>
+        <td th:text="${result.references}"></td>
+        <td th:text="${result.description}"></td>
+        <td th:text="${result.spatial}"></td>
+        <td th:text="${result.latitude}"></td>
+        <td th:text="${result.longitude}"></td>
+        <td th:text="${result.format}">image/jpg</td>
+        <td th:text="${result.publisher}"></td>
+        <td th:text="${result.audience}"></td>
+        <td th:text="${result.width}"></td>
+        <td th:text="${result.height}"></td>
+        <td th:text="${result.duration}"></td>
+        <td th:text="${result.type}">StillImage</td>
+        <td th:text="${result.size}">1234Kb</td>
+        <td th:text="${result.fileLastModified}">2012-09-16T10:00:00Z</td>
+        <td th:text="${result.creator}">Peter Boyce</td>
+        <td th:text="${result.accessRights}"></td>
+        <td th:text="${result.created}">2015-10-30T08:51:00Z</td>
+        <td th:text="${result.modified}"></td>
+        <td th:text="${result.license}"></td>
+        <td th:text="${result.rights}">See <a href="http://kew.org/about-kew/website-information/legal-notices/index.htm">http://kew.org/about-kew/website-information/legal-notices/index.htm</a>. With the permission of the Trustees of the Royal Botanic Gardens, Kew.</td>
+      </tr>
+      </tbody>
+    </table>
+    <span class="pull-left">
+        <form action="create.html" th:action="@{/edit/multimedia?form=true}" method="POST">
+          <button id="create_new_multimedia_id" name="create_new_multimedia" class="btn btn-mini btn-primary" th:title="#{entity_create(#{label_org_cateproject_domain_multimedia})}">
+            <i class="icon-plus-sign icon-white"><!----></i>
+          </button>
+        </form>
+      </span>
+    </section>
+  </div>
+  </div>
+  </div>
+</body>
+</html>

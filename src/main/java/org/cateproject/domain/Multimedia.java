@@ -20,7 +20,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.cateproject.batch.multimedia.MultimediaFileService;
+import org.cateproject.batch.multimedia.MultimediaHandler;
 import org.cateproject.domain.constants.DCMIType;
 import org.cateproject.domain.constants.MultimediaFileType;
 import org.cateproject.domain.util.MultimediaFile;
@@ -87,7 +87,7 @@ public class Multimedia extends NonOwnedEntity {
 
     @Transient
     @Autowired
-    private MultimediaFileService multimediaFileService;
+    private MultimediaHandler multimediaHandler;
 
     @Transient
     private transient MultipartFile multipartFile;
@@ -287,26 +287,26 @@ public class Multimedia extends NonOwnedEntity {
     
     @PostRemove
     private void postRemove() {
-        multimediaFileService.postRemove(this);
+        multimediaHandler.postRemove(this);
     }
 
     @PrePersist
     private void prePersist() {
-        multimediaFileService.prePersist(this);
+        multimediaHandler.prePersist(this);
     }
     
     @PreUpdate
     private void preUpdate() {
-        multimediaFileService.prePersist(this);	
+        multimediaHandler.prePersist(this);	
     }
     
     @PostPersist
     private void postPersist() {
-        multimediaFileService.postPersist(this);
+        multimediaHandler.postPersist(this);
     }
     
     @PostUpdate
     private void postUpdate() {
-        multimediaFileService.postUpdate(this);
+        multimediaHandler.postUpdate(this);
     }
 }

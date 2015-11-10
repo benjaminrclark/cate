@@ -30,6 +30,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Propagation;
@@ -41,22 +42,12 @@ public class MultimediaFileService {
 
     private static Logger logger = LoggerFactory.getLogger(MultimediaFileService.class);
 
-    @Value("${temporary.file.directory}")
+    @Value("${temporary.file.directory:#{systemProperties['java.io.tmpdir']}}")
     private FileSystemResource temporaryFileDirectory;
-
-    @Autowired
-    private FileTransferService fileTransferService;
 
     @Autowired
     private GetResourceClient getResourceClient;
 
-    @Autowired
-    @Qualifier("processMultimedia")
-    private Job processMultimediaJob;
-
-    @Autowired
-    @Qualifier("remoteJobLaunchRequests")
-    private JobLaunchRequestHandler jobLaunchRequestHandler;
 
     Tika tika = new Tika();
 
@@ -71,10 +62,16 @@ public class MultimediaFileService {
 	MIMETYPE_EXTENSION_MAP.put("image/bmp", "bmp");
     }
 
+    static {
+	MIMETYPE_DCMITYPE_MAP.put("image/jpeg", DCMIType.StillImage);
+	MIMETYPE_DCMITYPE_MAP.put("image/png", DCMIType.StillImage);
+	MIMETYPE_DCMITYPE_MAP.put("image/gif", DCMIType.StillImage);
+	MIMETYPE_DCMITYPE_MAP.put("image/bmp", DCMIType.StillImage);
+    }
     public static String getExtension(String mimeType) {
 	return MIMETYPE_EXTENSION_MAP.get(mimeType);
     }
-	
+
     public DCMIType getType(String mimeType) {
        return MIMETYPE_DCMITYPE_MAP.get(mimeType); 
     }
@@ -86,6 +83,7 @@ public class MultimediaFileService {
 	        Metadata metadata = new Metadata();
 	        metadata.set(TikaMetadataKeys.RESOURCE_NAME_KEY, file.getName());	        
 	        String mime = tika.detect(new FileInputStream(file), metadata);
+	        logger.info("Detected mimetype is {}", new Object[] {mime});
 	        multimedia.setFormat(mime);
 	        multimedia.setSize(file.length());
                 multimedia.setType(getType(mime));
@@ -107,7 +105,7 @@ public class MultimediaFileService {
 	        byte[] buffer = new byte[255 * 3];
 	        int read = fileInputStream.read(buffer);
 	        multimedia.setHash(new String(buffer,Charset.forName("UTF-8")));
-	        //multimedia.setLocalFileName(UUID.randomUUID().toString() + "." + getExtension(mime));
+	        multimedia.setLocalFileName(UUID.randomUUID().toString() + "." + getExtension(mime));
 	        fileInputStream.close();
 	    } catch (FileNotFoundException fnfe) {
 	        logger.error(fnfe.getMessage());
@@ -148,7 +146,7 @@ public class MultimediaFileService {
 
     public boolean videoUnchanged(Multimedia m1, Multimedia m2) {
 	    if(m1.getHash() != null && m2.getHash() != null && !m1.getHash().isEmpty() && !m2.getHash().isEmpty()) {
-	        logger.info("Comparing image file data");
+	        logger.info("Comparing video file data");
 	        return 
 	            m2.getSize().equals(m1.getSize()) 
                     && m2.getWidth().equals(m1.getWidth())
@@ -160,7 +158,7 @@ public class MultimediaFileService {
 	                logger.info("Comparing last modified dates");
 	                return m1.getFileLastModified().equals(m2.getFileLastModified());
 	     } else {
-	        logger.info("Images are different");
+	        logger.info("Video files are different");
 	        return false;
 	    }
 	}
@@ -168,7 +166,7 @@ public class MultimediaFileService {
 
     public boolean audioUnchanged(Multimedia m1, Multimedia m2) {
 	    if(m1.getHash() != null && m2.getHash() != null && !m1.getHash().isEmpty() && !m2.getHash().isEmpty()) {
-	        logger.info("Comparing image file data");
+	        logger.info("Comparing audio file data");
 	        return 
 	            m2.getSize().equals(m1.getSize()) 
                     && m2.getDuration().equals(m1.getDuration())
@@ -178,7 +176,7 @@ public class MultimediaFileService {
 	                logger.info("Comparing last modified dates");
 	                return m1.getFileLastModified().equals(m2.getFileLastModified());
 	     } else {
-	        logger.info("Images are different");
+	        logger.info("Audio files are different");
 	        return false;
 	    }
 	}
@@ -210,9 +208,6 @@ public class MultimediaFileService {
         to.setHash(from.getHash());
     }
 
-    public void postRemove(Multimedia multimedia) {
-
-    }
 
     public void handleFile(Multimedia multimedia) {
 
@@ -248,67 +243,4 @@ public class MultimediaFileService {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Multimedia process(Multimedia multimedia) {
-	logger.info("Processing {}", new Object[]{multimedia.getIdentifier()});
-	Map<String, JobParameter> jobParametersMap = new HashMap<String, JobParameter>();
-	if(multimedia.getOriginalFile() != null) {
-		String inputFile = "upload://" + multimedia.getLocalFileName();
-                try {
-		    fileTransferService.copyFileOut(multimedia.getOriginalFile(), inputFile);
-                } catch (IOException ioe) {
-                    logger.error("Could not copy file {} out : {}", multimedia.getOriginalFile(), ioe.getMessage());
-                    throw new RuntimeException(ioe);
-                }
-		jobParametersMap.put("input.file",new JobParameter(inputFile));
-	} else if(multimedia.getIdentifier() != null && multimedia.getIdentifier().startsWith("http://")) {
-		jobParametersMap.put("input.file", new JobParameter(multimedia.getIdentifier()));
-		jobParametersMap.put("random.string", new JobParameter(UUID.randomUUID().toString()));
-	} else {
-		return multimedia;
-	}
-	jobParametersMap.put("query.string", new JobParameter("select m from Multimedia m where m.identifier = :identifier"));
-    	jobParametersMap.put("query.parameters_map", new JobParameter("identifier=" + multimedia.getIdentifier()));
-        jobParametersMap.put("tenant.id", new JobParameter(MultitenantContextHolder.getContext().getTenantId()));
-        jobParametersMap.put("user.id", new JobParameter(SecurityContextHolder.getContext().getAuthentication().getName()));
-        JobParameters jobParameters = new JobParameters(jobParametersMap);
-        JobLaunchRequest jobLaunchRequest = new JobLaunchRequest(processMultimediaJob, jobParameters);
-        jobLaunchRequestHandler.launch(jobLaunchRequest);
-	return multimedia;
-		
-	}
-
-    public void prePersist(Multimedia multimedia) {
-    	if(!MultitenantContextHolder.getContext().getContextBoolean("ProcessingMultimediaFile")) {
-    		logger.debug("prePersist handling file");
-    		handleFile(multimedia);
-    	} else {
-    		logger.debug("prePersist doing nothing");
-    	}
-    }
-
-    public void postPersist(Multimedia multimedia) {
-    	if(!MultitenantContextHolder.getContext().getContextBoolean("ProcessingMultimediaFile")) {
-	    	logger.info("postPersist processing file");
-	        process(multimedia);
-    	} else {
-    		logger.debug("postPersist doing nothing");
-    	}
-    }
-
-    public void postUpdate(Multimedia multimedia) {
-    	if(!MultitenantContextHolder.getContext().getContextBoolean("ProcessingMultimediaFile")) {
-	    	logger.info("postPersist processing file");
-                Multimedia newMultimedia = extractFileInfo(multimedia.getOriginalFile(), multimedia);
-		if(filesUnchanged(multimedia, newMultimedia)) {
-		    logger.info("Files are the same, not processing");
-		    // Do nothing as we assume that the file is the same
-		} else {
-                    logger.info("Files have changed, processing");
-	            process(multimedia);
-                }
-    	} else {
-    		logger.debug("postUpdate doing nothing");
-    	}
-    }
 }

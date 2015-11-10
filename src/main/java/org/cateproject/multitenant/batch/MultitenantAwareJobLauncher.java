@@ -2,9 +2,9 @@ package org.cateproject.multitenant.batch;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.cateproject.multitenant.MultitenantContextHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
@@ -50,7 +50,7 @@ import org.springframework.util.Assert;
  */
 public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBean {
 
-	protected static final Log logger = LogFactory.getLog(MultitenantAwareJobLauncher.class);
+	protected static final Logger logger = LoggerFactory.getLogger(MultitenantAwareJobLauncher.class);
 
 	private JobRepository jobRepository;
 
@@ -102,29 +102,25 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
 		jobExecution = jobRepository.createJobExecution(job.getName(), jobParameters);
                 final String originalTenantId = MultitenantContextHolder.getContext().getTenantId();
                 final Map<String, Object> originalProperties = MultitenantContextHolder.getContext().copyContextProperties();
-                final String tenantId = jobParameters.getString("tenantId");
-                final Map<String, Object> properties = (Map<String, Object>)conversionService.convert(jobParameters.getString("tenantProperties"), Map.class);
+                final String tenantId = jobParameters.getString("tenant.id");
+                final Map<String, Object> properties = (Map<String, Object>)conversionService.convert(jobParameters.getString("tenant.properties"), Map.class);
                 logger.info("Tenant ID is " + tenantId);
 		try {
 			taskExecutor.execute(new Runnable() {
 
 				public void run() {
 					try {
-						logger.info("Setting Tenant ID to " + tenantId);
+						logger.info("Setting Tenant ID to {}", new Object[]{ tenantId});
 						MultitenantContextHolder.getContext().setTenantId(tenantId);
                                                 MultitenantContextHolder.getContext().clearContextProperties();
                                                 for(String propertyName : properties.keySet()) {
                                                     MultitenantContextHolder.getContext().putContextProperty(propertyName, properties.get(propertyName));
                                                 }
-						logger.info("Job: [" + job + "] launched with the following parameters: [" + jobParameters
-								+ "]");
+						logger.info("Job: {} launched with the following parameters: {} and the following tenantContext {}", new Object[]{job, jobParameters, properties});
 						job.execute(jobExecution);
-						logger.info("Job: [" + job + "] completed with the following parameters: [" + jobParameters
-								+ "] and the following status: [" + jobExecution.getStatus() + "]");
+						logger.info("Job: {} completed with the following parameters: {} and the following status: {}", new Object[] {job, jobParameters, jobExecution.getStatus()});
 					} catch (Throwable t) {
-						logger.info("Job: [" + job
-								+ "] failed unexpectedly and fatally with the following parameters: [" + jobParameters
-								+ "]", t);
+						logger.info("Job: {} failed unexpectedly and fatally with the following parameters: {}",new Object[] {job, jobParameters}, t);
 						rethrow(t);
 					} finally {
 						MultitenantContextHolder.getContext().setTenantId(originalTenantId);

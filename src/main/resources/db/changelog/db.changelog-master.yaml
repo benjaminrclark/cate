@@ -3351,6 +3351,11 @@ databaseChangeLog:
         - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('login',1,'Login');
   - changeSet:
       author: ben
+      id: 2015-11-09_01
+      changes:
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('login.twitter',0,'Login with Twitter');
+  - changeSet:
+      author: ben
       id: 2014-04-19_03
       changes:
         - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('edit',0,'Edit');

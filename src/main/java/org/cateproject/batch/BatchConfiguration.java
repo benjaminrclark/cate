@@ -4,10 +4,16 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
 import javax.sql.DataSource;
 
+import org.apache.activemq.command.ActiveMQQueue;
 import org.cateproject.multitenant.batch.MultitenantAwareJobLauncher;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.support.DefaultJobLoader;
+import org.springframework.batch.core.configuration.support.JobLoader;
+import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
 import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
@@ -51,8 +57,11 @@ public class BatchConfiguration {
     private PlatformTransactionManager transactionManager;
 
     @Autowired
-    @Qualifier("integrationConversionService")
+    @Qualifier("conversionService")
     private ConversionService conversionService;
+
+    @Autowired
+    private JobRegistry jobRegistry; 
 
     @Bean
     public TaskExecutor batchTaskExecutor() {
@@ -80,6 +89,11 @@ public class BatchConfiguration {
    }
 
    @Bean
+   public DefaultJobLoader jobLoader() {
+        return new DefaultJobLoader(jobRegistry);
+   }
+
+   @Bean
    public JobLauncher jobLauncher() {
         try {
             JobRepository jobRepository = jobRepositoryFactoryBean().getObject();
@@ -103,6 +117,10 @@ public class BatchConfiguration {
         return new DirectChannel();
     }
 
+    @Bean
+    public Destination jobLaunchRequestQueue() {
+        return new ActiveMQQueue("cate.jobLaunchRequests");
+    }
 
     @Bean
     @InboundChannelAdapter(value = "incomingJobLaunchRequests", poller = @Poller(fixedRate = "5000"))
@@ -111,18 +129,18 @@ public class BatchConfiguration {
 	jmsTemplate.setMessageConverter(messageConverter);
 	jmsTemplate.setConnectionFactory(connectionFactory);
 	JmsDestinationPollingSource jmsDestinationPollingSource = new JmsDestinationPollingSource(jmsTemplate);
-	jmsDestinationPollingSource.setDestinationName("cate.jobLaunchRequests");
+	jmsDestinationPollingSource.setDestination(jobLaunchRequestQueue());
 	return jmsDestinationPollingSource;
     }
 	
     @Bean
     @ServiceActivator(inputChannel = "outgoingJobLaunchRequests")
-    public MessageHandler outboundTenantEventHandler() {
+    public MessageHandler outboundJobLaunchRequestHandler() {
         JmsTemplate jmsTemplate = new DynamicJmsTemplate();
         jmsTemplate.setConnectionFactory(connectionFactory);
         jmsTemplate.setMessageConverter(messageConverter);
         JmsSendingMessageHandler messageHandler = new JmsSendingMessageHandler(jmsTemplate);
-        messageHandler.setDestinationName("cate.jobLaunchRequests");
+        messageHandler.setDestination(jobLaunchRequestQueue());
         return messageHandler;
     }
 

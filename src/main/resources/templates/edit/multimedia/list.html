@@ -23,6 +23,7 @@
           <th></th>
           <th></th>
           <th></th>
+          <th th:text="#{label_org_cateproject_domain_multimedia_localfilename}">File</th>
           <th th:text="#{label_org_cateproject_domain_multimedia_identifier}">Identifier</th>
           <th th:text="#{label_org_cateproject_domain_multimedia_title}">Title</th>
           <th th:text="#{label_org_cateproject_domain_multimedia_references}">References</th>
@@ -58,6 +59,11 @@
           <a th:href="@{/edit/multimedia/__${result.id}__?form=true}" th:alt="#{entity_update(#{label_org_cateproject_domain_multimedia})}" th:title="#{entity_update(#{label_org_cateproject_domain_multimedia})}">
              <i class="icon-pencil"><!--  --></i>
           </a>
+        </td>
+        <td>
+          <div class="thumbnail">
+              <img th:src="@{/static/__${result.type}__/original/__${result.localFileName}__}"/>
+          </div>
         </td>
         <td></td>
         <td th:text="${result.identifier}">culcasiaorientalisK000047959.jpg</td>

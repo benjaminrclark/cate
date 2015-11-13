@@ -29,7 +29,7 @@ public class MultimediaFileWriter implements ItemWriter<Multimedia> {
                     logger.debug("Writing {}", new Object[]{multimedia.getIdentifier()});
                     for(MultimediaFile multimediaFile : multimedia.getMultimediaFiles()) {
                         try {
-                            fileTransferService.copyFileOut(multimediaFile.getFile(), multimediaFile.toString());
+                            fileTransferService.moveFileOut(multimediaFile.getFile(), multimediaFile.toString());
                         } catch(IOException ioe) {
                             throw new RuntimeException(ioe);
                         }

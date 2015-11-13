@@ -5,6 +5,10 @@ import java.io.IOException;
 
 public interface FileTransferService {
 	
+	String moveFileOut(File from, String to) throws IOException;
+	
+	void moveFileIn(String from, File to) throws IOException;
+
 	String copyFileOut(File from, String to) throws IOException;
 	
 	void copyFileIn(String from, File to) throws IOException;

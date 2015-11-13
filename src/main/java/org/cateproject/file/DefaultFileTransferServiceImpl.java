@@ -83,12 +83,27 @@ public class DefaultFileTransferServiceImpl implements FileTransferService, Mult
         public void notify(MultitenantEvent multitenantEvent) {
         }
 
+	public String moveFileOut(File from, String toName) throws IOException {
+		File to = stringToFile(toName);
+		if(!from.equals(to)) {
+                    logger.debug("Copying {} to {}", new Object[]{from.getAbsolutePath(), to.getAbsolutePath()});
+	            Files.move(from.toPath(),to.toPath());
+		}
+		return to.getAbsolutePath();
+        }
+	
+	public void moveFileIn(String fromName, File to) throws IOException {
+		File from = stringToFile(fromName);
+		if(!from.equals(to)) {
+		    Files.move(from.toPath(), to.toPath());
+		}		
+        }
+
 	public String copyFileOut(File from, String toName) throws IOException {
 		File to = stringToFile(toName);
 		if(!from.equals(to)) {
                     logger.debug("Copying {} to {}", new Object[]{from.getAbsolutePath(), to.getAbsolutePath()});
 	            Files.copy(from.toPath(),to.toPath());
-		    from.delete();
 		}
 		return to.getAbsolutePath();
         }
@@ -97,7 +112,6 @@ public class DefaultFileTransferServiceImpl implements FileTransferService, Mult
 		File from = stringToFile(fromName);
 		if(!from.equals(to)) {
 		    Files.copy(from.toPath(), to.toPath());
-		    from.delete();
 		}		
         }
 

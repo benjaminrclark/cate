@@ -18,6 +18,8 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
@@ -52,10 +54,14 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
 
 	protected static final Logger logger = LoggerFactory.getLogger(MultitenantAwareJobLauncher.class);
 
+        @Autowired
 	private JobRepository jobRepository;
 
+        @Autowired
+        @Qualifier("batchTaskExecutor")
 	private TaskExecutor taskExecutor;
 
+        @Autowired
         private ConversionService conversionService;
 
 	/**
@@ -104,7 +110,7 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
                 final Map<String, Object> originalProperties = MultitenantContextHolder.getContext().copyContextProperties();
                 final String tenantId = jobParameters.getString("tenant.id");
                 final Map<String, Object> properties = (Map<String, Object>)conversionService.convert(jobParameters.getString("tenant.properties"), Map.class);
-                logger.info("Tenant ID is " + tenantId);
+                logger.info("Tenant ID is {} running on {}", new Object[]{  tenantId, taskExecutor});
 		try {
 			taskExecutor.execute(new Runnable() {
 

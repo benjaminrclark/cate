@@ -52,9 +52,9 @@ public class MultimediaHandler {
                 String extension = multimedia.getOriginalFile().getName().substring(multimedia.getOriginalFile().getName().lastIndexOf(".") + 1);
 		String inputFile = "upload://" + UUID.randomUUID().toString() + "." + extension;
                 try {
-		    fileTransferService.copyFileOut(multimedia.getOriginalFile(), inputFile);
+		    fileTransferService.moveFileOut(multimedia.getOriginalFile(), inputFile);
                 } catch (IOException ioe) {
-                    logger.error("Could not copy file {} out : {}", multimedia.getOriginalFile(), ioe.getMessage());
+                    logger.error("Could not move file {} out : {}", multimedia.getOriginalFile(), ioe.getMessage());
                     throw new RuntimeException(ioe);
                 }
 		jobParametersMap.put("input.file",new JobParameter(inputFile));

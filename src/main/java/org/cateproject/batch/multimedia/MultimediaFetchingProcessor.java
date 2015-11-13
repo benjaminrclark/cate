@@ -70,7 +70,7 @@ public class MultimediaFetchingProcessor implements ItemProcessor<Multimedia, Mu
 			logger.debug("Fetching {} last modified {}", new Object[] {multimedia.getIdentifier(),lastModified});
 		} else {
 			logger.debug("Fetching {}",new Object []{uploadedFile});
-			fileTransferService.copyFileIn(uploadedFile, to);	
+			fileTransferService.moveFileIn(uploadedFile, to);	
 		}
 	
                 MultimediaFile originalFile = new MultimediaFile(multimedia, to, MultimediaFileType.original);

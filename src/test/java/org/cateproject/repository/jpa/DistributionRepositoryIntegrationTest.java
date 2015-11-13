@@ -6,6 +6,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.cateproject.Application;
+import org.cateproject.batch.TestingBatchTaskExecutorConfiguration;
 import org.cateproject.domain.Distribution;
 import org.cateproject.multitenant.MultitenantContextHolder;
 import org.junit.After;
@@ -16,10 +17,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
+@SpringApplicationConfiguration(classes = { Application.class, TestingBatchTaskExecutorConfiguration.class})
+@ActiveProfiles({"default", "integration-test"})
 @IntegrationTest
 public class DistributionRepositoryIntegrationTest {
 

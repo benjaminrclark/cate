@@ -76,7 +76,7 @@ public class MultimediaFetchingProcessorTest {
         multimediaIn.setFileLastModified(new DateTime(2000,1,1,1,1,DateTimeZone.UTC));
 
         Multimedia extractedMultimedia = new Multimedia();
-        EasyMock.expect(getResourceClient.getResource(EasyMock.eq("http://IDENTIFIER"), EasyMock.isNull(), EasyMock.isA(File.class))).andReturn(new DateTime(2001,1,1,1,1,DateTimeZone.UTC));;
+        EasyMock.expect(getResourceClient.getResource(EasyMock.eq("http://IDENTIFIER"), (DateTime)EasyMock.isNull(), EasyMock.isA(File.class))).andReturn(new DateTime(2001,1,1,1,1,DateTimeZone.UTC));;
         EasyMock.expect(multimediaFileService.localFileInfo(EasyMock.isA(File.class))).andReturn(extractedMultimedia);
         EasyMock.expect(multimediaFileService.filesUnchanged(EasyMock.eq(multimediaIn),EasyMock.eq(extractedMultimedia))).andReturn(true);
         EasyMock.expect(fileTransferService.exists(EasyMock.isA(String.class))).andReturn(true);
@@ -95,7 +95,7 @@ public class MultimediaFetchingProcessorTest {
         multimediaIn.setFileLastModified(new DateTime(2000,1,1,1,1,DateTimeZone.UTC));
 
         Multimedia extractedMultimedia = new Multimedia();
-        EasyMock.expect(getResourceClient.getResource(EasyMock.eq("http://IDENTIFIER"), EasyMock.isNull(), EasyMock.isA(File.class))).andReturn(new DateTime(2001,1,1,1,1,DateTimeZone.UTC));;
+        EasyMock.expect(getResourceClient.getResource(EasyMock.eq("http://IDENTIFIER"), (DateTime)EasyMock.isNull(), EasyMock.isA(File.class))).andReturn(new DateTime(2001,1,1,1,1,DateTimeZone.UTC));;
         EasyMock.expect(multimediaFileService.localFileInfo(EasyMock.isA(File.class))).andReturn(extractedMultimedia);
         EasyMock.expect(multimediaFileService.filesUnchanged(EasyMock.eq(multimediaIn),EasyMock.eq(extractedMultimedia))).andReturn(true);
         EasyMock.expect(fileTransferService.exists(EasyMock.isA(String.class))).andReturn(false);

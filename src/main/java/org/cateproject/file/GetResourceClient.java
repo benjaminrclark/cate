@@ -65,100 +65,78 @@ public class GetResourceClient {
 	 *         indicating that the resource has not been modified
 	 */
 	public HttpResponse issueRequest(String resource, OutputStream outputStream, DateTime ifModifiedSince, HttpMethod httpMethod) {
-		
-		BufferedInputStream bufferedInputStream = null;
-		BufferedOutputStream bufferedOutputStream = null;
-
-		try {
-			logger.info("GET: " + resource);
-			URI uri = new URI(resource);
-			HttpUriRequest httpUriRequest = null;
-			switch(httpMethod) {
-			case HEAD:
-				httpUriRequest = new HttpHead(uri.toASCIIString());
-			case GET:
-			default:
-				httpUriRequest = new HttpGet(uri.toASCIIString());
-			}
-			if(ifModifiedSince != null) {
-			    httpUriRequest.addHeader(new BasicHeader("If-Modified-Since", HTTP_DATETIME_FORMATTER.print(ifModifiedSince)));
-			}
-			HttpResponse httpResponse = httpClient.execute(httpUriRequest);
-
-			switch (httpResponse.getStatusLine().getStatusCode()) {
-			case HttpURLConnection.HTTP_NOT_MODIFIED:
-				return httpResponse;
-			case HttpURLConnection.HTTP_OK:
-				HttpEntity entity = httpResponse.getEntity();
-				if (entity != null) {
-					bufferedInputStream = new BufferedInputStream(
-							entity.getContent());
-					bufferedOutputStream = new BufferedOutputStream(outputStream);
-					int count;
-					byte[] data = new byte[BUFFER];
-					while ((count = bufferedInputStream.read(data, 0, BUFFER)) != -1) {
-						bufferedOutputStream.write(data, 0, count);
-					}
-					bufferedOutputStream.flush();
-					bufferedOutputStream.close();
-					bufferedInputStream.close();
-				} else {
-                                        // TODO error condition 
-					logger.info("Server returned " + httpResponse.getStatusLine() + " but HttpEntity is null");
-					return httpResponse;
-				}
-				return httpResponse;
-			default:
-                                // TODO error condition 
-				logger.info("Server returned unexpected status code " + httpResponse.getStatusLine() + " for document "	+ resource); 
-				  /**
-				   *  This is not an error in this
-				   *  application but a server side
-				   *  error
-				   */
-				BufferedHttpEntity bufferedEntity = new BufferedHttpEntity(httpResponse.getEntity());
-				InputStreamReader reader = new InputStreamReader(bufferedEntity.getContent());
-				StringBuffer stringBuffer = new StringBuffer();
-				int count;
-				char[] content = new char[BUFFER];
-				while ((count = reader.read(content, 0, BUFFER)) != -1) {
-					stringBuffer.append(content);
-				}
-				logger.info("Server Response was: " + stringBuffer.toString());
-				httpUriRequest.abort();
-				return httpResponse;
-			}
-
-		} catch (ClientProtocolException cpe) {
-                        // TODO error condition
-			logger.error("Client Protocol Exception getting document " + resource + " " + cpe.getLocalizedMessage());
-			return null;
-		} catch (IOException ioe) {
-                        // TODO error condition
-			logger.error("Input Output Exception getting document " + resource	+ " " + ioe.getLocalizedMessage());
-			return null;
-		} catch (URISyntaxException urise) {
-                        // TODO error condition
-			logger.error("URI Syntax exception for " + resource + " " + urise.getLocalizedMessage());
-			return null;
-		} finally {
-			if (bufferedInputStream != null) {
-				try {
-					bufferedInputStream.close();
-				} catch (IOException ioe) {
-                                        // TODO error condition
-					logger.error("Input Output Exception closing inputStream for " + resource + " " + ioe.getLocalizedMessage());
-				}
-			}
-			if (bufferedOutputStream != null) {
-				try {
-					bufferedOutputStream.close();
-				} catch (IOException ioe) {
-                                        // TODO error condition
-					logger.error("Input Output Exception closing outputStream for "	+ resource + " " + ioe.getLocalizedMessage());
-				}
-			}
-		}
+	    try {
+	        logger.info("GET: " + resource);
+	        URI uri = new URI(resource);
+	        HttpUriRequest httpUriRequest = null;
+	        switch(httpMethod) {
+                    case HEAD:
+                        httpUriRequest = new HttpHead(uri.toASCIIString());
+                        break;
+                    case GET:
+                    default:
+                        httpUriRequest = new HttpGet(uri.toASCIIString());
+                        break;
+	        }
+                 
+                if(ifModifiedSince != null) {
+                    httpUriRequest.addHeader(new BasicHeader("If-Modified-Since", HTTP_DATETIME_FORMATTER.print(ifModifiedSince)));
+                }
+                HttpResponse httpResponse = httpClient.execute(httpUriRequest);
+                 
+                switch (httpResponse.getStatusLine().getStatusCode()) {
+                    case HttpURLConnection.HTTP_NOT_MODIFIED:
+                        return httpResponse;
+                    case HttpURLConnection.HTTP_OK:
+                        HttpEntity entity = httpResponse.getEntity();
+                        if (entity != null) {
+                            try(BufferedInputStream bufferedInputStream = new BufferedInputStream(entity.getContent());
+                                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
+                                int count;
+                                byte[] data = new byte[BUFFER];
+                                while ((count = bufferedInputStream.read(data, 0, BUFFER)) != -1) {
+                                    bufferedOutputStream.write(data, 0, count);
+                                }
+                                bufferedOutputStream.flush();
+                            }
+                        } else {
+                            // TODO error condition 
+                            logger.error("Server returned {} but HttpEntity is null", new Object[]{httpResponse.getStatusLine()});
+                            return httpResponse;
+                        }
+                        return httpResponse;
+                    default:
+                        // TODO error condition 
+                        logger.error("Server returned unexpected status code {} for document {}", new Object[]{httpResponse.getStatusLine(), resource}); 
+                        /**
+                         *  This is not an error in this
+                         *  application but a server side
+                         *  error
+                         */
+                        BufferedHttpEntity bufferedEntity = new BufferedHttpEntity(httpResponse.getEntity());
+                        InputStreamReader reader = new InputStreamReader(bufferedEntity.getContent());
+                        StringBuffer stringBuffer = new StringBuffer();
+                        char[] content = new char[BUFFER];
+                        while (reader.read(content, 0, BUFFER) != -1) {
+                            stringBuffer.append(content);
+                        }
+                        logger.info("Server Response was: {}", new Object[]{stringBuffer.toString()});
+                        httpUriRequest.abort();
+                        return httpResponse;
+                    }
+                } catch (ClientProtocolException cpe) {
+                    // TODO error condition
+                    logger.error("Client Protocol Exception getting document {}: {}", new Object[]{resource,cpe.getLocalizedMessage()});
+                    return null;
+                } catch (IOException ioe) {
+                    // TODO error condition
+                    logger.error("Input Output Exception getting document {}: {}", new Object[]{resource, ioe.getLocalizedMessage()});
+                    return null;
+                } catch (URISyntaxException urise) {
+                    // TODO error condition
+                    logger.error("URI Syntax exception for {}: {}", new Object[]{resource, urise.getLocalizedMessage()});
+                    return null;
+                }
 	}
 	
 	public DateTime getResource(String resource, DateTime ifModifiedSince, File localFile) {

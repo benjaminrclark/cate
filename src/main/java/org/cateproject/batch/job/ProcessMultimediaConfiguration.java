@@ -93,7 +93,7 @@ public class ProcessMultimediaConfiguration {
 
     @Bean(destroyMethod="")
     @StepScope
-    public JpaPagingItemReader<Multimedia> multimediaFileReader(@Value("#{jobExecutionContext['query.string']}") String queryString, @Value("#{jobExecutionContext['query.parameters_map']}") Map<String, Object> parameterValues) {
+    public JpaPagingItemReader<Multimedia> multimediaFileReader(@Value("#{jobExecutionContext['query.string']}") String queryString, @Value("#{jobExecutionContext['query.parameters']}") Map<String, Object> parameterValues) {
         JpaPagingItemReader<Multimedia> multimediaFileReader = new JpaPagingItemReader<Multimedia>();
         multimediaFileReader.setEntityManagerFactory(entityManagerFactory);
         multimediaFileReader.setQueryString(queryString);

@@ -20,6 +20,7 @@ public class JobLaunchingMessageHandler implements JobLaunchRequestHandler {
             jobLauncher.run(request.getJob(), request.getJobParameters());
         } catch (JobExecutionException jee) {
             logger.error("Exception running job {} with parameters {} : {}", new Object[] {request.getJob(), request.getJobParameters(), jee.getMessage()});
+            throw new RuntimeException("Exception handling jobLaunchRequest",jee);
         }
     }
 }

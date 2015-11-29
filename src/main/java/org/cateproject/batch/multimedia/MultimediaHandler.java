@@ -44,6 +44,26 @@ public class MultimediaHandler {
     @Qualifier("conversionService")
     private ConversionService conversionService;
 
+    public void setFileTransferService(FileTransferService fileTransferService) {
+        this.fileTransferService = fileTransferService;
+    }
+
+    public void setMultimediaFileService(MultimediaFileService multimediaFileService) {
+        this.multimediaFileService = multimediaFileService;
+    }
+
+    public void setProcessMultimediaJob(Job processMultimediaJob) {
+        this.processMultimediaJob = processMultimediaJob;
+    }
+
+    public void setJobLaunchRequestHandler(JobLaunchRequestHandler jobLaunchRequestHandler) {
+        this.jobLaunchRequestHandler = jobLaunchRequestHandler;
+    }
+
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Multimedia process(Multimedia multimedia) {
 	logger.info("Processing {}", new Object[]{multimedia.getIdentifier()});
@@ -59,7 +79,6 @@ public class MultimediaHandler {
                 }
 		jobParametersMap.put("input.file",new JobParameter(inputFile));
 	} else if(multimedia.getIdentifier() != null && multimedia.getIdentifier().startsWith("http://")) {
-		jobParametersMap.put("input.file", new JobParameter(multimedia.getIdentifier()));
 		jobParametersMap.put("random.string", new JobParameter(UUID.randomUUID().toString()));
 	} else {
 		return multimedia;
@@ -99,7 +118,12 @@ public class MultimediaHandler {
     public void postUpdate(Multimedia multimedia) {
     	if(!MultitenantContextHolder.getContext().getContextBoolean("ProcessingMultimediaFile")) {
 	    	logger.info("postPersist processing file");
-                Multimedia newMultimedia = multimediaFileService.extractFileInfo(multimedia.getOriginalFile(), multimedia);
+                Multimedia newMultimedia = null;
+                if(multimedia.getOriginalFile() != null) {
+                    newMultimedia = multimediaFileService.localFileInfo(multimedia.getOriginalFile());
+                } else {
+                    newMultimedia = multimediaFileService.remoteFileInfo(multimedia.getIdentifier());
+                }
 		if(multimediaFileService.filesUnchanged(multimedia, newMultimedia)) {
 		    logger.info("Files are the same, not processing");
 		    // Do nothing as we assume that the file is the same

@@ -3,8 +3,6 @@ package org.cateproject.batch;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
@@ -30,23 +28,22 @@ public class ParameterConvertingTasklet implements Tasklet {
 
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         logger.debug("jobParameters = {}", new Object[]{jobParameters});
-    	if(jobParameters.containsKey("dwca.fieldsTerminatedBy")) {
-    		fieldSeparator = jobParameters.get("dwca.fieldsTerminatedBy");
-    	}
     	for(String key : jobParameters.keySet()) {
     		String string = jobParameters.get(key);
     		Object value = null;
     		if(key.endsWith(MAP_SUFFIX)) {
-    			Map<String,String> defaultValuesMap = new HashMap<String,String>();
-    			for(String defaultValue : string.split(fieldSeparator)) {
-    			    if(defaultValue.indexOf("=") > -1) {
-    				    String k = defaultValue.substring(0,defaultValue.indexOf("="));
-    				    String v = defaultValue.substring(defaultValue.indexOf("=") + 1, defaultValue.length());
-    				    defaultValuesMap.put(k,v);
+                        key = key.substring(0, key.length() - MAP_SUFFIX.length());
+    			Map<String,String> valueMap = new HashMap<String,String>();
+    			for(String keyValue : string.split(fieldSeparator)) {
+    			    if(keyValue.indexOf("=") > -1) {
+    				    String k = keyValue.substring(0, keyValue.indexOf("="));
+    				    String v = keyValue.substring(keyValue.indexOf("=") + 1, keyValue.length());
+    				    valueMap.put(k,v);
     			    }
     			}
-    			value = defaultValuesMap;
+    			value = valueMap;
     		} else if(key.endsWith(ARRAY_SUFFIX)) {
+                        key = key.substring(0, key.length() - ARRAY_SUFFIX.length());
     			value = string.split(fieldSeparator);
     		} else {
     			value = string;

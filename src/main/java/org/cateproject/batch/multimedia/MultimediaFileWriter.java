@@ -20,6 +20,10 @@ public class MultimediaFileWriter implements ItemWriter<Multimedia> {
     @Autowired
     private FileTransferService fileTransferService;
 
+    public void setFileTransferService(FileTransferService fileTransferService) {
+        this.fileTransferService = fileTransferService;
+    }
+
     @Override
     public void write(final List<? extends Multimedia> multimedias) throws Exception {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter () {

@@ -25,7 +25,15 @@ public class DefaultFileTransferServiceImpl implements FileTransferService, Mult
         @Value("${static.file.directory:#{'./static/'}}")
 	private FileSystemResource staticFileDirectory;
 	
-	private File stringToFile(String fileName) {
+        public void setUploadFileDirectory(FileSystemResource uploadFileDirectory) {
+            this.uploadFileDirectory = uploadFileDirectory;
+        }
+
+        public void setStaticFileDirectory(FileSystemResource staticFileDirectory) {
+            this.staticFileDirectory = staticFileDirectory;
+        }
+
+	public File stringToFile(String fileName) {
 		
 		File file = null;
 		
@@ -94,7 +102,8 @@ public class DefaultFileTransferServiceImpl implements FileTransferService, Mult
 	
 	public void moveFileIn(String fromName, File to) throws IOException {
 		File from = stringToFile(fromName);
-		if(!from.equals(to)) {
+                logger.debug("Move {} to {} to exists {}", new Object[]{from.getAbsolutePath(), to.getAbsolutePath(), to.exists()});
+		if(!to.exists()) {
 		    Files.move(from.toPath(), to.toPath());
 		}		
         }
@@ -110,7 +119,8 @@ public class DefaultFileTransferServiceImpl implements FileTransferService, Mult
 	
 	public void copyFileIn(String fromName, File to) throws IOException {
 		File from = stringToFile(fromName);
-		if(!from.equals(to)) {
+                logger.debug("Copying {} to {} to exists {}", new Object[]{from.getAbsolutePath(), to.getAbsolutePath(), to.exists()});
+		if(!to.exists()) {
 		    Files.copy(from.toPath(), to.toPath());
 		}		
         }

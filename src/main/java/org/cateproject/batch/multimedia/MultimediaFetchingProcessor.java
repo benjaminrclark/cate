@@ -44,7 +44,7 @@ public class MultimediaFetchingProcessor implements ItemProcessor<Multimedia, Mu
 		this.fileTransferService = fileTransferService;
 	}
 	
-	public void setTemporaryFieDirectory(FileSystemResource temporaryFileDirectory) {
+	public void setTemporaryFileDirectory(FileSystemResource temporaryFileDirectory) {
 	    this.temporaryFileDirectory = temporaryFileDirectory;
 	}
 
@@ -52,29 +52,43 @@ public class MultimediaFetchingProcessor implements ItemProcessor<Multimedia, Mu
 		this.getResourceClient = getResourceClient;
 	}
 
+        public void setMultimediaFileService(MultimediaFileService multimediaFileService) {
+            this.multimediaFileService = multimediaFileService;
+        }
+
 	@Override
-	public Multimedia process(Multimedia multimedia) throws Exception {	
-		if(multimedia.getLocalFileName() == null) {		
-			if(uploadedFile.lastIndexOf(".") > -1) {
-				multimedia.setLocalFileName(UUID.randomUUID() + uploadedFile.substring(uploadedFile.lastIndexOf(".")));
-			} else {
-				multimedia.setLocalFileName(UUID.randomUUID().toString());
-			}
+	public Multimedia process(Multimedia multimedia) throws Exception {
+                String fromFileName = null;
+                if(uploadedFile == null) {
+                    fromFileName = multimedia.getIdentifier();
+                } else {
+                    fromFileName = uploadedFile;
+                }
+	
+		if(multimedia.getLocalFileName() == null) {
+		    if(fromFileName.lastIndexOf(".") > -1) {
+		        multimedia.setLocalFileName(UUID.randomUUID() + fromFileName.substring(fromFileName.lastIndexOf(".")));
+		    } else {
+		        multimedia.setLocalFileName(UUID.randomUUID().toString());
+		    }
 		}
 		
 		File to = new File(temporaryFileDirectory.getFile(), multimedia.getLocalFileName());
-		logger.debug("Fetching multimedia {} to {}", new Object[] {uploadedFile, to.getAbsolutePath()});
-		if(multimedia.getIdentifier().startsWith("http://")) {
+                if(uploadedFile != null) {
+                        logger.debug("Fetching {}",new Object []{uploadedFile});
+                        // TODO should be copyFileIn if we want to be able to restart this job
+                        fileTransferService.moveFileIn(uploadedFile, to);	
+		} else if(multimedia.getIdentifier().startsWith("http://")) {
 			DateTime lastModified = getResourceClient.getResource(multimedia.getIdentifier(), null, to);
 			multimedia.setFileLastModified(lastModified);
 			logger.debug("Fetching {} last modified {}", new Object[] {multimedia.getIdentifier(),lastModified});
 		} else {
-			logger.debug("Fetching {}",new Object []{uploadedFile});
-			fileTransferService.moveFileIn(uploadedFile, to);	
-		}
+                    // Should never be true, but defend against it
+                    return null;
+                }
 	
                 MultimediaFile originalFile = new MultimediaFile(multimedia, to, MultimediaFileType.original);
-		Multimedia newMultimedia = multimediaFileService.extractFileInfo(to, new Multimedia());
+		Multimedia newMultimedia = multimediaFileService.localFileInfo(to);
 		if(multimediaFileService.filesUnchanged(multimedia, newMultimedia) && fileTransferService.exists(originalFile.toString())) {
                     logger.info("{} has not changed, skipping",new Object[]{multimedia.getLocalFileName()});
 		    return null; // skip

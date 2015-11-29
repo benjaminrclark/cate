@@ -7,7 +7,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+
+import net.bramp.ffmpeg.FFprobe;
+import net.bramp.ffmpeg.probe.FFmpegProbeResult;
+import net.bramp.ffmpeg.probe.FFmpegStream;
 
 import org.apache.sanselan.ImageInfo;
 import org.apache.sanselan.ImageReadException;
@@ -48,8 +53,13 @@ public class MultimediaFileService {
     @Autowired
     private GetResourceClient getResourceClient;
 
+    private Tika tika = new Tika();
 
-    Tika tika = new Tika();
+    private FFprobe ffprobe = new FFprobe();
+
+    public void setGetResourceClient(GetResourceClient getResourceClient) {
+        this.getResourceClient = getResourceClient;
+    }
 
     private static Map<String,String> MIMETYPE_EXTENSION_MAP = new HashMap<String,String>();
 	
@@ -60,6 +70,8 @@ public class MultimediaFileService {
 	MIMETYPE_EXTENSION_MAP.put("image/png", "png");
 	MIMETYPE_EXTENSION_MAP.put("image/gif", "gif");
 	MIMETYPE_EXTENSION_MAP.put("image/bmp", "bmp");
+	MIMETYPE_EXTENSION_MAP.put("video/mp4", "mp4");
+	MIMETYPE_EXTENSION_MAP.put("audio/mpeg", "mp3");
     }
 
     static {
@@ -67,136 +79,115 @@ public class MultimediaFileService {
 	MIMETYPE_DCMITYPE_MAP.put("image/png", DCMIType.StillImage);
 	MIMETYPE_DCMITYPE_MAP.put("image/gif", DCMIType.StillImage);
 	MIMETYPE_DCMITYPE_MAP.put("image/bmp", DCMIType.StillImage);
+	MIMETYPE_DCMITYPE_MAP.put("video/mp4", DCMIType.MovingImage);
+	MIMETYPE_DCMITYPE_MAP.put("audio/mpeg", DCMIType.Sound);
     }
+
     public static String getExtension(String mimeType) {
 	return MIMETYPE_EXTENSION_MAP.get(mimeType);
     }
 
-    public DCMIType getType(String mimeType) {
+    public static DCMIType getType(String mimeType) {
        return MIMETYPE_DCMITYPE_MAP.get(mimeType); 
     }
 
-    public Multimedia extractFileInfo(File file, Multimedia multimedia) {
-        if(file != null) {
-	    logger.info("Getting image info from {}", new Object[] {file});
-	    try {
-	        Metadata metadata = new Metadata();
-	        metadata.set(TikaMetadataKeys.RESOURCE_NAME_KEY, file.getName());	        
-	        String mime = tika.detect(new FileInputStream(file), metadata);
-	        logger.info("Detected mimetype is {}", new Object[] {mime});
-	        multimedia.setFormat(mime);
-	        multimedia.setSize(file.length());
-                multimedia.setType(getType(mime));
-         
-                switch (multimedia.getType()) {
-                    case StillImage: 
+    public void setTemporaryFileDirectory(FileSystemResource temporaryFileDirectory) {
+        this.temporaryFileDirectory = temporaryFileDirectory;
+    }
+
+    public Multimedia remoteFileInfo(String resource) {
+        Multimedia multimedia = new Multimedia();
+	if(resource.startsWith("http://")) {
+	    logger.info("Trying to get last modified for {}", new Object[] {resource});
+	    DateTime lastModified = getResourceClient.getLastModified(resource);
+            logger.info("Last modified is {}", new Object[] {lastModified});
+	    multimedia.setFileLastModified(lastModified);
+	}
+        return multimedia;
+    }
+
+    public Multimedia localFileInfo(File file) {
+        Multimedia multimedia = new Multimedia();
+	logger.info("Getting image info from {}", new Object[] {file});
+	try {
+	    Metadata metadata = new Metadata();
+	    metadata.set(TikaMetadataKeys.RESOURCE_NAME_KEY, file.getName());	        
+	    String mime = tika.detect(new FileInputStream(file), metadata);
+	    multimedia.setFormat(mime);
+	    multimedia.setSize(file.length());
+            multimedia.setType(getType(mime));
+	    logger.info("Detected format is {}, type is {}", new Object[] {mime, getType(mime)});
+            switch (multimedia.getType()) {
+                case StillImage: 
+                    try {
 	                ImageInfo imageInfo = Sanselan.getImageInfo(file);
 	                multimedia.setWidth(imageInfo.getWidth());
 	                multimedia.setHeight(imageInfo.getHeight());
-                        break;
-                    case MovingImage:
-                    case Sound:
-                        break;
-                    default:
-                        break;
-                }
-                 
-	        FileInputStream fileInputStream = new FileInputStream(file);
-	        byte[] buffer = new byte[255 * 3];
-	        int read = fileInputStream.read(buffer);
-	        multimedia.setHash(new String(buffer,Charset.forName("UTF-8")));
-	        multimedia.setLocalFileName(UUID.randomUUID().toString() + "." + getExtension(mime));
-	        fileInputStream.close();
-	    } catch (FileNotFoundException fnfe) {
-	        logger.error(fnfe.getMessage());
-	    } catch (ImageReadException ire) {
-	        logger.error(ire.getMessage());
-	    } catch (IOException ioe) {
-	        logger.error(ioe.getMessage());
-	    }
-	} else {
-	    if(multimedia.getIdentifier() != null && multimedia.getIdentifier().startsWith("http://")) {
-	        logger.info("Trying to get last modified for {}", new Object[] {multimedia.getIdentifier()});
-	        DateTime lastModified = getResourceClient.getLastModified(multimedia.getIdentifier());
-                logger.info("Last modified is {}", new Object[] {lastModified});
-	        multimedia.setFileLastModified(lastModified);
-	     }
+	            } catch (ImageReadException ire) {
+                        // TODO report exception
+	                logger.error(ire.getMessage());
+                    }
+                    break;
+                case MovingImage:
+                    FFmpegProbeResult videoResult = ffprobe.probe(file.getAbsolutePath());
+                    for(FFmpegStream ffmpegStream : videoResult.getStreams()) {
+                        logger.info("Found stream index {} codec_long_name {} codec_name {}", new Object[]{ffmpegStream.index,ffmpegStream.codec_long_name, ffmpegStream.codec_name});
+                        if(isVideoCodec(ffmpegStream.codec_name)) {
+                            multimedia.setWidth(ffmpegStream.width);
+                            multimedia.setHeight(ffmpegStream.height);
+                            multimedia.setDuration(ffmpegStream.duration);
+                            break;
+                        }
+                    }
+                    break;
+                case Sound:
+                    FFmpegProbeResult audioResult = ffprobe.probe(file.getAbsolutePath());
+                    for(FFmpegStream ffmpegStream : audioResult.getStreams()) {
+                        if(isAudioCodec(ffmpegStream.codec_name)) {
+                            multimedia.setDuration(ffmpegStream.duration);
+                            break;
+                        }
+                    }
+                    break;
+                default:
+                    // TODO Error condition
+                    break;
+            }
+             
+	    FileInputStream fileInputStream = new FileInputStream(file);
+	    byte[] buffer = new byte[255 * 3];
+	    int read = fileInputStream.read(buffer);
+	    multimedia.setHash(new String(buffer,Charset.forName("UTF-8")));
+	    multimedia.setLocalFileName(UUID.randomUUID().toString() + "." + getExtension(mime));
+	    fileInputStream.close();
+	} catch (FileNotFoundException fnfe) {
+            // TODO report exception
+	    logger.error(fnfe.getMessage());
+	} catch (IOException ioe) {
+            // TODO report exception 
+	    logger.error(ioe.getMessage());
 	}
 	return multimedia;
     }
 
-    public boolean imageUnchanged(Multimedia m1, Multimedia m2) {
+    public boolean filesUnchanged(Multimedia m1, Multimedia m2) {
 	    if(m1.getHash() != null && m2.getHash() != null && !m1.getHash().isEmpty() && !m2.getHash().isEmpty()) {
 	        logger.info("Comparing image file data");
 	        return 
-	            m2.getSize().equals(m1.getSize()) 
-                    && m2.getWidth().equals(m1.getWidth())
-	            && m2.getHeight().equals(m1.getHeight())
-	            && m2.getHash().equals(m1.getHash());
+	            Objects.equals(m2.getSize(), m1.getSize()) 
+                    && Objects.equals(m2.getWidth(), m1.getWidth())
+	            && Objects.equals(m2.getHeight(), m1.getHeight())
+                    && Objects.equals(m2.getDuration(), m1.getDuration())
+	            && Objects.equals(m2.getHash(), m1.getHash());
 	        } else {
 	            if(m1.getFileLastModified() != null && m2.getFileLastModified() != null) {
 	                logger.info("Comparing last modified dates");
 	                return m1.getFileLastModified().equals(m2.getFileLastModified());
 	     } else {
-	        logger.info("Images are different");
+	        logger.info("Multimedia are different");
 	        return false;
 	    }
 	}
-    }
-
-    public boolean videoUnchanged(Multimedia m1, Multimedia m2) {
-	    if(m1.getHash() != null && m2.getHash() != null && !m1.getHash().isEmpty() && !m2.getHash().isEmpty()) {
-	        logger.info("Comparing video file data");
-	        return 
-	            m2.getSize().equals(m1.getSize()) 
-                    && m2.getWidth().equals(m1.getWidth())
-	            && m2.getHeight().equals(m1.getHeight())
-                    && m2.getDuration().equals(m1.getDuration())
-	            && m2.getHash().equals(m1.getHash());
-	        } else {
-	            if(m1.getFileLastModified() != null && m2.getFileLastModified() != null) {
-	                logger.info("Comparing last modified dates");
-	                return m1.getFileLastModified().equals(m2.getFileLastModified());
-	     } else {
-	        logger.info("Video files are different");
-	        return false;
-	    }
-	}
-    }
-
-    public boolean audioUnchanged(Multimedia m1, Multimedia m2) {
-	    if(m1.getHash() != null && m2.getHash() != null && !m1.getHash().isEmpty() && !m2.getHash().isEmpty()) {
-	        logger.info("Comparing audio file data");
-	        return 
-	            m2.getSize().equals(m1.getSize()) 
-                    && m2.getDuration().equals(m1.getDuration())
-	            && m2.getHash().equals(m1.getHash());
-	        } else {
-	            if(m1.getFileLastModified() != null && m2.getFileLastModified() != null) {
-	                logger.info("Comparing last modified dates");
-	                return m1.getFileLastModified().equals(m2.getFileLastModified());
-	     } else {
-	        logger.info("Audio files are different");
-	        return false;
-	    }
-	}
-    }
-    public boolean filesUnchanged(Multimedia m1, Multimedia m2) {
-        if(m1.getType() == m2.getType()) {
-            switch (m1.getType()) {
-                case StillImage:
-                    return imageUnchanged(m1,m2);
-                case MovingImage:
-                    return videoUnchanged(m1,m2);
-                case Sound:
-                    return audioUnchanged(m1,m2);
-                default:
-                    return false;
-            }
-        } else {
-            logger.info("Multimedia are different types ({}, {})", new Object[]{m1.getType(), m2.getType()});
-            return false;
-        }
     }
 
     public void copyFileInfo(Multimedia from, Multimedia to) {
@@ -208,6 +199,23 @@ public class MultimediaFileService {
         to.setHash(from.getHash());
     }
 
+    public boolean isVideoCodec(String codec) {
+        switch(codec) {
+            case "h264":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public boolean isAudioCodec(String codec) {
+        switch(codec) {
+            case "mp3":
+                return true;
+            default:
+                return false;
+        }
+    }
 
     public void handleFile(Multimedia multimedia) {
 
@@ -220,7 +228,7 @@ public class MultimediaFileService {
             try {
                 multipartFile.transferTo(temporaryFile);
                 multimedia.setOriginalFile(temporaryFile);
-            } catch (Exception e) {
+            } catch (IOException e) {
             	logger.error("Error transfering multipart file to {}", new Object[]{temporaryFile}, e);
                 throw new RuntimeException(e);
             }

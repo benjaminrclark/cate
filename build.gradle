@@ -162,7 +162,7 @@ test {
    maxHeapSize = '1024m'
     testLogging {
         events "failed"
-        exceptionFormat "long"
+        exceptionFormat "full"
     }
 }
 }

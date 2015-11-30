@@ -165,7 +165,6 @@ test {
         exceptionFormat "full"
     }
 }
-}
 
 jacocoTestReport {
     reports {

@@ -1,6 +1,7 @@
 package org.cateproject.batch.convert;
 
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.springframework.core.convert.converter.Converter;
 
@@ -9,7 +10,7 @@ public class MapToStringConverter implements Converter<Map<String,Object>,String
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("[");
         boolean first = true;
-        for(String key : map.keySet()) {
+        for(String key : new TreeSet<String>(map.keySet())) {
             if(!first) {
                 stringBuilder.append(",");
             } else {

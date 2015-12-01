@@ -8,6 +8,12 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.bramp.ffmpeg.FFprobe;
+import net.bramp.ffmpeg.probe.FFmpegProbeResult;
+import net.bramp.ffmpeg.probe.FFmpegStream;
 
 import org.cateproject.domain.Multimedia;
 import org.cateproject.domain.constants.DCMIType;
@@ -28,12 +34,16 @@ public class MultimediaFileServiceTest {
 
     private GetResourceClient getResourceClient;
 
+    private FFprobe ffprobe;
+
     @Before
     public void setUp() {
         multimediaFileService = new MultimediaFileService();
         getResourceClient = EasyMock.createMock(GetResourceClient.class);
+        ffprobe = EasyMock.createMock(FFprobe.class);
         multimediaFileService.setGetResourceClient(getResourceClient);
         multimediaFileService.setTemporaryFileDirectory(new FileSystemResource(new File(System.getProperty("java.io.tmpdir"))));
+        multimediaFileService.setFFprobe(ffprobe);
     }
 
     @Test
@@ -50,8 +60,21 @@ public class MultimediaFileServiceTest {
     }
 
     @Test
-    public void testLocalFileInfoVideo() {
-        Multimedia multimedia = multimediaFileService.localFileInfo(new File("src/test/resources/org/cateproject/batch/job/test.mp4"));
+    public void testLocalFileInfoVideo() throws IOException {
+        FFmpegStream stream = new FFmpegStream();
+        stream.width = 1920;
+        stream.height = 1080;
+        stream.duration = 2.238978;
+        stream.codec_name = "h264"; 
+        List<FFmpegStream> streams = new ArrayList<FFmpegStream>();
+        streams.add(stream);
+        FFmpegProbeResult ffmpegProbeResult = new FFmpegProbeResult();
+        ffmpegProbeResult.streams = streams;
+        File file = new File("src/test/resources/org/cateproject/batch/job/test.mp4");
+        EasyMock.expect(ffprobe.probe(EasyMock.eq(file.getAbsolutePath()))).andReturn(ffmpegProbeResult);
+
+        EasyMock.replay(ffprobe);
+        Multimedia multimedia = multimediaFileService.localFileInfo(file);
         assertEquals("localFileInfo should set the correct format", "video/mp4", multimedia.getFormat()); 
         assertEquals("localFileInfo should set the correct size", new Long(5754322), multimedia.getSize()); 
         assertEquals("localFileInfo should set the correct type", DCMIType.MovingImage, multimedia.getType()); 
@@ -61,11 +84,24 @@ public class MultimediaFileServiceTest {
         assertNotNull("localFileInfo should set the  hash", multimedia.getHash()); 
         assertNotNull("localFileInfo should set the local file name", multimedia.getLocalFileName()); 
         assertNull("localFileInfo should not set the fileLastModified", multimedia.getFileLastModified());
+        EasyMock.verify(ffprobe);
     }
 
     @Test
-    public void testLocalFileInfoAudio() {
-        Multimedia multimedia = multimediaFileService.localFileInfo(new File("src/test/resources/org/cateproject/batch/job/test.mp3"));
+    public void testLocalFileInfoAudio() throws IOException {
+
+        FFmpegStream stream = new FFmpegStream();
+        stream.duration = 3.422041;
+        stream.codec_name = "mp3"; 
+        List<FFmpegStream> streams = new ArrayList<FFmpegStream>();
+        streams.add(stream);
+        FFmpegProbeResult ffmpegProbeResult = new FFmpegProbeResult();
+        ffmpegProbeResult.streams = streams;
+        File file = new File("src/test/resources/org/cateproject/batch/job/test.mp3");
+        EasyMock.expect(ffprobe.probe(EasyMock.eq(file.getAbsolutePath()))).andReturn(ffmpegProbeResult);
+
+        EasyMock.replay(ffprobe);
+        Multimedia multimedia = multimediaFileService.localFileInfo(file);
         assertEquals("localFileInfo should set the correct format", "audio/mpeg", multimedia.getFormat()); 
         assertEquals("localFileInfo should set the correct size", new Long(69101), multimedia.getSize()); 
         assertEquals("localFileInfo should set the correct type", DCMIType.Sound, multimedia.getType()); 
@@ -73,6 +109,7 @@ public class MultimediaFileServiceTest {
         assertNotNull("localFileInfo should set the  hash", multimedia.getHash()); 
         assertNotNull("localFileInfo should set the local file name", multimedia.getLocalFileName()); 
         assertNull("localFileInfo should not set the fileLastModified", multimedia.getFileLastModified());
+        EasyMock.verify(ffprobe);
     }
     @Test
     public void testLocalFileInfoFileNotFound() {

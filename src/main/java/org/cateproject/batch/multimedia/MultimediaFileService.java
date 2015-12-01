@@ -61,6 +61,10 @@ public class MultimediaFileService {
         this.getResourceClient = getResourceClient;
     }
 
+    public void setFFprobe(FFprobe ffprobe) {
+        this.ffprobe = ffprobe;
+    }
+
     private static Map<String,String> MIMETYPE_EXTENSION_MAP = new HashMap<String,String>();
 	
     private static Map<String,DCMIType> MIMETYPE_DCMITYPE_MAP = new HashMap<String,DCMIType>();

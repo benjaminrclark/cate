@@ -9,11 +9,13 @@ import javax.persistence.EntityManagerFactory;
 import org.cateproject.batch.BatchListener;
 import org.cateproject.batch.InputFileCleanupTasklet;
 import org.cateproject.batch.ParameterConvertingTasklet;
+import org.cateproject.batch.multimedia.ImageResizeProcessor;
 import org.cateproject.batch.multimedia.MultimediaFetchingProcessor;
 import org.cateproject.batch.multimedia.MultimediaFileService;
 import org.cateproject.batch.multimedia.MultimediaFileWriter;
 import org.cateproject.domain.Base;
 import org.cateproject.domain.Multimedia;
+import org.cateproject.domain.constants.MultimediaFileType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -101,12 +103,6 @@ public class ProcessMultimediaConfiguration {
         return multimediaFileReader;
     }
 
-	/*
-	      <ref bean="imageMetadataProcessor"/>
-              <ref bean="imageLargeProcessor"/>
-	      <ref bean="imageThumbnailProcessor"/>
-	*/
-
     @Bean
     @StepScope
     public MultimediaFetchingProcessor multimediaFetchingProcessor(@Value("#{jobExecutionContext['input.file']}") String inputFile) {
@@ -119,9 +115,34 @@ public class ProcessMultimediaConfiguration {
     public ItemProcessor<Multimedia,Multimedia> multimediaFileProcessor(MultimediaFetchingProcessor multimediaFetchingProcessor) {
         List<ItemProcessor<Multimedia,Multimedia>> delegates = new ArrayList<ItemProcessor<Multimedia,Multimedia>>();
         delegates.add(multimediaFetchingProcessor);
+        delegates.add(imageLargeProcessor());
+        delegates.add(imageThumbnailProcessor());
         CompositeItemProcessor<Multimedia,Multimedia> multimediaFileProcessor = new CompositeItemProcessor<Multimedia,Multimedia>();
         multimediaFileProcessor.setDelegates(delegates);
         return multimediaFileProcessor;
+    }
+ 
+    @Bean
+    public ItemProcessor<Multimedia,Multimedia> imageLargeProcessor() {
+        ImageResizeProcessor imageLargeProcessor = new ImageResizeProcessor();
+        imageLargeProcessor.setType(MultimediaFileType.large);
+        imageLargeProcessor.setResizeX(1000);
+        imageLargeProcessor.setResizeY(1000);
+        imageLargeProcessor.setResizeChar('>');
+        return imageLargeProcessor;
+    }
+
+    @Bean
+    public ItemProcessor<Multimedia,Multimedia> imageThumbnailProcessor() {
+        ImageResizeProcessor imageThumbnailProcessor = new ImageResizeProcessor();
+        imageThumbnailProcessor.setType(MultimediaFileType.thumbnail);
+        imageThumbnailProcessor.setResizeX(100);
+        imageThumbnailProcessor.setResizeY(100);
+        imageThumbnailProcessor.setResizeChar('^');
+        imageThumbnailProcessor.setGravity("center");
+        imageThumbnailProcessor.setExtentX(100);
+        imageThumbnailProcessor.setExtentY(100);
+        return imageThumbnailProcessor;
     }
 
     @Bean

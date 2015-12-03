@@ -37,7 +37,8 @@
       <div th:replace="fragments/form :: display(id='org_cateproject_domain_multimedia_rights',field='rights')">Rights Field</div>
      </form>
      <span>       
-       <form th:action="@{/edit/multimedia/__${result.id}__}" method="DELETE">
+       <form th:action="@{/edit/multimedia/__${result.id}__}" method="POST">
+         <input type="hidden" name="_method" value="DELETE"/>
          <button id="delete" class="btn btn-mini btn-warning" th:title="#{entity_delete(#{label_org_cateproject_domain_multimedia})}" ><i class="icon-remove-sign"><!-- --></i></button>
        </form>
      </span>

@@ -51,7 +51,8 @@
       <tbody>
       <tr th:each="result : ${results}">
         <td>
-          <form th:action="@{/edit/multimedia/__${result.id}__}" method="DELETE">
+          <form th:action="@{/edit/multimedia/__${result.id}__}" method="POST">
+            <input type="hidden" name="_method" value="DELETE"/>
             <button id="delete" class="btn btn-mini btn-warning" th:title="#{entity_delete(#{label_org_cateproject_domain_multimedia})}" ><i class="icon-remove-sign"><!-- --></i></button>
           </form>
         </td>
@@ -62,7 +63,7 @@
         </td>
         <td>
           <div class="thumbnail">
-              <img th:src="@{/static/__${result.type}__/original/__${result.localFileName}__}"/>
+              <img th:src="@{/static/__${result.type}__/thumbnail/__${result.localFileName}__}"/>
           </div>
         </td>
         <td></td>

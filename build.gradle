@@ -159,7 +159,7 @@ dependencies {
 
 test {
   //makes the standard streams (err and out) visible at console when running tests
-  //testLogging.showStandardStreams = true
+  // testLogging.showStandardStreams = true
    maxHeapSize = '1024m'
     testLogging {
         events "failed"

@@ -40,13 +40,13 @@ public class JobExecutionControllerTest {
 
    @Test
    public void testList() {
-       Pageable pageable = new PageRequest(1,1);
+       Pageable pageable = new PageRequest(0,1);
        Model uiModel = new ExtendedModelMap();
        List<FilterQuery> filterQueries = new ArrayList<FilterQuery>();
        filterQueries.add(new SimpleFilterQuery());
        List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
        jobExecutions.add(MetaDataInstanceFactory.createJobExecution(1L));
-       SolrResultPage<JobExecution> solrResultPage = new SolrResultPage<JobExecution>(jobExecutions);
+       SolrResultPage<JobExecution> solrResultPage = new SolrResultPage<JobExecution>(jobExecutions, pageable, 1L, 1.0F);
        Page<FacetFieldEntry> facetPage = new PageImpl<FacetFieldEntry>(new ArrayList<FacetFieldEntry>());
        solrResultPage.addFacetResultPage(facetPage, new SimpleField("FIELD"));
 
@@ -62,11 +62,11 @@ public class JobExecutionControllerTest {
 
    @Test
    public void testListWithNullQuery() {
-       Pageable pageable = new PageRequest(1,1);
+       Pageable pageable = new PageRequest(0,1);
        Model uiModel = new ExtendedModelMap();
        List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
        jobExecutions.add(MetaDataInstanceFactory.createJobExecution(1L));
-       SolrResultPage<JobExecution> solrResultPage = new SolrResultPage<JobExecution>(jobExecutions);
+       SolrResultPage<JobExecution> solrResultPage = new SolrResultPage<JobExecution>(jobExecutions, pageable, 1L, 1.0F);
        Page<FacetFieldEntry> facetPage = new PageImpl<FacetFieldEntry>(new ArrayList<FacetFieldEntry>());
        solrResultPage.addFacetResultPage(facetPage, new SimpleField("FIELD"));
 
@@ -82,11 +82,11 @@ public class JobExecutionControllerTest {
 
    @Test
    public void testListWithEmptyQuery() {
-       Pageable pageable = new PageRequest(1,1);
+       Pageable pageable = new PageRequest(0,1);
        Model uiModel = new ExtendedModelMap();
        List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
        jobExecutions.add(MetaDataInstanceFactory.createJobExecution(1L));
-       SolrResultPage<JobExecution> solrResultPage = new SolrResultPage<JobExecution>(jobExecutions);
+       SolrResultPage<JobExecution> solrResultPage = new SolrResultPage<JobExecution>(jobExecutions, pageable, 1L, 1.0F);
        Page<FacetFieldEntry> facetPage = new PageImpl<FacetFieldEntry>(new ArrayList<FacetFieldEntry>());
        solrResultPage.addFacetResultPage(facetPage, new SimpleField("FIELD"));
 

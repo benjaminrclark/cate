@@ -1,0 +1,42 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head(title=#{entity_list_all(#{label_org_springframework_batch_core_job_plural})})">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js"><!-- required for FF3 and Opera --></script>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="500">
+<div id="header" class="navbar navbar-fixed-top navbar-inverse" th:replace="fragments/header :: header">Header Goes Here</div>
+  <header class="page-header">
+  <div class="container">
+    <div class="row">
+      <h1 id="page-title" class="span8">
+        <i class="glyphicons-icon cogwheel"><!----></i> <span th:text="#{entity_list_all(#{label_org_springframework_batch_core_job_plural})}">List all jobs</span>
+      </h1>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <div class="row">
+  <div class="span12">
+    <section>
+    <table id="list_org_springframework_batch_core_Job" class="table table-condensed">
+      <thead>
+        <tr>
+          <th th:text="#{label_org_springframework_batch_core_job_name}">Job Name</th>
+          <th th:text="#{label_org_springframework_batch_core_job_description}">Job Description</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr th:each="result : ${results}">
+        <td ><a th:href="@{/batch/job/__${result.name}__}" th:text="${result.name}">Process Darwin Core Archive</a></td>
+        <td th:text="#{'label_org_cateproject_batch_job_description_'+'__${result.name}__'}">DwC Archive processing job description</td>
+      </tr>
+      </tbody>
+    </table>
+    <div th:replace="fragments/search :: pagination(url='/explore',result=${results})"/>
+    </section>
+  </div>
+  </div>
+  </div>
+</body>
+</html>

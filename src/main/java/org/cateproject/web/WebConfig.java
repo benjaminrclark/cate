@@ -8,6 +8,8 @@ import org.cateproject.domain.Taxon;
 import org.cateproject.repository.jpa.DatasetRepository;
 import org.cateproject.repository.jpa.ReferenceRepository;
 import org.cateproject.repository.jpa.TaxonRepository;
+import org.cateproject.web.batch.JobController;
+import org.cateproject.web.batch.JobExecutionController;
 import org.cateproject.web.edit.MultimediaController;
 import org.cateproject.web.edit.TaxonController;
 import org.cateproject.web.format.FilterQueryAnnotationFormatterFactory;
@@ -58,6 +60,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         @Bean
         public MultimediaController editMultimediaController() {
                 return new MultimediaController();
+        }
+
+        @Bean
+        public JobController jobController() {
+            return new JobController();
+        }
+
+        @Bean
+        public JobExecutionController jobExecutionController() {
+            return new JobExecutionController();
         }
 
 	@Override

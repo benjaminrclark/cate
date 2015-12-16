@@ -91,7 +91,7 @@ public class MultitenantJdbcAutoConfiguration {
 		tenantRoutingDataSource.setTargetDataSources((Map)tenantDataSourceMap());
 		return tenantRoutingDataSource;
 	}
-	
+
 	@Bean
 	@DependsOn("liquibase")
 	MultitenantRepository multitenantRepository() {

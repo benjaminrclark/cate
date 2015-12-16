@@ -14,12 +14,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/tenant")
 public class TenantController {
-	@Autowired
+    
+    @Autowired
     TenantRepository tenantRepository;
 	
-	public void setTenantRepository(TenantRepository tenantRepository) {
-		this.tenantRepository = tenantRepository;
-	}
+    public void setTenantRepository(TenantRepository tenantRepository) {
+	this.tenantRepository = tenantRepository;
+    }
         
     @RequestMapping(produces = "text/html")
     public String show(Model uiModel) {

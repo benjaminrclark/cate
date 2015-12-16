@@ -52,12 +52,12 @@ public class TaxonController {
     private ConversionService conversionService;
     
     public void setTaxonRepository(TaxonRepository taxonRepository) {
-		this.taxonRepository = taxonRepository;	
-	}
+	this.taxonRepository = taxonRepository;	
+    }
     
     public void setConversionService(ConversionService conversionService) {
-		this.conversionService = conversionService;	
-	}
+	this.conversionService = conversionService;	
+    }
 
     @RequestMapping(produces = "text/html")
     public String list(Pageable pageable, Model uiModel) {        
@@ -93,7 +93,9 @@ public class TaxonController {
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
     public String create(@Valid Taxon result, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest, RedirectAttributes redirectAttributes) {
+        logger.debug("create {}", new Object[]{result});
         if(bindingResult.hasErrors()) {
+            logger.error("create error {}", new Object[]{bindingResult});
             populateEditForm(uiModel, result);
             String[] codes = new String[] { "entity_create_error" };
     		Object[] args = new Object[] { result.toString()};

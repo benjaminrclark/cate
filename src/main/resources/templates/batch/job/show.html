@@ -1,0 +1,70 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head(title=#{entity_show(#{label_org_springframework_batch_core_job})})">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js"><!-- required for FF3 and Opera --></script>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="500">
+<div id="header" class="navbar navbar-fixed-top navbar-inverse" th:replace="fragments/header :: header">Header Goes Here</div>
+<header class="page-header">
+  <div class="container">
+    <div class="row">
+      <h1 id="page-title" class="span8">
+        <i class="glyphicons-icon cogwheel"><!----></i> <span th:text="${result.name}">Job Name</span>
+      </h1>
+	</div>
+  </div>
+</header>
+<div class="container">
+  <div class="row">
+  <div class="span12">
+    <section>
+    <h2 th:text="#{label_org_springframework_batch_core_job_jobinstances}">Job Instances</h2>
+    <div class="row">
+        <div class="span8 pull-left">
+            <span th:replace="fragments/search :: results(first=${(jobInstances.number * jobInstances.size) + 1}, last=${(jobInstances.number * jobInstances.size) + jobInstances.numberOfElements}, total=${jobInstances.numberOfElements}, query=${param.query})"/>
+        </div>
+    </div>      
+    <table class="table">
+            <thead>
+              <tr>
+                <th colspan="2" th:text="#{label_org_springframework_batch_core_jobinstance}">Job Instance</th>
+                <th colspan="7" th:text="#{label_org_springframework_batch_core_jobinstance_lastjobexecution}">Last Job Execution</th>
+              </tr>
+              <tr>
+                <th th:text="#{label_org_springframework_batch_core_jobinstance_id}">Id</th>
+                <th th:text="#{label_org_springframework_batch_core_jobinstance_jobexecutioncount}">Job Execution Count</th>
+                <th th:text="#{label_org_springframework_batch_core_jobinstance_lastjobexecution_id}">Job Execution Id</th>
+                <th th:text="#{label_org_springframework_batch_core_jobinstance_lastjobexecution_startdate}">Date</th>
+                <th th:text="#{label_org_springframework_batch_core_jobinstance_lastjobexecution_starttime}">Started</th>
+                <th th:text="#{label_org_springframework_batch_core_jobinstance_lastjobexecution_duration}">Duration</th>
+                <th th:text="#{label_org_springframework_batch_core_jobinstance_lastjobexecution_jobparameters}">Parameters</th>
+                <th th:text="#{label_org_springframework_batch_core_jobinstance_lastjobexecution_status}">Status</th>
+                <th th:text="#{label_org_springframework_batch_core_jobinstance_lastjobexecution_exitcode}">Exit Code</th>
+              </tr>
+            </thead>
+            <tbody>
+              <div th:each="item : ${jobInstances.content}" th:remove="tag">
+		<tr>
+                  <td th:text="${item.lastJobExecution.jobInstance}">1</td>
+                  <td th:text="${item.jobExecutionCount}">1</td>
+                  <td>
+		    <a href="show.html" th:href="@{/batch/execution/__${item.lastJobExecution.id}__}" title="1" th:title="${item.lastJobExecution.id}" th:text="${item.lastJobExecution.id}">1</a>
+                  </td>
+                  <td th:text="${#dates.format(item.lastJobExecution.startDateTime,'yyyy-MM-dd')}">2015-12-07 </td>
+                  <td th:text="${#dates.format(item.lastJobExecution.startDateTime,'hh:mm:ss')}">2015-12-07 </td>
+                  <td th:text="${item.lastJobExecution.duration}">18:09:48</td>
+                  <td th:text="${item.lastJobExecution.jobParameters}">{}</td>
+                  <td th:text="${item.lastJobExecution.status}">COMPLETED</td>
+                  <td th:text="${item.lastJobExecution.exitCode}">COMPLETED</td>
+	        </tr>
+              </div>
+       </tbody>
+    </table>
+<div th:replace="fragments/search :: pagination(url='/explore',result=${jobInstances})"/>
+    </section>
+</div>
+  </div>
+  </div>
+</body>
+</html>

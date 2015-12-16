@@ -1,0 +1,95 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head(title=#{entity_search(#{label_org_springframework_batch_core_jobexecution_plural})})">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js"><!-- required for FF3 and Opera --></script>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="500">
+  <div id="header" class="navbar navbar-fixed-top navbar-inverse"
+			th:replace="fragments/header :: header">Header Goes Here</div>
+  <header class="page-header">
+  <div class="container">
+    <div class="row">
+      <h1 id="page-title" class="span8">
+        <i class="glyphicons-icon search"><!----></i> <span th:text="#{entity_search(#{label_org_springframework_batch_core_jobexecution_plural})}">Search Job Executions</span>
+      </h1>
+		  <script th:if="${@ff4j.check('search.autocomplete')}" type="text/javascript">
+		        $(document).ready(function() {
+                                $("input#query").autocomplete({
+                                        source: "autocomplete",
+                 	                minLength: 2
+	                        });
+	                });
+	  </script>
+	  <form id="search.form" class="pull-right form-search" accept-charset="UTF-8" method="GET" th:action="@{/batch/execution}">
+	    <input class="search-query span3" th:placeholder="#{search.placeholder}" th:value="${param.query != null}? ${param.query[0]}" type="text" name="query" id="query"/>
+		<input type="hidden" name="size" th:value="${results.size != null} ? ${results.size}" />
+		<input type="hidden" name="page" value="0" />			
+		<button class="btn btn-primary"><i class="icon-search icon-white"><!--  --></i><span th:text="#{search}">search</span></button>
+	  </form>
+	</div>
+    <div class="row">
+      <a th:href="@{/explore}" class="btn pull-right" id="reset"><i class="icon-refresh"><!--  --></i><span th:text="#{reset_search}">reset search</span></a>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <div class="row">
+    <div class="span3">
+      <ul id="facets" class="well nav nav-list">
+        <div th:each="facetName : ${results.facetFields}" th:remove="tag">
+          <li th:replace="fragments/search :: facet(url='/batch/execution',result=${results},facetName=${facetName})">
+            facet
+          </li>
+        </div>
+      </ul>
+    </div>
+    <div class="span9">
+      <section>
+        <div class="row">
+          <div class="span8 pull-left">
+
+            <div th:replace="fragments/search :: sort(url='/explore',result=${results},sortItems='base.label_sort,asc base.created_dt,asc relevance')">sort</div>
+            <div th:if="${@ff4j.check('download')}">
+               <div th:replace="fragments/search :: download(url='/download',result=${results})" >download</div>
+            </div>
+            <span th:replace="fragments/search :: results(first=${(results.number * results.size) + 1}, last=${(results.number * results.size) + results.numberOfElements}, total=${results.numberOfElements}, query=${param.query})"/>
+          </div>
+        </div>      
+	  <table class="table">
+            <thead>
+              <tr>
+                <th th:text="#{label_org_springframework_batch_core_jobexecution_id}">Job Execution Id</th>
+                <th th:text="#{label_org_springframework_batch_core_jobexecution_jobinstance}">Job Instance Id</th>
+                <th th:text="#{label_org_springframework_batch_core_jobexecution_jobname}">Job Name</th>
+                <th th:text="#{label_org_springframework_batch_core_jobexecution_startdate}">Date</th>
+                <th th:text="#{label_org_springframework_batch_core_jobexecution_starttime}">Started</th>
+                <th th:text="#{label_org_springframework_batch_core_jobexecution_duration}">Duration</th>
+                <th th:text="#{label_org_springframework_batch_core_jobexecution_status}">Status</th>
+                <th th:text="#{label_org_springframework_batch_core_jobexecution_exitcode}">Exit Code</th>
+              </tr>
+            </thead>
+            <tbody>
+              <div th:each="item : ${results.content}" th:remove="tag">
+		<tr>
+                  <td>
+		    <a href="show.html" th:href="@{/batch/execution/__${item.id}__}" title="1" th:title="${item.id}" th:text="${item.id}">1</a>
+                  </td>
+                  <td th:text="${item.jobInstance}">1</td>
+                  <td ><a th:href="@{/batch/job/__${item.jobName}__}" th:text="${item.jobName}">Process DwC Archive</a></td>
+                  <td th:text="${#dates.format(item.startDateTime,'yyyy-MM-dd')}">2015-12-07 </td>
+                  <td th:text="${#dates.format(item.startDateTime,'hh:mm:ss')}">2015-12-07 </td>
+                  <td th:text="${item.duration}">18:09:48</td>
+                  <td th:text="${item.status}">COMPLETED</td>
+                  <td th:text="${item.exitCode}">COMPLETED</td>
+	        </tr>
+              </div>
+    </tbody>
+  </table>
+<div th:replace="fragments/search :: pagination(url='/explore',result=${results})"/>
+	</section>
+    </div>
+  </div>
+</div>
+</body>
+</html>

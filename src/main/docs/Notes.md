@@ -38,18 +38,18 @@ Base
     Read-write pages for all objects
   Reconciliation Service
   Duplicate Detection / merging
-  Persistence
-    Audit
+  Persistence #
+    Audit #
   Remoting / Resilience
   Look & Feel
     Static Resource Serving #
     Theme Source #
     LESS -> CSS Conversion
-  Integration
-  Batch
+  Integration #
+  Batch # 
   	Job Launch Request
-    Jobs
-      Job Execution
+    Jobs #
+      Job Execution #
         Step Execution
         Job Output
   Scheduler
@@ -79,3 +79,9 @@ two underlying readers called in order
  if(!changeListEntry.type().equals(ChangeType.DELETE)) {
     //
  }
+
+# Architecture
+			CATE Process
+Embedded Single Server
+Private Cluster
+Cloud (AWS)

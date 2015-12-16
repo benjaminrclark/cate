@@ -1,0 +1,39 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head(title=#{entity_show(#{label_org_springframework_batch_core_jobexecution})})">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js"><!-- required for FF3 and Opera --></script>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="500">
+<div id="header" class="navbar navbar-fixed-top navbar-inverse" th:replace="fragments/header :: header">Header Goes Here</div>
+<header class="page-header">
+  <div class="container">
+    <div class="row">
+      <h1 id="page-title" class="span8">
+        <i class="glyphicons-icon cogwheels"><!----></i> <span th:text="#{entity_show(#{label_org_springframework_batch_core_jobexecution})}">Show JobExecution</span>
+      </h1>
+	</div>
+  </div>
+</header>
+<div class="container">
+  <div class="row">
+  <div class="span12">
+    <section>
+    <form id="show_org_springframework_batch_core_JobExecution"  name="show_org_springframework_batch_core_JobExecution" class="form form-horizontal" th:object="${result}">
+      <div th:replace="fragments/form :: display(id='org_springframework_batch_core_jobexecution_id',field='id')">Id Field</div>
+      <div th:replace="fragments/form :: displayLink(id='org_springframework_batch_core_jobexecution_jobinstance',field='id', link='/batch/instance/' + ${result.jobInstance})">Id Field</div>
+      <div th:replace="fragments/form :: displayLink(id='org_springframework_batch_core_jobexecution_jobname',field='jobName', link='/batch/job/' + ${result.jobName})">Name Field</div>
+      <div th:replace="fragments/form :: displayText(id='org_springframework_batch_core_jobexecution_jobparameters',field='jobParameters')">Parameters Field</div>
+      <div th:replace="fragments/form :: display(id='org_springframework_batch_core_jobexecution_startdate',field='startDateTime')">Id Field</div>
+      <div th:replace="fragments/form :: display(id='org_springframework_batch_core_jobexecution_duration',field='duration')">Id Field</div>
+      <div th:replace="fragments/form :: display(id='org_springframework_batch_core_jobexecution_status',field='status')">Id Field</div>
+      <div th:replace="fragments/form :: display(id='org_springframework_batch_core_jobexecution_exitcode',field='exitCode')">Id Field</div>
+      <div th:replace="fragments/form :: display(id='org_springframework_batch_core_jobexecution_exitdescription',field='exitDescription')">Id Field</div>
+      <div th:replace="fragments/form :: display(id='org_springframework_batch_core_jobexecution_stepexecutioncount',field='stepExecutionCount')">Id Field</div>
+     </form>
+    </section>
+  </div>
+  </div>
+  </div>
+</body>
+</html>

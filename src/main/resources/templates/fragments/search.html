@@ -104,7 +104,7 @@
 	    <a th:href="${url}" th:text="#{pagination_label_previous}"/>
 	  </li>
 	  <li class="active">
-            <a href="#" th:text="${#numbers.formatInteger((result.number * result.size) + 1,1)} + ' - ' +  ${#numbers.formatInteger((result.number * result.size) + result.numberOfElements,1)}"></a>
+            <a href="#" th:text="${result.numberOfElements eq  0 ? 0 : #numbers.formatInteger((result.number * result.size) + 1,1)} + ' - ' +  ${#numbers.formatInteger((result.number * result.size) + result.numberOfElements,1)}"></a>
           </li>
           <li th:classappend="${not result.hasNext()} ? 'disabled'" class="prev">
 	    <a th:href="${url}" page="${result.nextPageable().getPageNumber()}" size="${result.nextPageable().getPageSize()}" th:text="#{pagination_label_next}"/>

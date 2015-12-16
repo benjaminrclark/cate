@@ -157,7 +157,12 @@ public class Page {
 		for(String field : new TreeSet<String>(fields)) {
 			List<String> row = new ArrayList<String>();
 			row.add(field);
-			row.add(webDriver.findElement(By.id(prefix.toLowerCase() + "_" + field.toLowerCase() + "_id")).getText());
+                        WebElement fieldElement = webDriver.findElement(By.id(prefix.toLowerCase() + "_" + field.toLowerCase() + "_id"));
+                        if(fieldElement.isEnabled()) {
+	  	            row.add(fieldElement.getText());
+                        } else {
+                            row.add(fieldElement.getAttribute("value"));
+                        }
 			rows.add(row);
 		}
 		DataTable actual = DataTable.create(rows);

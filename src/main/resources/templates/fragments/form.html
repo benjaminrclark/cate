@@ -22,9 +22,21 @@
 					</div>
 				</div>
 				<div th:fragment="display (id, field)" class="control-group">
+					<label class="control-label" th:for="__${id}___id" th:text="#{'label_' + ${id}}">field label: </label>
+					<div class="controls">
+						<input th:id="__${id}___id" type="text" disabled="true" th:field="*{__${field}__}" />
+					</div>
+				</div>
+				<div th:fragment="displayText(id, field)" class="control-group">
+					<label class="control-label" th:for="__${id}___id" th:text="#{'label_' + ${id}}">field label: </label>
+					<div class="controls">
+						<textarea th:id="__${id}___id" disabled="true" rows="3" th:field="*{__${field}__}" />
+					</div>
+				</div>
+				<div th:fragment="displayLink (id, field, link)" class="control-group">
 					<label class="control-label" th:for="__${id}___id" th:text="#{'label_' + ${id}}">Field Label: </label>
 					<div class="controls">
-						<span th:id="__${id}___id" class="uneditable-input" th:text="*{__${field}__}" />
+						<a th:id="__${id}___id" class="uneditable-input" th:href="@{__${link}__}" th:text="*{__${field}__}" />
 					</div>
 				</div>
 				<div th:fragment="select (id, field, items)" class="control-group" th:classappend="${#fields.hasErrors(field)}? error">

@@ -25,8 +25,16 @@ public class SnsEndpointController {
     @Autowired
     private ObjectMapper objectMapper;
 
+    public void setIncomingTenantEvents(MessageChannel incomingTenantEvents) {
+        this.incomingTenantEvents = incomingTenantEvents;
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     @NotificationMessageMapping
-    public void recieveNotification(@NotificationMessage String message, @NotificationSubject String subject) {
+    public void receiveNotification(@NotificationMessage String message, @NotificationSubject String subject) {
         MultitenantEvent multitenantEvent = objectMapper.convertValue(message, MultitenantEvent.class);  
         incomingTenantEvents.send(new GenericMessage<MultitenantEvent>(multitenantEvent));
     }

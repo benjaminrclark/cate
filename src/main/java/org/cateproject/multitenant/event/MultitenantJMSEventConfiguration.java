@@ -7,9 +7,6 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.apache.activemq.command.ActiveMQTopic;
-import org.cateproject.batch.convert.BatchJobDeserializer;
-import org.cateproject.batch.convert.BatchJobSerializer;
-import org.springframework.batch.core.Job;
 import org.springframework.batch.integration.launch.JobLaunchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,9 +25,7 @@ import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
 import org.springframework.messaging.MessageHandler;
 
-import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Configuration
 @Profile("default")
@@ -39,6 +34,9 @@ public class MultitenantJMSEventConfiguration {
         @Autowired
 	private ConnectionFactory connectionFactory;
 
+        @Autowired
+        private ObjectMapper objectMapper;
+   
         @Bean
         public Destination tenantEventsTopic() {
             return new ActiveMQTopic("cate.tenantEvents");
@@ -56,30 +54,11 @@ public class MultitenantJMSEventConfiguration {
 		
 	}
  
-        @Bean
-        public BatchJobSerializer batchJobSerializer() {
-            return new BatchJobSerializer();
-        }
-
-        @Bean
-        public BatchJobDeserializer batchJobDeserializer() {
-            return new BatchJobDeserializer();
-        }
-
-        @Bean
-        public ObjectMapper objectMapper() {
-            ObjectMapper objectMapper = new ObjectMapper();
-            SimpleModule module = new SimpleModule("SpringBatchJobModule", new Version(0, 1, 0, "alpha"));
-            module.addSerializer(JobLaunchRequest.class, batchJobSerializer());
-            module.addDeserializer(JobLaunchRequest.class, batchJobDeserializer());
-            objectMapper.registerModule(module);
-            return objectMapper;
-        }
 	
 	@Bean
 	public MessageConverter messageConverter() {
 		MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
-                messageConverter.setObjectMapper(objectMapper());
+                messageConverter.setObjectMapper(objectMapper);
 		messageConverter.setTargetType(MessageType.TEXT);
 		messageConverter.setTypeIdPropertyName("javaType");
 		Map<String, Class<?>> typeIdMappings = new HashMap<String, Class<?>>();

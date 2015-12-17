@@ -135,8 +135,9 @@ dependencies {
   compile("com.vividsolutions:jts:1.11") {
     exclude group: "xerces"
   }
-  compile("org.springframework.cloud:spring-cloud-aws-context:1.0.1.RELEASE")
-  compile("org.springframework.cloud:spring-cloud-aws-messaging:1.0.1.RELEASE")
+  compile("org.springframework.cloud:spring-cloud-aws-context:1.0.3.RELEASE")
+  compile("org.springframework.cloud:spring-cloud-aws-messaging:1.0.3.RELEASE")
+  compile("org.springframework.cloud:spring-cloud-aws-autoconfigure:1.0.3.RELEASE")
   compile("org.springframework.session:spring-session")
   compile("net.bramp.ffmpeg:ffmpeg:0.2")
   compile("org.im4java:im4java:1.4.0")

@@ -192,11 +192,11 @@
           },
           "installRepo" : {
             "files" : {
-              "/etc/yum.repos.d/cate.repo" : {
+              "/etc/yum.repos.d/bintraybintray-benjaminrclark-rpm.repo" : {
                 "content" : { "Fn::Join" : [ "", [
-                  "[cate]\n",
-                  "name=cate\n",
-                  "baseurl=http://yum.cate-project.net/\n",
+                  "[bintraybintray-benjaminrclark-rpm]\n",
+                  "name=bintraybintray-benjaminrclark-rpm\n",
+                  "baseurl=https://dl.bintray.com/benjaminrclark/rpm\n",
                   "enabled=1\n",
                   "gpgcheck=0\n"
                 ]]},

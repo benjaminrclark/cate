@@ -3,10 +3,10 @@ package org.cateproject.file;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Base64;
 import org.cateproject.domain.constants.DCMIType;
 import org.cateproject.domain.constants.MultimediaFileType;
 import org.cateproject.multitenant.MultitenantContextHolder;
@@ -96,7 +96,7 @@ public class S3FileTransferService implements FileTransferService, MultitenantEv
             objectMetadata.setContentEncoding("UTF-8");
             objectMetadata.setContentLength(content.length);
             byte[] digest = DigestUtils.md5Digest(content);
-            String md5 = new String(Base64.getEncoder().encode(digest));
+            String md5 = new String(Base64.encodeBase64(digest));
             objectMetadata.setContentMD5(md5);
             return objectMetadata;
         }

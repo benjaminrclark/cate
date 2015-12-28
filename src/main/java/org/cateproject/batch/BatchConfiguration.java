@@ -2,6 +2,7 @@ package org.cateproject.batch;
 
 import javax.sql.DataSource;
 
+import org.cateproject.file.GetResourceClient;
 import org.cateproject.multitenant.batch.MultitenantAwareJobLauncher;
 import org.cateproject.repository.jdbc.batch.JobInstanceRepository;
 import org.springframework.batch.core.configuration.JobRegistry;
@@ -40,6 +41,10 @@ public class BatchConfiguration {
     @Autowired
     private JobRegistry jobRegistry; 
 
+    @Bean
+    public GetResourceClient getResourceClient() {
+       return new GetResourceClient();
+    }
 
     @Bean
     public JobRepositoryFactoryBean jobRepositoryFactoryBean() {

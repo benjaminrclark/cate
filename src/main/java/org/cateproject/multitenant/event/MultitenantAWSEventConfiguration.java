@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.MessageConverter;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,23 +29,19 @@ public class MultitenantAWSEventConfiguration {
         @Autowired
         private ObjectMapper objectMapper;
 
-        @Value("${cloudformation.topic.logicalName:'CATETopic'}")
-        private String logicalTopicName;
+        @Value("${cloudformation.topicName:'CATETopic'}")
+        private String topicName;
 
-        @Bean
-        public MappingJackson2MessageConverter messageConverter() {
-            MappingJackson2MessageConverter messageConverter =  new MappingJackson2MessageConverter();
-            messageConverter.setObjectMapper(objectMapper);
-            return messageConverter;
-        }
+        @Autowired
+        MessageConverter messageConverter;
 
 	@Bean
 	@ServiceActivator(inputChannel = "outgoingTenantEvents")
 	public MessageHandler outboundTenantEventHandler() {
 		NotificationMessagingTemplate snsTemplate = new NotificationMessagingTemplate(amazonSNS);
-                String topicArn = resourceIdResolver.resolveToPhysicalResourceId(logicalTopicName);
+                String topicArn = resourceIdResolver.resolveToPhysicalResourceId(topicName);
                 snsTemplate.setDefaultDestinationName(topicArn);
-                snsTemplate.setMessageConverter(messageConverter());
+                snsTemplate.setMessageConverter(messageConverter);
 		SnsSendingMessageHandler messageHandler = new SnsSendingMessageHandler(snsTemplate);
 		return messageHandler;
 	}

@@ -1,5 +1,6 @@
 package org.cateproject.file;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.ServiceActivator;
@@ -9,21 +10,19 @@ import org.springframework.messaging.MessageHandler;
 @Configuration
 public class FileConfiguration {
 
-    @Bean
-    public FileTransferService fileTransferService() {
-        return new DefaultFileTransferServiceImpl();
-    }
+
+    @Autowired
+    private FileTransferService fileTransferService;
 
     @Bean
     @ServiceActivator(inputChannel="localTenantEvents")
-    public MessageHandler fileTransferServiceHandler(FileTransferService fileTransferService) {
+    public MessageHandler localFileTransferServiceHandler() {
 	return new ServiceActivatingHandler(fileTransferService, "handle");
     }
 
     @Bean
-    public GetResourceClient getResourceClient() {
-       return new GetResourceClient();
+    @ServiceActivator(inputChannel="remoteTenantEvents")
+    public MessageHandler remoteFileTransferServiceHandler() {
+	return new ServiceActivatingHandler(fileTransferService, "notify");
     }
-
-    
 }

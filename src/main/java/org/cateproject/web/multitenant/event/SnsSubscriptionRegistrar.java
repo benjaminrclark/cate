@@ -21,7 +21,7 @@ public class SnsSubscriptionRegistrar implements ServletContextListener, Disposa
     private String hostname;
 
     @Value("${cloudformation.topic.logicalName:'CATETopic'}")
-    private String logicalTopicName;
+    private String topicName;
 
     @Autowired
     private ResourceIdResolver resourceIdResolver;
@@ -31,8 +31,32 @@ public class SnsSubscriptionRegistrar implements ServletContextListener, Disposa
 
     String subscriptionArn = null;
 
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
+    }
+
+    public void setResourceIdResolver(ResourceIdResolver resourceIdResolver) {
+        this.resourceIdResolver = resourceIdResolver;
+    }
+
+    public void setAmazonSNS(AmazonSNS amazonSNS) {
+        this.amazonSNS = amazonSNS;
+    }
+
+    public void setSubscriptionArn(String subscriptionArn) {
+        this.subscriptionArn = subscriptionArn;
+    }
+
+    public String getSubscriptionArn() {
+        return subscriptionArn;
+    }
+
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        String topicArn = resourceIdResolver.resolveToPhysicalResourceId(logicalTopicName);
+        String topicArn = resourceIdResolver.resolveToPhysicalResourceId(topicName);
         SubscribeResult subscribeResult = amazonSNS.subscribe(topicArn, "http", "http://" + hostname + "/multitenant/event");
         subscriptionArn = subscribeResult.getSubscriptionArn();
         logger.info("Subscription successful, ARN: {}", new Object[]{subscriptionArn});

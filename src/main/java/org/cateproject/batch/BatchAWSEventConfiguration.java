@@ -4,6 +4,7 @@ import org.springframework.batch.integration.launch.JobLaunchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.core.env.ResourceIdResolver;
+import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import org.springframework.messaging.converter.MessageConverter;
 import com.amazonaws.services.sqs.AmazonSQS;
 
 @Profile("aws")
+@EnableSqs
 @Configuration
 public class BatchAWSEventConfiguration {
 

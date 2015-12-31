@@ -183,7 +183,7 @@ ospackage {
   arch = NOARCH 
     
   from(jar.outputs.files) {
-      rename '([a-z]+)-\\d+.\\d+.\\d+(-\\d+-\\d+-\\w+)?.jar','$1.jar'
+      rename '([a-z]+)-\\d+.\\d+.\\d+(-\\d+)?(-\\d+-\\w+)?.jar','$1.jar'
       addParentDirs true 
       user 'root'
       into '/var/lib/cate'         

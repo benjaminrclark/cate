@@ -10,7 +10,6 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.cloud.aws.messaging.endpoint.NotificationStatus;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 

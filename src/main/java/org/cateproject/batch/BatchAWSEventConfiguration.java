@@ -3,7 +3,6 @@ package org.cateproject.batch;
 import org.springframework.batch.integration.launch.JobLaunchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.aws.core.env.ResourceIdResolver;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.context.annotation.Bean;
@@ -23,11 +22,8 @@ import com.amazonaws.services.sqs.AmazonSQS;
 @Configuration
 public class BatchAWSEventConfiguration {
 
-    @Autowired
-    private ResourceIdResolver resourceIdResolver;
-
-    @Value("${cloudformation.queueName:'CATEQueue'}")
-    private String queueName;
+    @Value("${cloudformation.queueArn}")
+    private String queueArn;
 
     @Autowired
     private AmazonSQS amazonSQS;
@@ -39,7 +35,6 @@ public class BatchAWSEventConfiguration {
     public QueueMessagingTemplate queueMessagingTemplate() {
         QueueMessagingTemplate queueMessagingTemplate = new QueueMessagingTemplate(amazonSQS);
 
-        String queueArn = resourceIdResolver.resolveToPhysicalResourceId(queueName);
         queueMessagingTemplate.setDefaultDestinationName(queueArn);
         queueMessagingTemplate.setMessageConverter(messageConverter);
         return queueMessagingTemplate;

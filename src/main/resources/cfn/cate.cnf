@@ -281,17 +281,12 @@
                                                                                 "liquibase.contexts=mysql\n",
 										"spring.datasource.name=cate\n",
 										"spring.datasource.driver-class-name=com.mysql.jdbc.Driver\n",
-										"spring.datasource.url=jdbc:mysql://", {
-											"Fn::GetAtt": ["MySQLDatabase", "Endpoint.Address"]
-										}, ":3306/", {
-											"Ref": "DBName"
-										}, "\n",
-										"spring.datasource.username=", {
-											"Ref": "DBUser"
-										}, "\n",
-										"spring.datasource.password=", {
-											"Ref": "DBPassword"
-										}, "\n"
+										"spring.datasource.url=jdbc:mysql://", { "Fn::GetAtt": ["MySQLDatabase", "Endpoint.Address"] }, ":3306/", { "Ref": "DBName" }, "\n",
+										"spring.datasource.username=", { "Ref": "DBUser" }, "\n",
+										"spring.datasource.password=", { "Ref": "DBPassword" }, "\n",
+                                                                                "cloudformation.topicArn=", {"Ref": "CATETopic"}, "\n",
+                                                                                "cloudformation.queueArn=", {"Ref": "CATEQueue"}, "\n",
+                                                                                "cloudformation.uploadBucketArn=", {"Ref": "UploadBucket"}, "\n",
 									]]
 								},
 								"mode": "000600",
@@ -507,7 +502,10 @@
 		},
 		"CATETopic": {
 			"Type": "AWS::SNS::Topic"
-		}
+		},
+                "UploadBucket": {
+	                "Type": "AWS::S3::Bucket"
+                }
 	},
 
 	"Outputs": {

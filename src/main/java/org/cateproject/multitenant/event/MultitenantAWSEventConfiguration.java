@@ -2,7 +2,6 @@ package org.cateproject.multitenant.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.aws.core.env.ResourceIdResolver;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSns;
 import org.springframework.cloud.aws.messaging.core.NotificationMessagingTemplate;
 import org.springframework.context.annotation.Bean;
@@ -24,13 +23,10 @@ public class MultitenantAWSEventConfiguration {
 	private AmazonSNS amazonSNS;
 
         @Autowired
-        private ResourceIdResolver resourceIdResolver;
-
-        @Autowired
         private ObjectMapper objectMapper;
 
-        @Value("${cloudformation.topicName:'CATETopic'}")
-        private String topicName;
+        @Value("${cloudformation.topicArn}")
+        private String topicArn;
 
         @Autowired
         MessageConverter messageConverter;
@@ -39,7 +35,6 @@ public class MultitenantAWSEventConfiguration {
 	@ServiceActivator(inputChannel = "outgoingTenantEvents")
 	public MessageHandler outboundTenantEventHandler() {
 		NotificationMessagingTemplate snsTemplate = new NotificationMessagingTemplate(amazonSNS);
-                String topicArn = resourceIdResolver.resolveToPhysicalResourceId(topicName);
                 snsTemplate.setDefaultDestinationName(topicArn);
                 snsTemplate.setMessageConverter(messageConverter);
 		SnsSendingMessageHandler messageHandler = new SnsSendingMessageHandler(snsTemplate);

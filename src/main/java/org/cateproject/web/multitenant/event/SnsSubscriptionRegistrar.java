@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.aws.core.env.ResourceIdResolver;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.model.SubscribeResult;
@@ -20,11 +19,8 @@ public class SnsSubscriptionRegistrar implements ServletContextListener, Disposa
     @Value("${public-hostname:N/A}") 
     private String hostname;
 
-    @Value("${cloudformation.topic.logicalName:'CATETopic'}")
-    private String topicName;
-
-    @Autowired
-    private ResourceIdResolver resourceIdResolver;
+    @Value("${cloudformation.topicArn}")
+    private String topicArn;
 
     @Autowired
     AmazonSNS amazonSNS;
@@ -35,12 +31,8 @@ public class SnsSubscriptionRegistrar implements ServletContextListener, Disposa
         this.hostname = hostname;
     }
 
-    public void setTopicName(String topicName) {
-        this.topicName = topicName;
-    }
-
-    public void setResourceIdResolver(ResourceIdResolver resourceIdResolver) {
-        this.resourceIdResolver = resourceIdResolver;
+    public void setTopicArn(String topicArn) {
+        this.topicArn = topicArn;
     }
 
     public void setAmazonSNS(AmazonSNS amazonSNS) {
@@ -56,7 +48,6 @@ public class SnsSubscriptionRegistrar implements ServletContextListener, Disposa
     }
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        String topicArn = resourceIdResolver.resolveToPhysicalResourceId(topicName);
         SubscribeResult subscribeResult = amazonSNS.subscribe(topicArn, "http", "http://" + hostname + "/multitenant/event");
         subscriptionArn = subscribeResult.getSubscriptionArn();
         logger.info("Subscription successful, ARN: {}", new Object[]{subscriptionArn});

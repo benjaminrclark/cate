@@ -7,6 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+
 @Profile("aws")
 @Configuration
 public class FileAWSConfiguration {
@@ -14,11 +18,19 @@ public class FileAWSConfiguration {
         @Autowired
         private RegionProvider regionProvider;
 
+        @Autowired
+        private AWSCredentials awsCredentials;
+
         @Value("${cloudformation.uploadBucketArn}")
         private String uploadBucketArn;
 
         @Bean
-        FileTransferService fileTransferService() {
+        public AmazonS3 amazonS3() {
+            return new AmazonS3Client(awsCredentials); 
+        }
+
+        @Bean
+        public FileTransferService fileTransferService() {
             S3FileTransferService s3FileTransferService = new S3FileTransferService();
             s3FileTransferService.setUploadBucketArn(uploadBucketArn);
             s3FileTransferService.setRegion(regionProvider.getRegion().getName());

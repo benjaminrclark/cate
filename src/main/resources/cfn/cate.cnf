@@ -286,7 +286,7 @@
 										"spring.datasource.password=", { "Ref": "DBPassword" }, "\n",
                                                                                 "cloudformation.topicArn=", {"Ref": "CATETopic"}, "\n",
                                                                                 "cloudformation.queueArn=", {"Ref": "CATEQueue"}, "\n",
-                                                                                "cloudformation.uploadBucketArn=", {"Ref": "UploadBucket"}, "\n",
+                                                                                "cloudformation.uploadBucketArn=", {"Ref": "UploadBucket"}, "\n"
 									]]
 								},
 								"mode": "000600",

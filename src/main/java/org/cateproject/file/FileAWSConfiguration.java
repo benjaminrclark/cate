@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 
@@ -19,14 +19,14 @@ public class FileAWSConfiguration {
         private RegionProvider regionProvider;
 
         @Autowired
-        private AWSCredentials awsCredentials;
+        private AWSCredentialsProvider awsCredentialsProvider;
 
         @Value("${cloudformation.uploadBucketArn}")
         private String uploadBucketArn;
 
         @Bean
         public AmazonS3 amazonS3() {
-            return new AmazonS3Client(awsCredentials); 
+            return new AmazonS3Client(awsCredentialsProvider); 
         }
 
         @Bean

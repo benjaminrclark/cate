@@ -51,12 +51,15 @@ public class MultitenantFilterTest {
 		filterChain.doFilter(EasyMock.eq(request), EasyMock.eq(response));
 		filterChain.doFilter(EasyMock.eq(request), EasyMock.eq(response));
 		filterChain.doFilter(EasyMock.eq(request), EasyMock.eq(response));
+		filterChain.doFilter(EasyMock.eq(request), EasyMock.eq(response));
 		EasyMock.replay(filterChain);
 		request.setRequestURI("/init/with/path");
 		tenantFilter.doFilter(request, response, filterChain);
 		request.setRequestURI("/static/with/path");
 		tenantFilter.doFilter(request, response, filterChain);
 		request.setRequestURI("/webjars/with/path");
+		tenantFilter.doFilter(request, response, filterChain);
+		request.setRequestURI("/multitenant/event");
 		tenantFilter.doFilter(request, response, filterChain);
 		EasyMock.verify(filterChain);
 	}

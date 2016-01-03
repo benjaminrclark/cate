@@ -39,7 +39,7 @@ public class MultitenantFilter extends OncePerRequestFilter {
 				MultitenantContextHolder.getContext().setTenantId(originalTenantId);
 			  }
 		  }
-		} else if(request.getRequestURI().startsWith("/init") || request.getRequestURI().startsWith("/static") || request.getRequestURI().startsWith("/webjars")) {
+		} else if(request.getRequestURI().startsWith("/init") || request.getRequestURI().startsWith("/static") || request.getRequestURI().startsWith("/webjars")|| request.getRequestURI().startsWith("/multitenant/event")) {
 			filterChain.doFilter(request, response);
 		} else {
 			response.sendRedirect("/init");

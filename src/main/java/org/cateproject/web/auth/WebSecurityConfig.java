@@ -25,17 +25,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	http.userDetailsService(userManager())
 	.authorizeRequests()
 	//.expressionHandler(new TenantWebExpressionHandler())
-        .antMatchers("/", "/index", "/init","/health","/explore","/static/**","/webjars/**","/multitenant/event").permitAll()
-        .antMatchers("/system").hasAnyAuthority("ROLE_CONFIGURE_SYSTEM")
-        .antMatchers("/admin").hasAnyAuthority("ROLE_ADMINISTRATE")
-        .antMatchers("/edit").hasAnyAuthority("ROLE_EDIT")
-        .anyRequest().authenticated()
+          .antMatchers("/", "/index", "/init","/health","/explore","/static/**","/webjars/**","/multitenant/event").permitAll()
+          .antMatchers("/system").hasAnyAuthority("ROLE_CONFIGURE_SYSTEM")
+          .antMatchers("/admin").hasAnyAuthority("ROLE_ADMINISTRATE")
+          .antMatchers("/edit").hasAnyAuthority("ROLE_EDIT")
+          .anyRequest().authenticated()
+        .and().csrf()
+          .ignoringAntMatchers("/multitenant/event") // disable csrf on the api endpoints
     //.hasAuthority("isAuthenticated() and tenantAllowed")
-        .and()
-        .formLogin()
-        .loginPage("/login")
-        .permitAll()
-        .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")).logoutSuccessUrl("/").permitAll();
+        .and().formLogin()
+          .loginPage("/login")
+          .permitAll()
+        .and().logout()
+          .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+          .logoutSuccessUrl("/")
+          .permitAll();
 	}
 	
 	@Bean

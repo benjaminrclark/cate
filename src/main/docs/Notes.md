@@ -22,13 +22,13 @@ Base
   Multi-Tenancy #
   Domain #
   Search
-    General Search & Faceting
+    General Search & Faceting #
     Spatial Search
     Pivot-table
   Web
     Read-only pages for non-owned objects
       Taxon
-      Image
+      Multimedia
       Key
       Term
       Occurrence
@@ -63,11 +63,47 @@ Base
   Harvester
 
 
-ResourceSync
+Import Process:
+
+Any File -> DwC/A -> DwC/A + resourcesync
+
+e.g. DwC/A is the canonical representation of data, and DwC/A + resourcesync is the "patch" being applied to this database. Implies a point in time, which suggests locking.
+
+Annotations
+
+Batch Axis
+JobExecution
+	StepExecution
+		Item
+			Only one item annotation per item per step e.g. either
+                        skipInRead
+                        readError
+                        processError
+                        skipInProcess
+                        writeError (multiple items in single tx)
+                        skipInWrite
+Data Axis
+	File
+		Row (Item)
+
+# Copy input archive in
+
+# Unpack
+
+# Validate Format e.g. is this a valid DwC/A? 
+	meta.xml 
+	eml.xml? (optional)
+	files?
+	meta and files agree?
+# If the dataset exists in the database
+  Then we should have some idea about how to distinguish records which belong to this database vs records which are referenced - by knowing the databases identifier format. 
+  # Filter out objects which dont belong - i.e. which have an identifier format which is not the same as the datasets.
+  # Or filter out data types according to a set of rules e.g. for this dataset exclude x, y, and z types
+# ResourceSync
 
 DwCA to ResourceSync
 -1) Mark Relationship or entity e.g. for images we call 
-  insert into annotation (annotated_object_id, annotated_object_type, other_annotated_object_id, other_annotated_object_type, job_id, date_time, authority_id, type, code, record_type) select i.id, 'Image', t.id, 'Taxon', :jobId, :dateTime, :authorityId, 'Warn', 'Absent', 'Image' from image i join image_taxon i_t on (i.id = i_t.image_id) join taxon t on (i_t.taxon_id = t.id) where i.authority_id = :authority
+  insert into lookup (object_id, object_type, other_object_id, other_object_type, job_id, date_time, authority_id, type, code, record_type) select i.id, 'Image', t.id, 'Taxon', :jobId, :dateTime, :authorityId, 'Warn', 'Absent', 'Image' from image i join image_taxon i_t on (i.id = i_t.image_id) join taxon t on (i_t.taxon_id = t.id) where i.authority_id = :authority
 1) Identify creates / updates (based on modified time) & deletes (missing items)
 2) Identify deleted joins - for the skipped and updated any-to-manys,
 2) Order by max(created,updated) deletes go at the end. Sort DwCA file in this way too (as it is not guarenteed to be in order) and filter out the unchanged lines
@@ -77,7 +113,9 @@ two underlying readers called in order
  changeListEntry = changeListReader.read()
 
  if(!changeListEntry.type().equals(ChangeType.DELETE)) {
-    //
+    // insert or update records
+ } else {
+    // skip to delete
  }
 
 # Architecture

@@ -1,6 +1,8 @@
 package org.cateproject.web.multitenant.event;
 
 import org.cateproject.multitenant.event.MultitenantEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.aws.messaging.config.annotation.NotificationMessage;
@@ -17,6 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RequestMapping("/multitenant/event")
 public class SnsEndpointController {
+
+    private static Logger logger = LoggerFactory.getLogger(SnsEndpointController.class);
 
     @Autowired
     @Qualifier("incomingTenantEvents")
@@ -41,6 +45,7 @@ public class SnsEndpointController {
 
     @NotificationSubscriptionMapping
     public void confirmSubscription(NotificationStatus notificationStatus){
+        logger.info("Confirm Subscription" + notificationStatus);
         notificationStatus.confirmSubscription();
     }
 

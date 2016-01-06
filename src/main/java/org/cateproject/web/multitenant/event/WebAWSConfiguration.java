@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodArgumentResolverComposite;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.amazonaws.services.sns.AmazonSNS;
@@ -48,8 +49,10 @@ public class WebAWSConfiguration extends WebMvcConfigurerAdapter{
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(notificationStatusHandlerMethodArgumentResolver());
-        argumentResolvers.add(notificationMessageHandlerMethodArgumentResolver());
-        argumentResolvers.add(notificationSubjectHandlerMethodArgumentResolver());
+        HandlerMethodArgumentResolverComposite handlerMethodArgumentResolverComposite = new HandlerMethodArgumentResolverComposite();
+        handlerMethodArgumentResolverComposite.addResolver(notificationStatusHandlerMethodArgumentResolver());
+        handlerMethodArgumentResolverComposite.addResolver(notificationMessageHandlerMethodArgumentResolver());
+        handlerMethodArgumentResolverComposite.addResolver(notificationSubjectHandlerMethodArgumentResolver());
+        argumentResolvers.add(handlerMethodArgumentResolverComposite);
     }
 }

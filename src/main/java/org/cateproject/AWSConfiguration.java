@@ -5,6 +5,8 @@ import org.springframework.cloud.aws.context.config.annotation.EnableContextCred
 import org.springframework.cloud.aws.context.config.annotation.EnableContextInstanceData;
 import org.springframework.cloud.aws.context.config.annotation.EnableContextRegion;
 import org.springframework.cloud.aws.context.config.annotation.EnableStackConfiguration;
+import org.springframework.cloud.aws.messaging.config.annotation.EnableSns;
+import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableContextRegion(autoDetect=true)
 @EnableContextInstanceData
 @EnableStackConfiguration
+@EnableSqs
+@EnableSns
 public class AWSConfiguration {
 
         @Autowired

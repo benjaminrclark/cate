@@ -3,7 +3,6 @@ package org.cateproject.batch;
 import org.springframework.batch.integration.launch.JobLaunchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +17,6 @@ import org.springframework.messaging.converter.MessageConverter;
 import com.amazonaws.services.sqs.AmazonSQS;
 
 @Profile("aws")
-@EnableSqs
 @Configuration
 public class BatchAWSEventConfiguration {
 
@@ -32,25 +30,25 @@ public class BatchAWSEventConfiguration {
     private MessageConverter messageConverter;
 
     @Bean
-    public QueueMessagingTemplate queueMessagingTemplate() {
-        QueueMessagingTemplate queueMessagingTemplate = new QueueMessagingTemplate(amazonSQS);
+    public QueueMessagingTemplate jobQueueMessagingTemplate() {
+        QueueMessagingTemplate jobQueueMessagingTemplate = new QueueMessagingTemplate(amazonSQS);
 
-        queueMessagingTemplate.setDefaultDestinationName(queueArn);
-        queueMessagingTemplate.setMessageConverter(messageConverter);
-        return queueMessagingTemplate;
+        jobQueueMessagingTemplate.setDefaultDestinationName(queueArn);
+        jobQueueMessagingTemplate.setMessageConverter(messageConverter);
+        return jobQueueMessagingTemplate;
     }
 
     @Bean
     @InboundChannelAdapter(value = "incomingJobLaunchRequests", poller = @Poller(fixedRate = "5000"))
     public MessageSource<JobLaunchRequest> inboundJobLaunchRequestHandler() {
-        SQSMessagePollingSource<JobLaunchRequest> sqsMessagePollingSource = new SQSMessagePollingSource<JobLaunchRequest>(queueMessagingTemplate(), JobLaunchRequest.class);
+        SQSMessagePollingSource<JobLaunchRequest> sqsMessagePollingSource = new SQSMessagePollingSource<JobLaunchRequest>(jobQueueMessagingTemplate(), JobLaunchRequest.class);
 	return sqsMessagePollingSource;
     }
 	
     @Bean
     @ServiceActivator(inputChannel = "outgoingJobLaunchRequests")
     public MessageHandler outboundJobLaunchRequestHandler() {
-        SQSSendingMessageHandler messageHandler = new SQSSendingMessageHandler(queueMessagingTemplate());
+        SQSSendingMessageHandler messageHandler = new SQSSendingMessageHandler(jobQueueMessagingTemplate());
         return messageHandler;
     }
 

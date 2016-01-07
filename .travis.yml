@@ -1,6 +1,14 @@
+branches:
+  only:
+  - master
 language: java
 jdk:
 - openjdk7
+addons:
+  apt:
+    packages:
+    - ffmpeg 
+    - imagemagick
 env:
   matrix:
   - TERM=dumb
@@ -17,8 +25,3 @@ deploy:
   file: dpl.cfg
   user: benjaminrclark
   key: "$BINTRAY_API_KEY"
-addons:
-  apt:
-    packages:
-    - ffmpeg 
-    - imagemagick

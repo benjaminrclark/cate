@@ -8,7 +8,7 @@
 
 ## Features
 
- - Modern [spring-boot](http://boot.spring.io) application 
+ - Modern [spring-boot](http://projects.spring.io/spring-boot/) application 
  - Easy to [install](#installation)
  - Cloud-native [design](#architecture)
  - [Multi-tenant](#multitenancy) 
@@ -18,7 +18,7 @@
 
 ## Installation
 
-  CATE is distributed as an rpm. 
+  CATE is distributed as an rpm, hosted in a yum repository on [bintray](http://bintray.com). 
 
 ```bash
 $ wget https://bintray.com/benjaminrclark/rpm/rpm -O /etc/yum.repos.d/bintray-benjaminrclark-rpm.repo
@@ -31,7 +31,7 @@ $ yum install cate
  Once CATE is installed it can be started without any further configuration, running by default in 'embedded' mode. 
  
  This means that it will use an in-memory database and a local solr server and filesystem. To configure CATE to use other 
- services or persist data to a specific location, see [configuration](#configuration), below.
+ services and/or persist data to a specific location, see [configuration](#configuration), below.
 
 #### As a service
 
@@ -50,21 +50,64 @@ $ java -jar /var/lib/cate/cate.jar
 ### Configuration 
 
   CATE requires Java Development Kit 1.7 (either Oracle JDK or OpenJDK). CATE uses FFMPEG and ImageMagick to process multimedia files and these packages must be installed locally on the server. 
-  These dependencies are specified as dependencies of the package and installed automatically.
+  These dependencies are specified as dependencies of the package and are verfied / installed automatically if you install the rpm.
 
   CATE as a system depends upon a number of other services. The location and configuration of these services is relatively flexible. By default, CATE will run in 
   embedded mode, meaning that no other external services are required.
 
+  CATE follows the [approach used by spring boot](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) to passing configuration parameters to the application.
+  Many of the configuration properties are generic properties defined by spring-boot. Not all of them are listed below, but can be found in the [spring-boot documentation](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html). Others are specific to CATE.
+
+  Some properties are specific to a deployment on [Amazon Web Services](http://aws.amazon.com), and are listed under the heading AWS. CATE can also be deployed on to private servers using open-source software. 
+
 #### Database
   
-  CATE is currently able to make use of H2 or MySQL. 
+  CATE uses a relational database as the canonical data store. Currently it is able to make use of H2 or MySQL. The properties used to configure it are standard spring-boot properties 
+
+ - spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+ - spring.datasource.username=root
+ - spring.datasource.password=
+ - liquibase.contexts=mysql
+
 #### Solr
+ 
+  CATE uses solr to power the free-text search and faceting.
+ 
+ - solr.server.url=http://localhost:8983
+ - solr.connection.timeout=100
+ - solr.so.timeout=3000
 
 #### Redis
 
-#### Filesystem
+ - spring.redis.database=0
+ - spring.redis.host=localhost
+ - spring.redis.port=6397
+ - spring.redis.password=
 
-#### Messaging Queue and Topic
+#### Filesystem / Object Store 
 
-#### Email Server
+##### Local Filesystem / Network-Attached Shared Filesystem
+
+ - upload.file.directory
+ - static.file.directory
+
+##### AWS S3
+
+ - cloudformation.uploadBucketArn
+
+#### Messaging
+
+##### ActiveMQ
+
+ - spring.activemq.broker.url=
+ - spring.activemq.in.memory=false
+ - spring.activemq.user=
+ - spring.activemq.password=
+
+##### AWS SNS & SQS
+
+ - cloudformation.topicArn
+ - cloudformation.queueArn
+ 
+#### Email 
 

@@ -54,18 +54,18 @@ public class MultitenantAWSEventConfiguration {
 	}
 
         @Bean
-        public QueueMessagingTemplate tenantQueueMessagingTemplate() {
+        public QueueMessagingTemplate tenantQueueMessagingTemplate(SnsRegistrar snsRegistrar) {
             QueueMessagingTemplate tenantQueueMessagingTemplate = new QueueMessagingTemplate(amazonSQS);
 
-            tenantQueueMessagingTemplate.setDefaultDestinationName(snsRegistrar().getQueueArn());
+            tenantQueueMessagingTemplate.setDefaultDestinationName(snsRegistrar.getQueueArn());
             tenantQueueMessagingTemplate.setMessageConverter(messageConverter);
             return tenantQueueMessagingTemplate;
         }
 
         @Bean
         @InboundChannelAdapter(value = "incomingTenantEvents", poller = @Poller(fixedRate = "5000"))
-        public MessageSource<MultitenantEvent> inboundMultitenantEventHandler() {
-            SQSMessagePollingSource<MultitenantEvent> sqsMessagePollingSource = new SQSMessagePollingSource<MultitenantEvent>(tenantQueueMessagingTemplate(), MultitenantEvent.class);
+        public MessageSource<MultitenantEvent> inboundMultitenantEventHandler(SnsRegistrar snsRegistrar) {
+            SQSMessagePollingSource<MultitenantEvent> sqsMessagePollingSource = new SQSMessagePollingSource<MultitenantEvent>(tenantQueueMessagingTemplate(snsRegistrar), MultitenantEvent.class);
 	    return sqsMessagePollingSource;
         }
 }

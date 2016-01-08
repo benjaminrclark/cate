@@ -1,5 +1,7 @@
 package org.cateproject.multitenant.event;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -55,7 +57,9 @@ public class SnsRegistrar implements InitializingBean, DisposableBean {
     }
 
     public void afterPropertiesSet() {
-        CreateQueueResult createQueueResult = amazonSqs.createQueue(new CreateQueueRequest());
+        CreateQueueRequest createQueueRequest = new CreateQueueRequest();
+        createQueueRequest.setQueueName("cateMultitenantEvent-" + UUID.randomUUID().toString());
+        CreateQueueResult createQueueResult = amazonSqs.createQueue(createQueueRequest);
         queueArn = createQueueResult.getQueueUrl();
         SubscribeResult subscribeResult = amazonSns.subscribe(topicArn, "sqs", queueArn);
         subscriptionArn = subscribeResult.getSubscriptionArn();

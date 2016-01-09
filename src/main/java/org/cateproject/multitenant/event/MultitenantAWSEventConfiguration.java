@@ -2,6 +2,7 @@ package org.cateproject.multitenant.event;
 
 import org.cateproject.batch.SQSMessagePollingSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.core.NotificationMessagingTemplate;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
@@ -64,8 +65,8 @@ public class MultitenantAWSEventConfiguration {
 
         @Bean
         @InboundChannelAdapter(value = "incomingTenantEvents", poller = @Poller(fixedRate = "5000"))
-        public MessageSource<MultitenantEvent> inboundMultitenantEventHandler(SnsRegistrar snsRegistrar) {
-            SQSMessagePollingSource<MultitenantEvent> sqsMessagePollingSource = new SQSMessagePollingSource<MultitenantEvent>(tenantQueueMessagingTemplate(snsRegistrar), MultitenantEvent.class);
+        public MessageSource<MultitenantEvent> inboundMultitenantEventHandler(@Qualifier("tenantQueueMessagingTemplate") QueueMessagingTemplate tenantQueueMessagingTemplate) {
+            SQSMessagePollingSource<MultitenantEvent> sqsMessagePollingSource = new SQSMessagePollingSource<MultitenantEvent>(tenantQueueMessagingTemplate, MultitenantEvent.class);
 	    return sqsMessagePollingSource;
         }
 }

@@ -103,6 +103,7 @@ dependencies {
   compile("org.springframework.boot:spring-boot-starter-integration")
   compile("org.springframework.boot:spring-boot-starter-actuator")
   compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+  compile("org.springframework.boot:spring-boot-starter-redis")
   compile("com.h2database:h2")
   compile("mysql:mysql-connector-java")
   compile("org.liquibase:liquibase-core")

@@ -1,5 +1,7 @@
 package org.cateproject.multitenant.event;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import com.amazonaws.services.sns.model.SubscribeResult;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
+import com.amazonaws.services.sqs.model.GetQueueAttributesResult;
 
 public class SnsRegistrar implements InitializingBean, DisposableBean {
 
@@ -60,9 +63,15 @@ public class SnsRegistrar implements InitializingBean, DisposableBean {
         CreateQueueRequest createQueueRequest = new CreateQueueRequest();
         createQueueRequest.setQueueName("cateMultitenantEvent-" + UUID.randomUUID().toString());
         CreateQueueResult createQueueResult = amazonSqs.createQueue(createQueueRequest);
-        queueArn = createQueueResult.getQueueUrl();
+        logger.info("Successfully created queue with url {}", new Object[]{createQueueResult.getQueueUrl()});
+        List<String> queueAttributeNames = new ArrayList<String>();
+        queueAttributeNames.add("QueueArn");
+        GetQueueAttributesResult getQueueAttributesResult = amazonSqs.getQueueAttributes(createQueueResult.getQueueUrl(),queueAttributeNames);
+        queueArn = getQueueAttributesResult.getAttributes().get("QueueArn");
+        logger.info("Got queue arn for url {} : {}", new Object[]{createQueueResult.getQueueUrl(),queueArn});
+        
         SubscribeResult subscribeResult = amazonSns.subscribe(topicArn, "sqs", queueArn);
         subscriptionArn = subscribeResult.getSubscriptionArn();
-        logger.info("Subscription successful, ARN: {}", new Object[]{subscriptionArn});
+        logger.info("Subscription successful, subscribed queue {} to topic {}, subscription arn: {}", new Object[]{queueArn, topicArn, subscriptionArn});
     }
 }

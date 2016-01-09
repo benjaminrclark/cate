@@ -10,7 +10,7 @@
 
  - Modern [spring-boot](http://projects.spring.io/spring-boot/) application 
  - Easy to [install](#installation)
- - Cloud-native [design](#architecture)
+ - Cloud-native [design](#design)
  - [Multi-tenant](#multitenancy) 
  - Built around open standards like [Darwin-Core Archive](#darwincore)
  - [Imports and exports](#importexport) data formats used by taxonomists such as DELTA, SDD, bibtex, csv
@@ -111,3 +111,17 @@ $ java -jar /var/lib/cate/cate.jar
  
 #### Email 
 
+## Design
+
+  CATE is a web application which is designed to work at scale, deployed on virtual servers, and supporting many users and tenant projects.
+
+  In terms of scalability, its worth noting that the CATE application itself, and the application server it runs on, is not stateful. State is
+  held in the following services:
+
+ - Data: The relational database, plus a denormalized copy of the data is held in solr
+ - Media: Media files are held in the object store (either NAS or S3) and are fetched to the application server as required. They are served to clients directly from
+   the store
+ - Session: When running in clustered mode (i.e. 2+ application servers), CATE stores session state in a redis key-value store.
+ 
+  Events (job requests and tenant events) are distributed using a message broker. Tenant events are distributed to all instances using a topic. Job requests are distributed across
+  application servers using a single queue which is polled by all servers.

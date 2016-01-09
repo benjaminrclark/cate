@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
-    <logger name="org.cateproject" level="DEBUG"/>
-    <logger name="org.springframework.mock.web" level="DEBUG"/>
-    <logger name="org.springframework.integration" level="DEBUG"/>
-    <!--<logger name="org.springframework.web.servlet.resource" level="TRACE"/>
-    <logger name="liquibase" level="DEBUG"/>-->
+    <logger name="org.cateproject" level="INFO"/>
 </configuration>

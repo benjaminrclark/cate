@@ -121,7 +121,7 @@ $ java -jar /var/lib/cate/cate.jar
  - Data: The relational database, plus a denormalized copy of the data is held in solr
  - Media: Media files are held in the object store (either NAS or S3) and are fetched to the application server as required. They are served to clients directly from
    the store
- - Session: When running in clustered mode (i.e. 2+ application servers), CATE stores session state in a redis key-value store.
+ - Session: CATE stores session state in a redis key-value store.
  
   Events (job requests and tenant events) are distributed using a message broker. Tenant events are distributed to all instances using a topic. Job requests are distributed across
   application servers using a single queue which is polled by all servers.

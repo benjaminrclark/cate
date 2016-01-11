@@ -1,6 +1,8 @@
 package org.cateproject.multitenant.event;
 
 import org.cateproject.batch.SQSMessagePollingSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 @Profile("aws")
 public class MultitenantAWSEventConfiguration {
+
+        private static Logger logger = LoggerFactory.getLogger(MultitenantAWSEventConfiguration.class);
 
         @Autowired
 	private AmazonSNS amazonSNS;
@@ -55,7 +59,7 @@ public class MultitenantAWSEventConfiguration {
         @Bean
         public QueueMessagingTemplate tenantQueueMessagingTemplate() {
             QueueMessagingTemplate tenantQueueMessagingTemplate = new QueueMessagingTemplate(amazonSQS);
-
+            logger.info("Creating tenantQueueMessagingTemplate for arn {}", new Object[]{snsRegistrar.getQueueArn()});
             tenantQueueMessagingTemplate.setDefaultDestinationName(snsRegistrar.getQueueArn());
             tenantQueueMessagingTemplate.setMessageConverter(messageConverter);
             return tenantQueueMessagingTemplate;

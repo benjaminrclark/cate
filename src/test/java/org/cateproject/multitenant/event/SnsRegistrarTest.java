@@ -32,7 +32,7 @@ public class SnsRegistrarTest {
     }
 
     @Test
-    public void testAfterPropertiesSet() {
+    public void testGetQueueArn() {
         CreateQueueResult createQueueResult = new CreateQueueResult();
         createQueueResult.setQueueUrl("QUEUE_URL");
         GetQueueAttributesResult getQueueAttributesResult = new GetQueueAttributesResult();
@@ -44,7 +44,16 @@ public class SnsRegistrarTest {
         EasyMock.expect(amazonSns.subscribe(EasyMock.eq("TOPIC_ARN"), EasyMock.eq("sqs"), EasyMock.eq("QUEUE_ARN"))).andReturn(subscribeResult);
         
         EasyMock.replay(amazonSns, amazonSqs);
-        snsRegistrar.afterPropertiesSet();
+        assertEquals("afterPropertiesSet should set the queueArn", "QUEUE_ARN", snsRegistrar.getQueueArn());
+        assertEquals("afterPropertiesSet should set the subscriptionArn", "SUBSCRIPTION_ARN", snsRegistrar.getSubscriptionArn());
+        EasyMock.verify(amazonSns, amazonSqs);
+    }
+
+    @Test
+    public void testGetQueueArnAlreadyInitialized() {
+        snsRegistrar.setQueueArn("QUEUE_ARN");
+        snsRegistrar.setSubscriptionArn("SUBSCRIPTION_ARN");
+        EasyMock.replay(amazonSns, amazonSqs);
         assertEquals("afterPropertiesSet should set the queueArn", "QUEUE_ARN", snsRegistrar.getQueueArn());
         assertEquals("afterPropertiesSet should set the subscriptionArn", "SUBSCRIPTION_ARN", snsRegistrar.getSubscriptionArn());
         EasyMock.verify(amazonSns, amazonSqs);

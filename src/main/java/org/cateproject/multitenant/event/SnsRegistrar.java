@@ -37,6 +37,10 @@ public class SnsRegistrar implements InitializingBean, DisposableBean {
     }
 
     public String getQueueArn() {
+        logger.info("Calling getQueueArn, arn is {}", new Object[]{queueArn});
+        if(queueArn == null) {
+            afterPropertiesSet();
+        }
         return queueArn;
     }
 

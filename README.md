@@ -55,15 +55,26 @@ $ java -jar /var/lib/cate/cate.jar
   CATE as a system depends upon a number of other services. The location and configuration of these services is relatively flexible. By default, CATE will run in 
   embedded mode, meaning that no other external services are required.
 
-  CATE follows the [approach used by spring boot](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) to passing configuration parameters to the application.
+  CATE follows the [approach used by spring boot](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) in externalizing the configuration parameters.
   Many of the configuration properties are generic properties defined by spring-boot. Not all of them are listed below, but can be found in the [spring-boot documentation](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html). Others are specific to CATE.
 
-  Some properties are specific to a deployment on [Amazon Web Services](http://aws.amazon.com), and are listed under the heading AWS. CATE can also be deployed on to private servers using open-source software. 
+  In addition to specifying configuration properties, you can also enable optional services through the use of spring profiles. To run CATE as a single application server, the default profile is sufficient. To run multiple CATE application servers behind a load balancer (e.g. nginx / apache / elb), include the 'cluster' profile e.g.
+
+ - spring.profiles.active=default,cluster
+
+  To run CATE on a [http://aws.amazon.com](Amazon Web Services), the 'aws' profile should be enabled.
+
+ - spring.profiles.active=aws,cluster
+
+  The aws profile uses the standard properties for the database, solr and redis but is able to make use of Amazon Relational Database Service (RDS) and Amazon Elasticache in place non-Amazon services. In addition, the aws profile uses Amazon Simple Storage Service (S3) in place of a shared filesystem, and Amazon Simple Notification Service / Simple Queue Service in place of activemq. The parameters required to configure these components are listed under the heading AWS.
+
+  A sample Amazon Cloudformation template for a CATE cluster can be found in src/main/resources/cfn/cate.cnf.
 
 #### Database
   
-  CATE uses a relational database as the canonical data store. Currently it is able to make use of H2 or MySQL. The properties used to configure it are standard spring-boot properties 
+  CATE uses a relational database as the canonical data store. Currently it is able to make use of H2 or MySQL. The properties used to configure it are standard spring-boot properties.
 
+ - spring.datasource.url=jdbc:mysql://localhost:3306/cate
  - spring.datasource.driver-class-name=com.mysql.jdbc.Driver
  - spring.datasource.username=root
  - spring.datasource.password=
@@ -73,11 +84,14 @@ $ java -jar /var/lib/cate/cate.jar
  
   CATE uses solr to power the free-text search and faceting.
  
- - solr.server.url=http://localhost:8983
+ - solr.server.url=http://localhost:8983/solr
+ - solr.server.class=org.apache.solr.client.solrj.impl.HttpSolrServer
  - solr.connection.timeout=100
  - solr.so.timeout=3000
 
 #### Redis
+
+  CATE uses a redis database to store http session data when running in clustered mode
 
  - spring.redis.database=0
  - spring.redis.host=localhost
@@ -86,10 +100,12 @@ $ java -jar /var/lib/cate/cate.jar
 
 #### Filesystem / Object Store 
 
+  CATE stores files in a shared filesystem mounted on the application server, or in S3 when running on AWS.
+
 ##### Local Filesystem / Network-Attached Shared Filesystem
 
- - upload.file.directory
- - static.file.directory
+ - upload.file.directory=/mnt/cate/upload
+ - static.file.directory=/mnt/cate/static
 
 ##### AWS S3
 
@@ -97,10 +113,12 @@ $ java -jar /var/lib/cate/cate.jar
 
 #### Messaging
 
+  CATE uses messaging to distribute tenant events across nodes in the cluster and to queue batch jobs. It uses activemq or SNS / SQS when running on AWS.
+
 ##### ActiveMQ
 
- - spring.activemq.broker.url=
- - spring.activemq.in.memory=false
+ - spring.activemq.broker-url=tcp://localhost:61616
+ - spring.activemq.in-memory=false
  - spring.activemq.user=
  - spring.activemq.password=
 

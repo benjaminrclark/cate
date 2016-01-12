@@ -42,7 +42,8 @@ public class MultitenantAwareSolrServer extends SolrServer implements Initializi
 
         private SolrServer solrServer = null;
 	
-	private Class<? extends SolrServer> solrServerClass = EmbeddedSolrServer.class;
+        @Value("${solr.server.class:#{'org.apache.solr.client.solrj.embedded.EmbeddedSolrServer'}}")
+	private Class<? extends SolrServer> serverClass;
 	
 	private CoreContainer coreContainer;
 
@@ -84,8 +85,8 @@ public class MultitenantAwareSolrServer extends SolrServer implements Initializi
 	    this.solrHomeString = solrHomeString;
 	}
 	
-	public void setSolrServerClass(Class<? extends SolrServer> solrServerClass) {
-	    this.solrServerClass = solrServerClass;
+	public void setServerClass(Class<? extends SolrServer> serverClass) {
+	    this.serverClass = serverClass;
 	}
 	
         public void setSolrResources(String solrResources) {
@@ -114,7 +115,7 @@ public class MultitenantAwareSolrServer extends SolrServer implements Initializi
 	}
 
         public void initialize() throws IOException {
-	    if(solrServerClass.equals(EmbeddedSolrServer.class)) {
+	    if(serverClass.equals(EmbeddedSolrServer.class)) {
                 File solrHomeFile = new File(this.solrHomeString);
                 solrHomeFile.mkdirs();
                 this.solrHome = new FileSystemResource(solrHomeFile);
@@ -134,7 +135,7 @@ public class MultitenantAwareSolrServer extends SolrServer implements Initializi
         }
 
         public SolrServer createSolrServer(String core) throws MalformedURLException {
-		if(solrServerClass.equals(EmbeddedSolrServer.class)) {
+		if(serverClass.equals(EmbeddedSolrServer.class)) {
 		    return new EmbeddedSolrServer(coreContainer, core);
 		} else {
 		    URL solrCoreUrl = new URL(serverUrl, core);

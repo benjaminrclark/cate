@@ -19,7 +19,6 @@ import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.request.QueryRequest;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CoreContainer;
@@ -50,6 +49,7 @@ public class MultitenantAwareSolrServerTest {
     public void setUp() throws IOException {
         tempDir = Files.createTempDirectory("multitenant-solr");
         multitenantAwareSolrServer = new MultitenantAwareSolrServer();
+        multitenantAwareSolrServer.setServerClass(EmbeddedSolrServer.class);
         multitenantAwareSolrServer.setSolrHomeString(tempDir.toFile().getAbsolutePath());
         solrServer = EasyMock.createMock(SolrServer.class);
         multitenantRepository = EasyMock.createMock(MultitenantRepository.class);
@@ -69,7 +69,6 @@ public class MultitenantAwareSolrServerTest {
     public void testExtractFromClasspathToFile() throws IOException {
         ClassPathResource test1 = new ClassPathResource("org/cateproject/multitenant/solr/solrhome/test1.txt");
         File test1Destination = new File(tempDir.toFile(),"test1.txt");
-        File test2Destination = new File(tempDir.toFile(),"test2.txt");
         FileUtils.copyURLToFile(test1.getURL(), test1Destination);
         assertEquals("extractFromClasspathToFile should return the number of files copied", 3, multitenantAwareSolrServer.extractFromClasspathToFile("org/cateproject/multitenant/solr/solrhome/",tempDir.toFile()));
     }
@@ -121,7 +120,7 @@ public class MultitenantAwareSolrServerTest {
 
     @Test
     public void testInitializeHttpSolrServer() throws MalformedURLException, IOException {
-        multitenantAwareSolrServer.setSolrServerClass(HttpSolrServer.class);
+        multitenantAwareSolrServer.setServerClass(HttpSolrServer.class);
         multitenantAwareSolrServer.setServerUrl(new URL("http://localhost:1234"));
         multitenantAwareSolrServer.initialize();
     }
@@ -157,7 +156,7 @@ public class MultitenantAwareSolrServerTest {
     public void testInitializeCoreHttpSolrServer() throws IOException {
         Multitenant multitenant = new Multitenant();
         multitenant.setIdentifier("test.localhost.org");
-        multitenantAwareSolrServer.setSolrServerClass(HttpSolrServer.class);
+        multitenantAwareSolrServer.setServerClass(HttpSolrServer.class);
         multitenantAwareSolrServer.initialize(); 
         EasyMock.replay(solrServer, coreContainer);
         multitenantAwareSolrServer.initializeCore(multitenant);
@@ -172,7 +171,7 @@ public class MultitenantAwareSolrServerTest {
         multitenant.setIdentifier("test.localhost.org");
         List<Multitenant> multitenants = new ArrayList<Multitenant>();
         multitenants.add(multitenant);
-        multitenantAwareSolrServer.setSolrServerClass(HttpSolrServer.class);
+        multitenantAwareSolrServer.setServerClass(HttpSolrServer.class);
         EasyMock.expect(multitenantRepository.findAll()).andReturn(multitenants);
 
         EasyMock.replay(solrServer, coreContainer, multitenantRepository);
@@ -189,7 +188,7 @@ public class MultitenantAwareSolrServerTest {
         multitenantEvent.setIdentifier("test.localhost.org");
         multitenantEvent.setType(MultitenantEventType.CREATE); 
 
-        multitenantAwareSolrServer.setSolrServerClass(HttpSolrServer.class);
+        multitenantAwareSolrServer.setServerClass(HttpSolrServer.class);
         multitenantAwareSolrServer.initialize();
         EasyMock.expect(multitenantRepository.findByIdentifier(EasyMock.eq("test.localhost.org"))).andReturn(multitenant);
 
@@ -208,7 +207,7 @@ public class MultitenantAwareSolrServerTest {
         multitenantEvent.setIdentifier("test.localhost.org");
         multitenantEvent.setType(MultitenantEventType.OTHER); 
 
-        multitenantAwareSolrServer.setSolrServerClass(HttpSolrServer.class);
+        multitenantAwareSolrServer.setServerClass(HttpSolrServer.class);
         multitenantAwareSolrServer.initialize();
 
         EasyMock.replay(solrServer, coreContainer, multitenantRepository);
@@ -246,7 +245,7 @@ public class MultitenantAwareSolrServerTest {
         MultitenantEvent multitenantEvent = new MultitenantEvent();
         multitenantEvent.setIdentifier("test.localhost.org");
         multitenantEvent.setType(MultitenantEventType.OTHER); 
-        multitenantAwareSolrServer.setSolrServerClass(HttpSolrServer.class);
+        multitenantAwareSolrServer.setServerClass(HttpSolrServer.class);
 
         EasyMock.replay(solrServer, coreContainer, multitenantRepository);
         multitenantAwareSolrServer.handle(multitenantEvent);

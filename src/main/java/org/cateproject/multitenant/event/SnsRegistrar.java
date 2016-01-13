@@ -68,11 +68,7 @@ public class SnsRegistrar implements InitializingBean, DisposableBean {
         createQueueRequest.setQueueName("cateMultitenantEvent-" + UUID.randomUUID().toString());
         CreateQueueResult createQueueResult = amazonSqs.createQueue(createQueueRequest);
         logger.info("Successfully created queue with url {}", new Object[]{createQueueResult.getQueueUrl()});
-        List<String> queueAttributeNames = new ArrayList<String>();
-        queueAttributeNames.add("QueueArn");
-        GetQueueAttributesResult getQueueAttributesResult = amazonSqs.getQueueAttributes(createQueueResult.getQueueUrl(),queueAttributeNames);
-        queueArn = getQueueAttributesResult.getAttributes().get("QueueArn");
-        logger.info("Got queue arn for url {} : {}", new Object[]{createQueueResult.getQueueUrl(),queueArn});
+        queueArn = createQueueResult.getQueueUrl();
         
         SubscribeResult subscribeResult = amazonSns.subscribe(topicArn, "sqs", queueArn);
         subscriptionArn = subscribeResult.getSubscriptionArn();

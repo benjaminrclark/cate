@@ -59,8 +59,8 @@ public class MultitenantAWSEventConfiguration {
         @Bean
         public QueueMessagingTemplate tenantQueueMessagingTemplate() {
             QueueMessagingTemplate tenantQueueMessagingTemplate = new QueueMessagingTemplate(amazonSQS);
-            logger.info("Creating tenantQueueMessagingTemplate for arn {}", new Object[]{snsRegistrar.getQueueArn()});
-            tenantQueueMessagingTemplate.setDefaultDestinationName(snsRegistrar.getQueueArn());
+            logger.info("Creating tenantQueueMessagingTemplate for url {}", new Object[]{snsRegistrar.getQueueUrl()});
+            tenantQueueMessagingTemplate.setDefaultDestinationName(snsRegistrar.getQueueUrl());
             tenantQueueMessagingTemplate.setMessageConverter(messageConverter);
             return tenantQueueMessagingTemplate;
         }

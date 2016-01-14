@@ -37,30 +37,33 @@ public class SnsRegistrarTest {
         createQueueResult.setQueueUrl("QUEUE_URL");
         SubscribeResult subscribeResult = new SubscribeResult();
         subscribeResult.setSubscriptionArn("SUBSCRIPTION_ARN");
+        GetQueueAttributesResult getQueueAttributesResult = new GetQueueAttributesResult();
+        getQueueAttributesResult.addAttributesEntry("QueueArn","QUEUE_ARN");
         EasyMock.expect(amazonSqs.createQueue(EasyMock.isA(CreateQueueRequest.class))).andReturn(createQueueResult);
-        EasyMock.expect(amazonSns.subscribe(EasyMock.eq("TOPIC_ARN"), EasyMock.eq("sqs"), EasyMock.eq("QUEUE_URL"))).andReturn(subscribeResult);
+        EasyMock.expect(amazonSqs.getQueueAttributes(EasyMock.eq("QUEUE_URL"), (List<String>)EasyMock.isA(List.class))).andReturn(getQueueAttributesResult);
+        EasyMock.expect(amazonSns.subscribe(EasyMock.eq("TOPIC_ARN"), EasyMock.eq("sqs"), EasyMock.eq("QUEUE_ARN"))).andReturn(subscribeResult);
         
         EasyMock.replay(amazonSns, amazonSqs);
-        assertEquals("getQueueArn should set the queueArn", "QUEUE_URL", snsRegistrar.getQueueArn());
-        assertEquals("getQueueArn should set the subscriptionArn", "SUBSCRIPTION_ARN", snsRegistrar.getSubscriptionArn());
+        assertEquals("getQueueUrl should set the queueArn", "QUEUE_URL", snsRegistrar.getQueueUrl());
+        assertEquals("getQueueUrl should set the subscriptionArn", "SUBSCRIPTION_ARN", snsRegistrar.getSubscriptionArn());
         EasyMock.verify(amazonSns, amazonSqs);
     }
 
     @Test
     public void testGetQueueArnAlreadyInitialized() {
-        snsRegistrar.setQueueArn("QUEUE_URL");
+        snsRegistrar.setQueueUrl("QUEUE_URL");
         snsRegistrar.setSubscriptionArn("SUBSCRIPTION_ARN");
         EasyMock.replay(amazonSns, amazonSqs);
-        assertEquals("getQueueArn should set the queueArn", "QUEUE_URL", snsRegistrar.getQueueArn());
-        assertEquals("getQueueArn should set the subscriptionArn", "SUBSCRIPTION_ARN", snsRegistrar.getSubscriptionArn());
+        assertEquals("getQueueUrl should set the queueUrl", "QUEUE_URL", snsRegistrar.getQueueUrl());
+        assertEquals("getQueueUrl should set the subscriptionArn", "SUBSCRIPTION_ARN", snsRegistrar.getSubscriptionArn());
         EasyMock.verify(amazonSns, amazonSqs);
     }
 
     @Test
     public void testDestroy() {
-        snsRegistrar.setQueueArn("QUEUE_ARN");
+        snsRegistrar.setQueueUrl("QUEUE_URL");
         snsRegistrar.setSubscriptionArn("SUBSCRIPTION_ARN");
-        amazonSqs.deleteQueue(EasyMock.eq("QUEUE_ARN"));
+        amazonSqs.deleteQueue(EasyMock.eq("QUEUE_URL"));
         amazonSns.unsubscribe(EasyMock.eq("SUBSCRIPTION_ARN"));
         
         EasyMock.replay(amazonSns, amazonSqs);

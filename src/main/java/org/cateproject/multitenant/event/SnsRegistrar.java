@@ -28,6 +28,8 @@ public class SnsRegistrar implements InitializingBean, DisposableBean {
 
     private String subscriptionArn;
 
+    private String queueUrl;
+
     private String queueArn;
 
     public SnsRegistrar(AmazonSNS amazonSns, AmazonSQS amazonSqs, String topicArn) {
@@ -36,16 +38,16 @@ public class SnsRegistrar implements InitializingBean, DisposableBean {
         this.topicArn = topicArn;
     }
 
-    public String getQueueArn() {
-        logger.info("Calling getQueueArn, arn is {}", new Object[]{queueArn});
-        if(queueArn == null) {
+    public String getQueueUrl() {
+        logger.info("Calling getQueueUrl, arn is {}", new Object[]{queueUrl});
+        if(queueUrl == null) {
             afterPropertiesSet();
         }
-        return queueArn;
+        return queueUrl;
     }
 
-    protected void setQueueArn(String queueArn) {
-        this.queueArn = queueArn;
+    protected void setQueueUrl(String queueUrl) {
+        this.queueUrl = queueUrl;
     }
    
     protected void setSubscriptionArn(String subscriptionArn) {
@@ -59,8 +61,8 @@ public class SnsRegistrar implements InitializingBean, DisposableBean {
     public void destroy() {
         amazonSns.unsubscribe(subscriptionArn);
         logger.info("Unsubscribed from ARN: {}, Subscription ARN {}", new Object[]{topicArn, subscriptionArn});
-        amazonSqs.deleteQueue(queueArn);
-        logger.info("Deleted Queue ARN: {}", new Object[]{queueArn});
+        amazonSqs.deleteQueue(queueUrl);
+        logger.info("Deleted Queue URL: {}", new Object[]{queueUrl});
     }
 
     public void afterPropertiesSet() {
@@ -68,8 +70,14 @@ public class SnsRegistrar implements InitializingBean, DisposableBean {
         createQueueRequest.setQueueName("cateMultitenantEvent-" + UUID.randomUUID().toString());
         CreateQueueResult createQueueResult = amazonSqs.createQueue(createQueueRequest);
         logger.info("Successfully created queue with url {}", new Object[]{createQueueResult.getQueueUrl()});
-        queueArn = createQueueResult.getQueueUrl();
-        
+        queueUrl = createQueueResult.getQueueUrl();
+
+        List<String> queueAttributeNames = new ArrayList<String>();
+        queueAttributeNames.add("QueueArn");
+        GetQueueAttributesResult getQueueAttributesResult = amazonSqs.getQueueAttributes(createQueueResult.getQueueUrl(),queueAttributeNames);
+        queueArn = getQueueAttributesResult.getAttributes().get("QueueArn");
+        logger.info("Got queue arn for url {} : {}", new Object[]{createQueueResult.getQueueUrl(),queueArn});
+
         SubscribeResult subscribeResult = amazonSns.subscribe(topicArn, "sqs", queueArn);
         subscriptionArn = subscribeResult.getSubscriptionArn();
         logger.info("Subscription successful, subscribed queue {} to topic {}, subscription arn: {}", new Object[]{queueArn, topicArn, subscriptionArn});

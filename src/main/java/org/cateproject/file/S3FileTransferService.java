@@ -131,7 +131,7 @@ public class S3FileTransferService implements FileTransferService, MultitenantEv
                         }
                         BucketWebsiteConfiguration bucketWebsiteConfiguration = new BucketWebsiteConfiguration("index.html","error.html");
                         amazonS3.setBucketWebsiteConfiguration(bucketName, bucketWebsiteConfiguration);
-                        SetBucketPolicyRequest bucketPolicyRequest = new SetBucketPolicyRequest(bucketName, "{\"Version\":\"2015-12-22\",\"Statement\":[{\"Sid\":\"PublicReadForGetBucketObjects\",\"Effect\":\"Allow\",\"Principal\": \"*\",\"Action\":[\"s3:GetObject\"],\"Resource\":[\"arn:aws:s3:::"+ bucketName + "/*\"]}]}");
+                        SetBucketPolicyRequest bucketPolicyRequest = new SetBucketPolicyRequest(bucketName, "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"PublicReadForGetBucketObjects\",\"Effect\":\"Allow\",\"Principal\": \"*\",\"Action\":[\"s3:GetObject\"],\"Resource\":[\"arn:aws:s3:::"+ bucketName + "/*\"]}]}");
                         amazonS3.setBucketPolicy(bucketPolicyRequest);
                         // TODO Configure Route53 Recordsets
 			logger.info("Static directory for tenant {} ({}) has been created successfully", new Object[]{ multitenantEvent.getIdentifier(), bucketName});

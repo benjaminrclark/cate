@@ -67,12 +67,20 @@
   Darwin Core Archive which is also a valid ResourceSync change dump (see below). Resolvable in this sense means that each property value with a non empty identifier should have a corresponding
   valid row in the archive. 
 
-  Some of the identifiers and entities in the Dataset may belong to another dataset published by a different organisation. To ensure that publishers are in control of the data aggregated, CATE 
+  Some of the identifiers and entities in the Dataset may belong to another dataset published by a different organisation (foreign identifiers). To ensure that publishers are in control of the 
+  data aggregated, CATE 
   will not import entities which belong to a different dataset. This means that any publisher can link to another publisher's data by using their identifiers in their own data, but they cannot
   change the entity that the identifier links to (by e.g. changing values in the corresponding row in their own darwin core archive). This approach leads to the problem of ordering in importing 
-  data. If a darwin core record contains references to entities which belong to a different dataset and does not exist in the database already, CATE will 
+  data. If a darwin core record contains references to entities which belong to a different dataset and does not exist in the database already, CATE will exit with a warning, or if the metadata for
+  the dependent datasets is available, will attempt to synchronize those datasets first. This process relies on foreign identifier having a dataset property, and that dataset being available.
 
 ## Darwin Core + resourcesync
+
+  In general, we assume that datasets don't change very much once they are created. When re-synchronising with a publisher, an aggregator only needs the rows which have changed: creates and updates,
+  plus deletes. Darwin Core Archives don't have a way of expressing this on their own. CATE can publish Darwin Core Archives as a Resource Sync Change Dump. This consists of a standard Darwin Core Archive
+  where the only rows are newly created entities or updated entities, plus a change dump manifest which lists the updates, creates and deletes.
+
+  Normal Darwin Core Archives which do not contain a change dump manifest are first converted to this format by the aggregator before importing. 
 ## Design
 
   The first principle is that we've tried to keep the mapping between Darwin Core and the internal data model as 
@@ -84,3 +92,73 @@
   ensures that data is imported in a consistent way. Translation to DwC/A from another format may be lossy, but import
   from DwC/A is not.
   CATE can operate as an a
+
+  
+Import Process:
+
+Any File -> DwC/A -> DwC/A + resourcesync
+
+e.g. DwC/A is the canonical representation of data, and DwC/A + resourcesync is the "patch" being applied to this database. Implies a point in time, which suggests locking.
+
+Annotations
+
+Batch Axis
+JobExecution
+	StepExecution
+		Item
+			Only one item annotation per item per step e.g. either
+                        skipInRead
+                        readError
+                        processError
+                        skipInProcess
+                        writeError (multiple items in single tx)
+                        skipInWrite
+Data Axis
+	File
+		Row (Item)
+
+# Copy input archive in from url to upload bucket
+
+fileTransferSystem.copyFileOut(/tmp/cate/random_filename.zip,upload://random_filename.zip)
+
+# Copy from upload bucket to local machine
+
+fileTransferSystem.copyFileIn(upload://random_filename.zip, /tmp/cate/random_filename.zip)
+
+# Unpack
+
+archiveUnpackingTasklet.unzip(/tmp/cate/random_filename.zip, /tmp/cate/working_dir)
+
+# Validate Format e.g. is this a valid DwC/A? 
+	meta.xml exists? 
+	eml.xml? exists (optional)
+	meta.xml valid?
+        Core File exists?
+        Extension Files exist?
+	meta and files agree (column numbers)?
+# Does the DwC/A declare a dataset? and if it does, does the dataset declare an identifier? this should be in the eml file as the identifier of the dataset
+  If the dataset exists in the database
+    Then we should have some idea about how to distinguish records which belong to this database vs records which are referenced - by knowing the databases identifier prefix. 
+    # Filter out objects which dont belong - i.e. which have an identifier format which is not the same as the datasets.
+    # Or filter out data types according to another set of rules e.g. for this dataset exclude x, y, and z types
+# Does the DwC/A declare any other datasets? Do they already exist in the database?
+# ResourceSync
+
+DwCA to ResourceSync
+-1) Mark Relationship or entity e.g. for images we call 
+  insert into lookup (object_id, object_type, other_object_id, other_object_type, job_id, date_time, authority_id, type, code, record_type) select i.id, 'Image', t.id, 'Taxon', :jobId, :dateTime, :authorityId, 'Warn', 'Absent', 'Image' from image i join image_taxon i_t on (i.id = i_t.image_id) join taxon t on (i_t.taxon_id = t.id) where i.authority_id = :authority
+1) Identify creates / updates (based on modified time) & deletes (missing items)
+d2) Identify deleted joins - for the skipped and updated any-to-manys,
+2) Order by max(created,updated) deletes go at the end. Sort DwCA file in this way too (as it is not guarenteed to be in order) and filter out the unchanged lines
+3) Duplicate change list entries for multiple rows
+3) Iterate over changelist & file using composite item reader
+two underlying readers called in order
+ changeListEntry = changeListReader.read()
+
+ if(!changeListEntry.type().equals(ChangeType.DELETE)) {
+    // insert or update records
+ } else {
+    // skip to delete
+ }
+
+

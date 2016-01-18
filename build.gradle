@@ -46,8 +46,8 @@ def getReleaseName = { ->
 }
 
 project.ext {
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
+    //sourceCompatibility = 1.7
+    //targetCompatibility = 1.7
     aspectjVersion = "1.8.4"
 }
 
@@ -149,6 +149,8 @@ dependencies {
   compile("org.apache.tika:tika-parsers:1.10")
   compile("org.apache.tika:tika-core:1.10")
   compile("org.apache.sanselan:sanselan:0.97-incubator")
+  compile("com.amazonaws:aws-java-sdk-route53:1.10.7")
+  compile("com.amazonaws:aws-java-sdk-elasticache:1.10.7")
   testCompile("org.springframework.boot:spring-boot-starter-test")
   testCompile("org.easymock:easymock:3.3")
   testCompile("org.seleniumhq.selenium:selenium-java:2.43.1")

@@ -56,6 +56,12 @@
 			"AllowedValues": ["true", "false"],
 			"ConstraintDescription": "must be either true or false."
 		},
+                "ClusterNodeType" : {
+                         "Description" : "The Elasticache Node Type",
+                         "Default": "cache.t2.micro",
+                         "AllowedValues": ["cache.t2.micro", "cache.t2.small"],
+                         "ConstraintDescription" : "Must be a valid elasticache node type" 
+                }
 		"WebServerCapacity": {
 			"Default": "2",
 			"Description": "The initial nuber of WebServer instances",
@@ -79,6 +85,19 @@
 			"Default": "0.0.0.0/0",
 			"AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
 			"ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+		},
+                "HostedZoneId": {
+			"Description": "Route 53 Hosted Zone Id",
+			"Type": "String",
+			"MinLength": "12",
+			"MaxLength": "15",
+			"AllowedPattern": "[\\dA-Z]+",
+			"ConstraintDescription": "must be a valid hosted zone id"
+		},
+                "HostedZoneName": {
+			"Description": "Route 53 Hosted Zone Name",
+			"Type": "String",
+			"ConstraintDescription": "must be the hosted zone name matching the hosted zone id"
 		}
 	},
 
@@ -192,6 +211,19 @@
       "sa-east-1"        : {"PV64" : "ami-7d15ad11", "HVM64" : "ami-6817af04", "HVMG2" : "NOT_SUPPORTED"},
       "cn-north-1"       : {"PV64" : "ami-18ac6575", "HVM64" : "ami-43a36a2e", "HVMG2" : "NOT_SUPPORTED"}
     }
+,
+    "AWSRegionS3Details" : {
+      "us-east-1"        : {"HostedZoneId" : "Z3AQBSTGFYJSTF", "WebsiteEndpoint" : "s3-website-us-east-1.amazonaws.com"},
+      "us-west-2"        : {"HostedZoneId" : "Z3BJ6K6RIION7M", "WebsiteEndpoint" : "s3-website-us-west-2.amazonaws.com"},
+      "us-west-1"        : {"HostedZoneId" : "Z2F56UZL2M1ACD", "WebsiteEndpoint" : "s3-website-us-west-1.amazonaws.com"},
+      "eu-west-1"        : {"HostedZoneId" : "Z1BKCTXD74EZPE", "WebsiteEndpoint" : "s3-website-eu-west-1.amazonaws.com"},
+      "eu-central-1"     : {"HostedZoneId" : "Z21DNDUVLTQW6Q", "WebsiteEndpoint" : "s3-website.eu-central-1.amazonaws.com"},
+      "ap-northeast-1"   : {"HostedZoneId" : "Z2M4EHUR26P7ZW", "WebsiteEndpoint" : "s3-website-ap-northeast-1.amazonaws.com"},
+      "ap-southeast-1"   : {"HostedZoneId" : "Z3O0J2DXBE1FTB", "WebsiteEndpoint" : "s3-website-ap-southeast-1.amazonaws.com"},
+      "ap-southeast-2"   : {"HostedZoneId" : "Z1WCIGYICN2BYD", "WebsiteEndpoint" : "s3-website-ap-southeast-2.amazonaws.com"},
+      "sa-east-1"        : {"HostedZoneId" : "Z7KQH4QJS55SO", "WebsiteEndpoint" : "s3-website-sa-east-1.amazonaws.com"},
+      "cn-north-1"       : {"HostedZoneId" : "NOT_SUPPORTED", "WebsiteEndpoint" : "NOT_SUPPORTED"}
+    }
 
   },
   "Resources": {
@@ -277,7 +309,7 @@
 								"content": {
 									"Fn::Join": ["", [
 										"server.port=80\n",
-                                                                                "spring.profiles.active=aws\n",
+                                                                                "spring.profiles.active=aws,cluster\n",
                                                                                 "liquibase.contexts=mysql\n",
 										"spring.datasource.name=cate\n",
 										"spring.datasource.driver-class-name=com.mysql.jdbc.Driver\n",
@@ -286,7 +318,10 @@
 										"spring.datasource.password=", { "Ref": "DBPassword" }, "\n",
                                                                                 "cloudformation.topicArn=", {"Ref": "CATETopic"}, "\n",
                                                                                 "cloudformation.queueArn=", {"Ref": "CATEQueue"}, "\n",
-                                                                                "cloudformation.uploadBucketArn=", {"Ref": "UploadBucket"}, "\n"
+                                                                                "cloudformation.uploadBucketArn=", {"Ref": "UploadBucket"}, "\n",
+                                                                                "route53.hostedZoneId=", {"Ref": "HostedZoneId"}, "\n",
+                                                                                "s3.websiteHostedZoneId=", { "Fn::FindInMap": ["AWSRegionS3Details", {"Ref": "AWS::Region" }, "HostedZoneId"] }, "\n",
+                                                                                "s3.websiteEndpoint=", { "Fn::FindInMap": ["AWSRegionS3Details", {"Ref": "AWS::Region" }, "WebsiteEndpoint"] }, "\n"
 									]]
 								},
 								"mode": "000600",
@@ -298,7 +333,7 @@
 									"Fn::Join": ["", [
 										"[main]\n",
 										"stack=", {
-											"Ref": "AWS::StackId"
+												"Ref": "AWS::StackId"
 										}, "\n",
 										"region=", {
 											"Ref": "AWS::Region"
@@ -505,6 +540,42 @@
 		},
                 "UploadBucket": {
 	                "Type": "AWS::S3::Bucket"
+                },
+                "ElasticacheSecurityGroup": {
+                        "Type": "AWS::Elasticache::SecurityGroup",
+                        "Properties": {
+                                "GroupDescription": "Elasticache Security Group"
+                         } 
+                },
+                "ElasticacheSecurityGroupIngress": {
+                         "Type": "AWS::Elasticache::SecurityGroupIngress",
+                         "Properties" : {
+                            "CacheSecurityGroupName" : { "Ref" : "ElasticacheSecurityGroup" },
+                            "EC2SecurityGroupName" : { "Ref" : "WebServerSecurityGroup" },
+                         }
+                },
+                "ElasticacheCluster": {
+                         "Type": "AWS::ElastiCache::CacheCluster",
+                         "Properties": {
+                                  "Engine": "redis",
+                                  "CacheNodeType": { "Ref" : "ClusterNodeType" },
+                                  "NumCacheNodes": "1",
+                                  "CacheSecurityGroupNames": [{"Ref": "ElasticacheSecurityGroup"}]
+                          }
+                },
+                "Dns" : {
+                        "Type" : "AWS::Route53::RecordSetGroup",
+                        "Properties" : {
+                            "HostedZoneId" : { "Ref": "HostedZoneId" },
+                            "RecordSets" : [{
+                                "Name" : { "Fn::Join": ["", ["*.",  { "Ref": "HostedZoneName" }, "."]]},
+                                "Type" : "A",
+                                "AliasTarget" : {
+                                    "HostedZoneId" : { "Fn::GetAtt" : ["ElasticLoadBalancer", "CanonicalHostedZoneNameID"] },
+                                    "DNSName" : { "Fn::GetAtt" : ["ElasticLoadBalancer","CanonicalHostedZoneName"] }
+                                }
+                            }]
+                        }
                 }
 	},
 
@@ -512,9 +583,7 @@
 		"WebsiteURL": {
 			"Description": "URL for newly created CATE stack",
 			"Value": {
-				"Fn::Join": ["", ["http://", {
-					"Fn::GetAtt": ["ElasticLoadBalancer", "DNSName"]
-				}]]
+				"Fn::Join": ["", ["http://", { "Ref": "HostedZoneName" }]]
 			}
 		}
 	}

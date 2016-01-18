@@ -91,7 +91,8 @@ $ java -jar /var/lib/cate/cate.jar
 
 #### Redis
 
-  CATE uses a redis database to store http session data when running in clustered mode
+  CATE uses a redis database to store http session data when running in clustered mode. N.b. When running on AWS CATE will attempt to discover the port and address of an elasticache 
+  cluster running in the same account.
 
  - spring.redis.database=0
  - spring.redis.host=localhost

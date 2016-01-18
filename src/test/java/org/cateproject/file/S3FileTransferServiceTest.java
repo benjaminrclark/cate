@@ -16,6 +16,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.amazonaws.services.route53.AmazonRoute53;
+import com.amazonaws.services.route53.model.ChangeResourceRecordSetsRequest;
+import com.amazonaws.services.route53.model.ChangeResourceRecordSetsResult;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.BucketWebsiteConfiguration;
@@ -33,13 +36,20 @@ public class S3FileTransferServiceTest {
 
     private AmazonS3 amazonS3;
 
+    private AmazonRoute53 amazonRoute53;
+
     @Before
     public void setUp() {
         s3FileTransferService = new S3FileTransferService();
         amazonS3 = EasyMock.createMock(AmazonS3.class);
+        amazonRoute53 = EasyMock.createMock(AmazonRoute53.class);
         s3FileTransferService.setAmazonS3(amazonS3);
+        s3FileTransferService.setAmazonRoute53(amazonRoute53);
         s3FileTransferService.setRegion("REGION");
         s3FileTransferService.setUploadBucketArn("UPLOAD_BUCKET_ARN");
+        s3FileTransferService.setHostedZoneId("HOSTED_ZONE_ID");
+        s3FileTransferService.setS3WebsiteEndpoint("S3_WEBSITE_ENDPOINT");
+        s3FileTransferService.setS3WebsiteHostedZoneId("S3_WEBSITE_HOSTED_ZONE_ID");
         MultitenantContextHolder.getContext().setTenantId("TENANT_ID");
     }
 
@@ -54,9 +64,9 @@ public class S3FileTransferServiceTest {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         EasyMock.expect(amazonS3.getObject(EasyMock.isA(GetObjectRequest.class), EasyMock.eq(file))).andReturn(objectMetadata);
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.stringToFile("static://FILENAME", file);
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
     @Test
@@ -65,16 +75,16 @@ public class S3FileTransferServiceTest {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         EasyMock.expect(amazonS3.getObject(EasyMock.isA(GetObjectRequest.class), EasyMock.eq(file))).andReturn(objectMetadata);
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.stringToFile("upload://FILENAME", file);
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testStringToFileBadURI() throws IOException {
         File file = new File("test.txt");
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.stringToFile("other://FILENAME", file);
     }
 
@@ -85,9 +95,9 @@ public class S3FileTransferServiceTest {
         putObjectResult.setETag("ETAG");
         EasyMock.expect(amazonS3.putObject(EasyMock.isA(PutObjectRequest.class))).andReturn(putObjectResult);
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         assertEquals("fileToString should return the ETag","ETAG", s3FileTransferService.fileToString(file,"static://FILENAME"));
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
     @Test
@@ -97,16 +107,16 @@ public class S3FileTransferServiceTest {
         putObjectResult.setETag("ETAG");
         EasyMock.expect(amazonS3.putObject(EasyMock.isA(PutObjectRequest.class))).andReturn(putObjectResult);
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         assertEquals("fileToString should return the ETag","ETAG", s3FileTransferService.fileToString(file,"upload://FILENAME"));
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testFileToStringBadURI() throws IOException {
         File file = new File("test.txt");
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.fileToString(file, "other://FILENAME");
     }
 
@@ -114,23 +124,23 @@ public class S3FileTransferServiceTest {
     public void testDeleteStatic() throws IOException {
         amazonS3.deleteObject(EasyMock.isA(DeleteObjectRequest.class));
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         assertTrue("delete should return true", s3FileTransferService.delete("static://FILENAME"));
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
     @Test
     public void testDeleteUpload() throws IOException {
         amazonS3.deleteObject(EasyMock.isA(DeleteObjectRequest.class));
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         assertTrue("delete should return true",s3FileTransferService.delete("upload://FILENAME"));
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testDeleteBadURI() throws IOException {
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.delete("other://FILENAME");
     }
 
@@ -138,34 +148,34 @@ public class S3FileTransferServiceTest {
     public void testCopyDirectoryIn() throws IOException {
         File file = new File("test.txt");
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.copyDirectoryIn("upload://FILENAME",file);
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
     @Test
     public void testCopyDirectoryOut() throws IOException {
         File file = new File("test.txt");
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.copyDirectoryOut(file, "upload://FILENAME");
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
     @Test
     public void testExists() throws IOException {
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         assertFalse("exists should return false", s3FileTransferService.exists("upload://FILENAME"));
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
     @Test
     public void testNotify() throws IOException {
         MultitenantEvent multitenantEvent = new MultitenantEvent();        
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.notify(multitenantEvent);
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
     @Test
@@ -174,9 +184,9 @@ public class S3FileTransferServiceTest {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         EasyMock.expect(amazonS3.getObject(EasyMock.isA(GetObjectRequest.class), EasyMock.eq(file))).andReturn(objectMetadata);
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.copyFileIn("static://FILENAME", file);
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
 
@@ -187,9 +197,9 @@ public class S3FileTransferServiceTest {
         EasyMock.expect(amazonS3.getObject(EasyMock.isA(GetObjectRequest.class), EasyMock.eq(file))).andReturn(objectMetadata);
         amazonS3.deleteObject(EasyMock.isA(DeleteObjectRequest.class));
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.moveFileIn("static://FILENAME", file);
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
     @Test
@@ -199,9 +209,9 @@ public class S3FileTransferServiceTest {
         putObjectResult.setETag("ETAG");
         EasyMock.expect(amazonS3.putObject(EasyMock.isA(PutObjectRequest.class))).andReturn(putObjectResult);
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         assertEquals("copyFileOut should return the ETag","ETAG", s3FileTransferService.copyFileOut(file,"static://FILENAME"));
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
 
@@ -212,10 +222,10 @@ public class S3FileTransferServiceTest {
         putObjectResult.setETag("ETAG");
         EasyMock.expect(amazonS3.putObject(EasyMock.isA(PutObjectRequest.class))).andReturn(putObjectResult);
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         assertEquals("moveFileOut should return the ETag","ETAG", s3FileTransferService.moveFileOut(file,"static://FILENAME"));
         assertFalse("moveFileOut should delete the file", file.exists());
-        EasyMock.verify(amazonS3);
+        EasyMock.verify(amazonS3, amazonRoute53);
     }
 
     @Test
@@ -239,10 +249,10 @@ public class S3FileTransferServiceTest {
         EasyMock.expect(amazonS3.putObject(EasyMock.isA(PutObjectRequest.class))).andReturn(putObjectResult).anyTimes();
         amazonS3.setBucketWebsiteConfiguration(EasyMock.eq("static-TENANT_ID"),EasyMock.isA(BucketWebsiteConfiguration.class));
         amazonS3.setBucketPolicy(EasyMock.isA(SetBucketPolicyRequest.class));       
-
-        EasyMock.replay(amazonS3);
+        EasyMock.expect(amazonRoute53.changeResourceRecordSets(EasyMock.isA(ChangeResourceRecordSetsRequest.class))).andReturn(new ChangeResourceRecordSetsResult());
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.handle(multitenantEvent);
-        EasyMock.verify(amazonS3); 
+        EasyMock.verify(amazonS3, amazonRoute53); 
     }
 
     @Test
@@ -251,9 +261,9 @@ public class S3FileTransferServiceTest {
         multitenantEvent.setIdentifier("TENANT_ID");
         multitenantEvent.setType(MultitenantEventType.DELETE);
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.handle(multitenantEvent);
-        EasyMock.verify(amazonS3); 
+        EasyMock.verify(amazonS3, amazonRoute53); 
     }
 
     @Test
@@ -262,8 +272,8 @@ public class S3FileTransferServiceTest {
         multitenantEvent.setIdentifier("TENANT_ID");
         multitenantEvent.setType(MultitenantEventType.OTHER);
 
-        EasyMock.replay(amazonS3);
+        EasyMock.replay(amazonS3, amazonRoute53);
         s3FileTransferService.handle(multitenantEvent);
-        EasyMock.verify(amazonS3); 
+        EasyMock.verify(amazonS3, amazonRoute53); 
     }
 }

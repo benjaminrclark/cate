@@ -3,8 +3,6 @@ package org.cateproject.file;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.cateproject.domain.constants.DCMIType;
@@ -14,15 +12,20 @@ import org.cateproject.multitenant.event.MultitenantEvent;
 import org.cateproject.multitenant.event.MultitenantEventAwareService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.DigestUtils;
 
+import com.amazonaws.services.route53.AmazonRoute53;
+import com.amazonaws.services.route53.model.AliasTarget;
+import com.amazonaws.services.route53.model.Change;
+import com.amazonaws.services.route53.model.ChangeAction;
+import com.amazonaws.services.route53.model.ChangeBatch;
+import com.amazonaws.services.route53.model.ChangeResourceRecordSetsRequest;
+import com.amazonaws.services.route53.model.RRType;
+import com.amazonaws.services.route53.model.ResourceRecordSet;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AccessControlList;
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.BucketPolicy;
 import com.amazonaws.services.s3.model.BucketWebsiteConfiguration;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -40,6 +43,18 @@ public class S3FileTransferService implements FileTransferService, MultitenantEv
         @Autowired
         private AmazonS3 amazonS3;
 
+        @Autowired
+        private AmazonRoute53 amazonRoute53;
+
+        @Value("${route53.hostedZoneId}")
+	private String hostedZoneId;
+
+        @Value("${s3.websiteHostedZoneId}")
+        private String s3WebsiteHostedZoneId;
+
+        @Value("${s3.websiteEndpoint}")
+        private String s3WebsiteEndpoint;
+
         private String uploadBucketArn;
 
         private String region;
@@ -52,6 +67,10 @@ public class S3FileTransferService implements FileTransferService, MultitenantEv
             this.amazonS3 = amazonS3;
         }
 
+        public void setAmazonRoute53(AmazonRoute53 amazonRoute53) {
+            this.amazonRoute53 = amazonRoute53;
+        }
+
         public void setUploadBucketArn(String uploadBucketArn) {
           this.uploadBucketArn = uploadBucketArn;
         }
@@ -60,6 +79,17 @@ public class S3FileTransferService implements FileTransferService, MultitenantEv
             this.region = region;
         }
 
+        public void setHostedZoneId(String hostedZoneId) {
+            this.hostedZoneId = hostedZoneId;
+        } 
+
+        public void setS3WebsiteHostedZoneId(String s3WebsiteHostedZoneId) {
+            this.s3WebsiteHostedZoneId = s3WebsiteHostedZoneId;
+        }
+
+        public void setS3WebsiteEndpoint(String s3WebsiteEndpoint) {
+            this.s3WebsiteEndpoint = s3WebsiteEndpoint;
+        }
 
         protected void stringToFile(String fileName, File file) throws IOException {
                 GetObjectRequest getObjectRequest = null;
@@ -117,7 +147,7 @@ public class S3FileTransferService implements FileTransferService, MultitenantEv
                             amazonS3.putObject(errorRequest);
 
                             for(DCMIType type : DCMIType.values()) {
-                                String multimediaTypeDirectory  = bucketName + "/" + type.toString();
+                                String multimediaTypeDirectory  = type.toString();
                                 PutObjectRequest multimediaTypeRequest = new PutObjectRequest(bucketName, multimediaTypeDirectory + "/index.html", indexResource.getInputStream(), indexMetadata);
                                 amazonS3.putObject(multimediaTypeRequest);
                                 for(MultimediaFileType multimediaType : type.getMultimediaFileTypes()) {
@@ -133,7 +163,12 @@ public class S3FileTransferService implements FileTransferService, MultitenantEv
                         amazonS3.setBucketWebsiteConfiguration(bucketName, bucketWebsiteConfiguration);
                         SetBucketPolicyRequest bucketPolicyRequest = new SetBucketPolicyRequest(bucketName, "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"PublicReadForGetBucketObjects\",\"Effect\":\"Allow\",\"Principal\": \"*\",\"Action\":[\"s3:GetObject\"],\"Resource\":[\"arn:aws:s3:::"+ bucketName + "/*\"]}]}");
                         amazonS3.setBucketPolicy(bucketPolicyRequest);
-                        // TODO Configure Route53 Recordsets
+                        ResourceRecordSet s3ResourceRecordSet = new ResourceRecordSet(bucketName, RRType.A);
+                        s3ResourceRecordSet.setAliasTarget(new AliasTarget(s3WebsiteHostedZoneId, s3WebsiteEndpoint));
+                        ChangeBatch changeBatch = new ChangeBatch();
+                        Change s3Change = new Change(ChangeAction.CREATE, s3ResourceRecordSet);
+                        changeBatch.withChanges(s3Change);
+                        amazonRoute53.changeResourceRecordSets(new ChangeResourceRecordSetsRequest(hostedZoneId,changeBatch));
 			logger.info("Static directory for tenant {} ({}) has been created successfully", new Object[]{ multitenantEvent.getIdentifier(), bucketName});
 			break;
 		case DELETE:	

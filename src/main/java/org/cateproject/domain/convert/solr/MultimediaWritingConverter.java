@@ -10,7 +10,7 @@ public class MultimediaWritingConverter extends BaseWritingConverter<Multimedia>
             SolrInputDocument solrInputDocument = super.convert(multimedia);
             solrInputDocument.addField("id", "multimedia_" + multimedia.getId());
             solrInputDocument.addField("base.label_sort", multimedia.getTitle());
-            solrInputDocument.addField("base.class_s", "org.cateproject.domain.Image");
+            solrInputDocument.addField("base.class_s", "org.cateproject.domain.Multimedia");
             solrInputDocument.addField("base.title_s", multimedia.getTitle());        
         
             solrInputDocument.addField("multimedia.identifier_s", multimedia.getIdentifier());

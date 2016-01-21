@@ -114,51 +114,73 @@ JobExecution
                         writeError (multiple items in single tx)
                         skipInWrite
 Data Axis
+DarwinCoreArchive
+ - Contains copy of information from meta.xml
 	File
-		Row (Item)
+	 - Either Core File or Extension File
+		Record
 
-# Copy input archive in from url to upload bucket
 
-fileTransferSystem.copyFileOut(/tmp/cate/random_filename.zip,upload://random_filename.zip)
 
-# Copy from upload bucket to local machine
+# Copy input archive in from url to upload bucket allowStartIfComplete
+
+fileTransferSystem.copyFileOut(/tmp/cate/random_filename.zip,upload://random_filename.zip) | Retrieved archive from x
+
+# Copy from upload bucket to local machine allowStartIfComplete=true
 
 fileTransferSystem.copyFileIn(upload://random_filename.zip, /tmp/cate/random_filename.zip)
 
-# Unpack
+# Unpack & Validate Format e.g. is this a valid DwC/A? allowStartIfComplete=true
 
-archiveUnpackingTasklet.unzip(/tmp/cate/random_filename.zip, /tmp/cate/working_dir)
-
-# Validate Format e.g. is this a valid DwC/A? 
-	meta.xml exists? 
-	eml.xml? exists (optional)
-	meta.xml valid?
-        Core File exists?
+archiveUnpackingTasklet.unzip(/tmp/cate/random_filename.zip, /tmp/cate/working_dir) | Unpacked archive successfully
+	meta.xml exists!
+	eml.xml exists?
+        manifest.xml exists?
+        Core File exists!
         Extension Files exist?
+ 
+# Create DarwinCoreArchive record with data from meta and eml (optionally). | Read meta.xml, eml.xml - add terms
+
+# Validate Archive
+	meta.xml valid?
+        meta file contains known terms
+
+# Read core file into File object
+
+# Read core records into Record objects | Read # records from ${filename}
+
+# For each extension file
+	# Read extension into File object
+
+	# Read records into Record objects | Read # records from ${filename}
 	meta and files agree (column numbers)?
-# Does the DwC/A declare a dataset? and if it does, does the dataset declare an identifier? this should be in the eml file as the identifier of the dataset
+        Identifiers resolvable
+        Taxon only - parents have the correct status
+        Validate values
+
+#### can produce report at this stage - this is a 'valid' DwC/A.
+
+# Does the DwC/A declare a dataset in the columns of the core and extension files as well as an identifier for 'this' dataset in the eml? If so, we can exclude some records as being foreign - we don't import those records, but we also need to check that the identifiers of foreign datasets are either known and up to date, or resolvable and we import them.
+
+# Do we have a changedump manifest? if so, we can import changes, provided the change dump is the "next" change dump (need to check)
+
+# Otherwise this dataset exists in the database and we have modified dates for those entities. 
+
   If the dataset exists in the database
-    Then we should have some idea about how to distinguish records which belong to this database vs records which are referenced - by knowing the databases identifier prefix. 
-    # Filter out objects which dont belong - i.e. which have an identifier format which is not the same as the datasets.
-    # Or filter out data types according to another set of rules e.g. for this dataset exclude x, y, and z types
-# Does the DwC/A declare any other datasets? Do they already exist in the database?
-# ResourceSync
+  for each object type in the sum of (object types already in database for that dataset, object types in darwin core archve)
+    for each object in the database belonging to that dataset, does that object exist in the archive? If so, then it is either a skip if unchanged, an update if updated, or a delete if absent.
+      Non-Owned Extension files will need to check (coreId, identifier) tuples to detect skip / updated / deleted joins
+    for each object in the archive, does it exist in the database, if so, then it is a create.
 
-DwCA to ResourceSync
--1) Mark Relationship or entity e.g. for images we call 
-  insert into lookup (object_id, object_type, other_object_id, other_object_type, job_id, date_time, authority_id, type, code, record_type) select i.id, 'Image', t.id, 'Taxon', :jobId, :dateTime, :authorityId, 'Warn', 'Absent', 'Image' from image i join image_taxon i_t on (i.id = i_t.image_id) join taxon t on (i_t.taxon_id = t.id) where i.authority_id = :authority
-1) Identify creates / updates (based on modified time) & deletes (missing items)
-d2) Identify deleted joins - for the skipped and updated any-to-manys,
-2) Order by max(created,updated) deletes go at the end. Sort DwCA file in this way too (as it is not guarenteed to be in order) and filter out the unchanged lines
-3) Duplicate change list entries for multiple rows
-3) Iterate over changelist & file using composite item reader
+# We can now write out a change dump DwC/A
+  for each object type in the sum of (object types already in database for that dataset, object types in darwin core archve)
+    for each record in the file (including extra records which express deletes or deleted joins) we can write out an entry in the change dump manifest
+    Duplicate change list entries for multiple rows or express them as ranges
+    2) Order by max(created,updated) deletes go at the end. Sort DwCA file in this way too (as it is not guarenteed to be in order) and filter out the unchanged lines
+
+#### can produce change dump at this stage ####
+
+3) Iterate over records in files 
 two underlying readers called in order
- changeListEntry = changeListReader.read()
 
- if(!changeListEntry.type().equals(ChangeType.DELETE)) {
-    // insert or update records
- } else {
-    // skip to delete
- }
-
-
+ apply changes

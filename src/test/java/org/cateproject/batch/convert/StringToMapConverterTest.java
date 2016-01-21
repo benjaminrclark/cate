@@ -26,6 +26,13 @@ public class StringToMapConverterTest {
         assertEquals("Convert should return the expected map", expectedMap, stringToMapConverter.convert("[KEY_1:VALUE_1,KEY_2_bool:true]"));
     }
 
+    @Test
+    public void testConvertEmptyMap() {
+        Map<String,Object> expectedMap = new HashMap<String,Object>();
+
+        assertEquals("Convert should return the expected map", expectedMap, stringToMapConverter.convert("[]"));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testConvertInvalidBeginningChar() {
         stringToMapConverter.convert("KEY_1:VALUE_1,KEY_2_bool:true]");

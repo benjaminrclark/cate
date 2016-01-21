@@ -16,16 +16,18 @@ public class StringToMapConverter implements Converter<String, Map<String, Objec
         if(values.startsWith("[") && values.endsWith("]")) {
             Map<String, Object> map = new HashMap<String, Object>();
             values = values.substring(1,values.length() - 1);
-            for(String value : values.split(",")) {
-                logger.debug("Converting keyvalue {}", new Object[]{value});
-                String[] keyValue = value.split(":", 2);
-                String key = keyValue[0];
-                Object val = keyValue[1];
-                if(key.endsWith("_bool")) {
-                    val = Boolean.parseBoolean(val.toString());
-                    key = key.substring(0, key.length() - "_bool".length());
+            if(!values.isEmpty()){
+                for(String value : values.split(",")) {
+                    logger.debug("Converting keyvalue {}", new Object[]{value});
+                    String[] keyValue = value.split(":", 2);
+                    String key = keyValue[0];
+                    Object val = keyValue[1];
+                    if(key.endsWith("_bool")) {
+                        val = Boolean.parseBoolean(val.toString());
+                        key = key.substring(0, key.length() - "_bool".length());
+                    }
+                    map.put(key,val);
                 }
-                map.put(key,val);
             }
             return map;
         } else {

@@ -15,4 +15,5 @@ public class TestingBatchTaskExecutorConfiguration extends BatchTaskExecutorConf
     public TaskExecutor batchTaskExecutor() {
         return new SyncTaskExecutor();
     }
+
 }

@@ -6,9 +6,6 @@ import java.util.Map;
 
 import javax.persistence.EntityManagerFactory;
 
-import org.cateproject.batch.BatchListener;
-import org.cateproject.batch.InputFileCleanupTasklet;
-import org.cateproject.batch.ParameterConvertingTasklet;
 import org.cateproject.batch.multimedia.ImageResizeProcessor;
 import org.cateproject.batch.multimedia.MultimediaFetchingProcessor;
 import org.cateproject.batch.multimedia.MultimediaFileService;
@@ -27,15 +24,14 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,10 +54,22 @@ public class ProcessMultimediaConfiguration {
     @Autowired
     JobRegistry jobRegistry;
 
+    @Autowired
+    @Qualifier("batchListener")
+    private JobExecutionListener batchListener;
+
+    @Autowired
+    @Qualifier("convertBatchParams")
+    private Step convertBatchParams;
+
+    @Autowired
+    @Qualifier("cleanUpResources")
+    private Step cleanUpResources;
+
     @Bean
-    public Job processMultimedia(Step convertBatchParams, Step processSingleMultimedia, Step cleanUpResources) {
+    public Job processMultimedia(Step processSingleMultimedia) {
         try {
-            Job job =  jobs.get("processMultimedia").start(convertBatchParams).next(processSingleMultimedia).next(cleanUpResources).listener(batchListener()).build();
+            Job job =  jobs.get("processMultimedia").start(convertBatchParams).next(processSingleMultimedia).next(cleanUpResources).listener(batchListener).build();
             jobRegistry.register(new ReferenceJobFactory(job));
             return job;
         } catch (DuplicateJobException dje) {
@@ -69,24 +77,6 @@ public class ProcessMultimediaConfiguration {
         }
     }
 
-    @Bean
-    @StepScope
-    public ParameterConvertingTasklet convertBatchParamsTasklet(@Value("#{jobParameters}") Map<String,String> jobParameters) {
-        logger.debug("JobParameters {}", new Object[]{jobParameters});
-        ParameterConvertingTasklet parameterConvertingTasklet = new ParameterConvertingTasklet();
-        parameterConvertingTasklet.setJobParameters(jobParameters);
-        return parameterConvertingTasklet;
-    }
-
-    @Bean
-    JobExecutionListener batchListener() {
-        return new BatchListener();
-    }
-
-    @Bean
-    public Step convertBatchParams(Tasklet convertBatchParamsTasklet) {
-        return steps.get("convertBatchParams").tasklet(convertBatchParamsTasklet).listener(batchListener()).build();
-    }
 
     @Bean
     public MultimediaFileService multimediaFileService() {
@@ -172,19 +162,8 @@ public class ProcessMultimediaConfiguration {
        return steps.get("processSingleMultimedia").<Multimedia,Multimedia> chunk(1).faultTolerant().retryLimit(5).retry(OptimisticLockingFailureException.class)
                    .reader(multimediaFileReader(null, null))
                    .processor(multimediaFileProcessor)
-                   .writer(multimediaWriter()).listener(batchListener()).build();
+                   .writer(multimediaWriter()).listener((Object)batchListener).build();
     }
 
-    @Bean
-    public Step cleanUpResources(Tasklet inputFileCleanupTasklet) {
-      return steps.get("cleanupResources").tasklet(inputFileCleanupTasklet).listener(batchListener()).build();
-    }
 
-    @Bean
-    @StepScope
-    public InputFileCleanupTasklet inputFileCleanupTasklet(@Value("#{jobExecutionContext['input.file']}") String inputFile) {
-        InputFileCleanupTasklet inputFileCleanupTasklet = new InputFileCleanupTasklet();
-        inputFileCleanupTasklet.setInputFile(inputFile);
-        return inputFileCleanupTasklet;
-    }
 }

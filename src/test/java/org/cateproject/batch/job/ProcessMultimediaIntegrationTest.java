@@ -23,7 +23,9 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,8 +43,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class ProcessMultimediaIntegrationTest {
 
     @Autowired
-    @Qualifier("processMultimedia")
-    private Job processMultimedia;
+    private JobRegistry jobRegistry;
 
     private JobLauncherTestUtils jobLauncherTestUtils;
 
@@ -63,11 +64,11 @@ public class ProcessMultimediaIntegrationTest {
     private JobParameters jobParameters;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() throws IOException, NoSuchJobException {
         MultitenantContextHolder.getContext().clearContextProperties();
         MultitenantContextHolder.getContext().setTenantId(null);
         jobLauncherTestUtils = new JobLauncherTestUtils();
-        jobLauncherTestUtils.setJob(processMultimedia);
+        jobLauncherTestUtils.setJob(jobRegistry.getJob("processMultimedia"));
         jobLauncherTestUtils.setJobLauncher(jobLauncher);
         Multimedia multimedia = new Multimedia();
         multimedia.setIdentifier("1234");

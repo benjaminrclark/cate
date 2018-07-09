@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.configuration.JobRegistry;
+import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.integration.launch.JobLaunchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,8 +35,7 @@ public class MultimediaHandler {
     MultimediaFileService multimediaFileService;
 
     @Autowired
-    @Qualifier("processMultimedia")
-    private Job processMultimediaJob;
+    private JobRegistry jobRegistry;
 
     @Autowired
     @Qualifier("remoteJobLaunchRequests")
@@ -52,8 +53,8 @@ public class MultimediaHandler {
         this.multimediaFileService = multimediaFileService;
     }
 
-    public void setProcessMultimediaJob(Job processMultimediaJob) {
-        this.processMultimediaJob = processMultimediaJob;
+    public void setJobRegistry(JobRegistry jobRegistry) {
+        this.jobRegistry = jobRegistry;
     }
 
     public void setJobLaunchRequestHandler(JobLaunchRequestHandler jobLaunchRequestHandler) {
@@ -91,12 +92,15 @@ public class MultimediaHandler {
         tenantProperties.put("ProcessingMultimediaFile", Boolean.TRUE);
         jobParametersMap.put("tenant.properties", new JobParameter(conversionService.convert(tenantProperties,String.class)));
         JobParameters jobParameters = new JobParameters(jobParametersMap);
-        JobLaunchRequest jobLaunchRequest = new JobLaunchRequest(processMultimediaJob, jobParameters);
-        jobLaunchRequestHandler.launch(jobLaunchRequest);
-	return multimedia;
-		
-	}
-
+        try {
+            Job processMultimediaJob = jobRegistry.getJob("processMultimedia");
+            JobLaunchRequest jobLaunchRequest = new JobLaunchRequest(processMultimediaJob, jobParameters);
+            jobLaunchRequestHandler.launch(jobLaunchRequest);
+	    return multimedia;		
+	} catch (NoSuchJobException nsje) {
+            throw new RuntimeException("Could not launch job", nsje);
+        }
+    }
     public void prePersist(Multimedia multimedia) {
     	if(!MultitenantContextHolder.getContext().getContextBoolean("ProcessingMultimediaFile")) {
     		logger.debug("prePersist handling file");

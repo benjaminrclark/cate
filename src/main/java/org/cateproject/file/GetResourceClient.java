@@ -158,6 +158,10 @@ public class GetResourceClient {
 			throw new RuntimeException(fnfe);
 		}
 	}
+
+        public DateTime getResource(String resource, File localFile) {
+            return getResource(resource, null, localFile);
+        }
 	
 	public DateTime getLastModified(String resource) {
 		OutputStream outputStream = new ByteArrayOutputStream();

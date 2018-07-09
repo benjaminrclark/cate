@@ -46,8 +46,8 @@ def getReleaseName = { ->
 }
 
 project.ext {
-    //sourceCompatibility = 1.7
-    //targetCompatibility = 1.7
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
     aspectjVersion = "1.8.4"
 }
 
@@ -108,6 +108,8 @@ dependencies {
   compile("org.liquibase:liquibase-core")
   compile("org.springframework:spring-jdbc")
   compile("org.springframework:spring-aspects")
+  compile("org.springframework:spring-oxm")
+  compile("com.thoughtworks.xstream:xstream:1.4.8")
   compile("org.springframework.data:spring-data-solr")
   compile("org.springframework.session:spring-session-data-redis")
   compile("org.springframework.batch:spring-batch-integration")
@@ -127,8 +129,8 @@ dependencies {
   compile("org.apache.commons:commons-lang3:3.3.2")
   compile("org.apache.activemq:activemq-broker")
   compile("org.apache.activemq:activemq-pool")
-  compile("org.gbif:dwca-reader:1.12")
-  compile("org.gbif:dwc-api:1.1")
+  compile("org.gbif:dwca-reader:1.16")
+  compile("org.gbif:dwc-api:1.16")
   compile("org.gbif:gbif-common:0.8")
   compile("org.gbif:ecat-common:1.6") {
     exclude group: "org.apache.lucene"
@@ -163,7 +165,7 @@ dependencies {
 
 test {
   //makes the standard streams (err and out) visible at console when running tests
-  // testLogging.showStandardStreams = true
+   testLogging.showStandardStreams = true
    maxHeapSize = '1024m'
     testLogging {
         events "failed"

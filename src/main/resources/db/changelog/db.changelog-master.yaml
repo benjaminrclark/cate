@@ -3678,3 +3678,209 @@ databaseChangeLog:
       context: mysql
       changes:
        - sql: insert into batch_job_seq (id) select 0 from dual where not exists (select id from batch_job_seq limit 1);
+  - changeSet:
+      author: ben
+      id: 2016_02_25-01
+      changes:
+       - createTable:
+           tableName: batch_dataset 
+           columns:
+            - column:
+                name: id 
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: version
+                type: INT
+                constraints:
+                  nullable: false
+            - column:
+                name: type 
+                type: INT
+            - column:
+                name: identifier 
+                type: VARCHAR(255)
+            - column:
+                name: change_dump_manifest_present 
+                type: boolean
+                defaultValueBoolean: false
+            - column:
+                name: citation 
+                type: VARCHAR(255)
+            - column:
+                name: creator_email 
+                type: VARCHAR(255)
+            - column:
+                name: creator_name 
+                type: VARCHAR(255)
+            - column:
+                name: description 
+                type: VARCHAR(255)
+            - column:
+                name: homepage 
+                type: VARCHAR(255)
+            - column:
+                name: logo 
+                type: VARCHAR(255)
+            - column:
+                name: published 
+                type: DATETIME 
+            - column:
+                name: publisher_email 
+                type: VARCHAR(255)
+            - column:
+                name: publisher_name
+                type: VARCHAR(255)
+            - column:
+                name: rights
+                type: VARCHAR(255)
+            - column:
+                name: subject
+                type: VARCHAR(255)
+            - column:
+                name: title
+                type: VARCHAR(255)
+  - changeSet:
+      author: ben
+      id: 2016_02_25-02
+      changes:
+       - createTable:
+           tableName: batch_file 
+           columns:
+            - column:
+                name: id 
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: version
+                type: INT
+                constraints:
+                  nullable: false
+            - column:
+                name: dataset_id 
+                type: BIGINT
+                constraints:
+                  nullable: false
+            - column:
+                name: core
+                type: BIT
+                constraints:
+                  nullable: false 
+            - column:
+                name: location 
+                type: VARCHAR(255)
+            - column:
+                name: date_format 
+                type: VARCHAR(255)
+            - column:
+                name: encoding
+                type: VARCHAR(255)
+            - column:
+                name: fields_enclosed_by 
+                type: CHAR(1)
+            - column:
+                name: fields_terminated_by 
+                type: VARCHAR(255)
+            - column:
+                name: ignore_header_lines 
+                type: INT
+            - column:
+                name: lines_terminated_by
+                type: VARCHAR(255)
+            - column:
+                name: row_type 
+                type: VARCHAR(255)
+  - changeSet:
+      author: ben
+      id: 2016_02_25-03
+      changes:
+       - createTable:
+           tableName: batch_field 
+           columns:
+            - column:
+                name: id 
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: version
+                type: INT
+                constraints:
+                  nullable: false 
+            - column:
+                name: id_field
+                type: BIT
+                constraints:
+                  nullable: false
+            - column:
+                name: file_id 
+                type: BIGINT
+                constraints:
+                  nullable: false
+            - column:
+                name: term 
+                type: VARCHAR(255)
+            - column:
+                name: index 
+                type: INT 
+            - column:
+                name: default_value 
+                type: VARCHAR(255)
+  - changeSet:
+      author: ben
+      id: 2016_02_29-01
+      changes:
+       - createTable:
+           tableName: batch_line 
+           columns:
+            - column:
+                name: id 
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: version
+                type: INT
+                constraints:
+                  nullable: false
+            - column:
+                name: file_id 
+                type: BIGINT
+                constraints:
+                  nullable: false
+            - column:
+                name: line 
+                type: LONGTEXT 
+            - column:
+                name: line_number 
+                type: INT 
+            - column:
+                name: last_mod 
+                type: DATETIME
+            - column:
+                name: loc 
+                type: VARCHAR(255)
+            - column:
+                name: change 
+                type: BIT
+            - column:
+                name: hash 
+                type: VARCHAR(255)
+            - column:
+                name: length
+                type: INT
+            - column:
+                name: type 
+                type: VARCHAR(255)
+            - column:
+                name: path
+                type: VARCHAR(255)
+            - column:
+                name: number_of_columns 
+                type: INTEGER

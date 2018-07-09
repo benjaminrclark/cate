@@ -15,7 +15,7 @@ import org.hibernate.envers.Audited;
 @Entity
 public class Description extends OwnedEntity {
 
-	@Lob
+    @Lob
     private String description;
 
     @Enumerated

@@ -22,4 +22,9 @@ public class MultimediaConfiguration {
     public MultimediaHandler multimediaHandler() {
         return new MultimediaHandler();
     }
+
+    @Bean
+    public MultimediaFileService multimediaFileService() {
+        return new MultimediaFileService();
+    }
 }

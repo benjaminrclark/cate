@@ -5,6 +5,9 @@ import java.util.Set;
 
 import org.cateproject.batch.convert.StringToMapConverter;
 import org.cateproject.batch.convert.MapToStringConverter;
+import org.cateproject.domain.convert.StringToNomenclaturalCodeConverter;
+import org.cateproject.domain.convert.StringToRankConverter;
+import org.cateproject.domain.convert.StringToTaxonomicStatusConverter;
 import org.cateproject.domain.convert.StringToTermConverter;
 import org.cateproject.domain.convert.batch.ArchiveToBatchDatasetConverter;
 import org.springframework.boot.SpringApplication;
@@ -45,6 +48,9 @@ public class Application
 		converters.add(new MapToStringConverter());
 		converters.add(new StringToMapConverter());
 		converters.add(new ArchiveToBatchDatasetConverter());
+		converters.add(new StringToNomenclaturalCodeConverter());
+		converters.add(new StringToRankConverter());
+		converters.add(new StringToTaxonomicStatusConverter());
 		converters.add(new StringToTermConverter());
 		conversionServiceFactoryBean.setConverters(converters);
 		return conversionServiceFactoryBean;

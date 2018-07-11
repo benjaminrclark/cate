@@ -86,6 +86,7 @@ public abstract class DarwinCoreFieldSetMapper<T> implements FieldSetMapper<T> {
                 logger.debug("Mapping " + fieldNames[i] + " " + fieldSet.readString(i));
                 mapField(t, fieldNames[i], fieldSet.readString(i));
             } catch(ConversionFailedException cfe) {
+                logger.debug(fieldNames[i] + " has an error " + cfe.getMessage());
                 fsme.addConversionException(fieldNames[i], cfe);
             }
         }
@@ -95,6 +96,7 @@ public abstract class DarwinCoreFieldSetMapper<T> implements FieldSetMapper<T> {
         }
         
         if(fsme.hasConversionExceptions()) {
+            logger.debug("Object has conversion exceptions, throwing error");
        	    throw fsme;
         }
         logger.debug("Returning object " + t);

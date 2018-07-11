@@ -3861,7 +3861,36 @@ databaseChangeLog:
                 name: line_number 
                 type: INT 
             - column:
-                name: last_mod 
+                name: number_of_columns 
+                type: INTEGER
+            - column:
+                name: change_manifest_url_id 
+                type: BIGINT
+                constraints:
+                  nullable: true
+  - changeSet:
+      author: ben
+      id: 2018_07_10-01
+      changes:
+       - createTable:
+           tableName: change_manifest_url
+           columns:
+            - column:
+                name: id 
+                type: BIGINT
+                constraints:
+                  nullable: false
+                  primaryKey: true
+            - column:
+                name: version
+                type: INT
+                constraints:
+                  nullable: false
+            - column:
+                name: type 
+                type: VARCHAR(255)
+            - column:
+                name: lastmod 
                 type: DATETIME
             - column:
                 name: loc 
@@ -3876,11 +3905,15 @@ databaseChangeLog:
                 name: length
                 type: INT
             - column:
-                name: type 
-                type: VARCHAR(255)
-            - column:
                 name: path
                 type: VARCHAR(255)
-            - column:
-                name: number_of_columns 
-                type: INTEGER
+  - changeSet:
+      author: ben
+      id: 2018-07-10-02
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: change_manifest_url_id
+            baseTableName: batch_line
+            constraintName: batch_line_change_manifest_url_id_FK
+            referencedColumnNames: id
+            referencedTableName: change_manifest_url

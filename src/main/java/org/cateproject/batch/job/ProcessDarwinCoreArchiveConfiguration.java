@@ -151,7 +151,7 @@ public class ProcessDarwinCoreArchiveConfiguration
         @StepScope 
         public JpaPagingItemReader<BatchLine> changeReader(@Value("#{jobExecutionContext['dataset.identifier']}") String datasetIdentifier) {
              JpaPagingItemReader<BatchLine> itemReader = new JpaPagingItemReader<BatchLine>();
-             itemReader.setQueryString("select l from BatchLine l left join l.file as f left join f.dataset as d where d.identifier = :datasetIdentifier order by l.lastMod asc");
+             itemReader.setQueryString("select l from BatchLine l join l.file as f join f.dataset as d join l.changeManifestUrl as u where d.identifier = :datasetIdentifier order by u.lastmod asc");
              itemReader.setEntityManagerFactory(entityManagerFactory);
              Map<String,Object> parameterValues = new HashMap<String,Object>();
              parameterValues.put("datasetIdentifier", datasetIdentifier);

@@ -3,6 +3,7 @@ package org.cateproject.domain.sync;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -43,7 +44,7 @@ public class ChangeManifestUrl {
     @Embedded
     private ChangeManifestChange md;
  
-    @OneToMany
+    @OneToMany(mappedBy="changeManifestUrl", cascade=CascadeType.PERSIST)
     @OrderBy("lineNumber ASC") 
     SortedSet<BatchLine> batchLines;
 

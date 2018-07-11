@@ -48,13 +48,6 @@ public class BatchLine implements Comparable<BatchLine> {
     @ManyToOne
     private ChangeManifestUrl changeManifestUrl;
 
-    private String path;
-
-    private String loc;
-
-    @Type(type="dateTimeUserType")
-    private DateTime lastMod;
-
     /**
      * @return the id
      */
@@ -151,39 +144,6 @@ public class BatchLine implements Comparable<BatchLine> {
      */
     public void setNumberOfColumns(Integer numberOfColumns) {
         this.numberOfColumns = numberOfColumns;
-    }
-
-    /**
-     * @param path the path to set
-     */   
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    /**
-     * @param loc the loc to set
-     */  
-    public void setLoc(String loc) {
-        this.loc = loc;
-    }
-
-    public String getLoc() {
-        return loc;
-    }
-
-    /**
-     * @param lastMod the lastMod to set
-     */  
-    public void setLastMod(DateTime lastMod) {
-        this.lastMod = lastMod;
-    }
-
-    public DateTime getLastMod() {
-        return this.lastMod;
     }
 
     /**

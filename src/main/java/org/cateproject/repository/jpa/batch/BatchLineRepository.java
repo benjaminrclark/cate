@@ -18,6 +18,6 @@ public interface BatchLineRepository extends JpaRepository<BatchLine, Long>, Jpa
     @Query("select max(l.numberOfColumns) from BatchLine l left join l.file as f where f.id = :fileId")
     public Integer findMaxNumberOfColumnsByFile(@Param("fileId") Long fileId);
 
-    @Query("select l from BatchLine l left join l.file as f left join f.dataset as d where d.identifier = :datasetIdentifier and f.location = :fileLocation and l.lineNumber <= :lineFrom and l.lineNumber => :lineTo order by l.lineTo asc")
+    @Query("select l from BatchLine l left join l.file as f left join f.dataset as d where d.identifier = :datasetIdentifier and f.location = :fileLocation and l.lineNumber <= :lineFrom and l.lineNumber >= :lineTo order by l.lineNumber asc")
     public SortedSet<BatchLine> findLinesByDatasetIdentifierAndFileLocationAndLineNumbers(@Param("datasetIdentifier") String datasetIdentifier, @Param("fileLocation") String fileLocation, @Param("lineFrom") Integer lineFrom, @Param("lineTo") Integer lineTo);
 }

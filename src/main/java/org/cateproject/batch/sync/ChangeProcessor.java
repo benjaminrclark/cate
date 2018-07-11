@@ -86,6 +86,8 @@ public class ChangeProcessor implements ItemProcessor<BatchLine,BatchLine>, Init
         DarwinCoreProcessor itemProcessor;
         if (term ==  DwcTerm.Taxon) {
             itemProcessor = new org.cateproject.batch.job.darwincore.taxon.Processor();
+        } else if (term == GbifTerm.Reference) {
+            itemProcessor = new org.cateproject.batch.job.darwincore.reference.Processor();
         } else {
             throw new RuntimeException(String.format("Could not find an item processor for row type %s", batchFile.getRowType()));
         }
@@ -130,7 +132,7 @@ public class ChangeProcessor implements ItemProcessor<BatchLine,BatchLine>, Init
     } 
  
     public BatchLine process(BatchLine batchLine) throws Exception {
-        String file = getFile(batchLine.getPath());
+        String file = getFile(batchLine.getChangeManifestUrl().getMd().getPath());
         doRead(batchLine, file);
         return doProcess(batchLine, file);
     }
@@ -138,7 +140,12 @@ public class ChangeProcessor implements ItemProcessor<BatchLine,BatchLine>, Init
     public String getFile(String path) {
         Pattern pattern = Pattern.compile("\\/(.*?)#row=(\\d+)");
         Matcher matcher = pattern.matcher(path);
-        return matcher.group(1); 
+        if(matcher.matches()) {
+            return matcher.group(1); 
+        } else {
+            throw new RuntimeException(String.format("String '%s' does not match expected regex", 
+                                                     new Object[] { path })); 
+        }
     }
 
     public void doRead(BatchLine batchLine, String file) throws Exception {
@@ -149,10 +156,10 @@ public class ChangeProcessor implements ItemProcessor<BatchLine,BatchLine>, Init
     public BatchLine doProcess(BatchLine batchLine, String file) throws Exception {
         DarwinCoreProcessor itemProcessor = itemProcessors.get(file); 
 
-        if(linesInChunk.containsKey(batchLine.getLoc())) {
+        if(linesInChunk.containsKey(batchLine.getChangeManifestUrl().getLoc())) {
             // A line has already been returned for this object so squash the changes as 
             // they will be committed together
-            BatchLine existingLine = linesInChunk.get(batchLine.getLastMod());
+            BatchLine existingLine = linesInChunk.get(batchLine.getChangeManifestUrl().getLastmod());
             itemProcessor.remove(existingLine.getEntity());
             switch(existingLine.getChangeManifestUrl().getMd().getChange()) {
                 case created:

@@ -1,5 +1,6 @@
 package org.cateproject.batch.sync;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,8 @@ import org.cateproject.repository.jpa.batch.BatchLineRepository;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.dwc.terms.Term;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -35,7 +38,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 
-public class ChangeProcessor implements ItemProcessor<BatchLine,BatchLine>, InitializingBean, ChunkListener, ItemWriteListener<BatchLine>{
+public class ChangeProcessor implements ItemWriteListener<BatchLine>, ChunkListener, ItemProcessor<BatchLine,BatchLine>, InitializingBean {
+
+    private static final Logger logger = LoggerFactory.getLogger(ChangeProcessor.class);
 
     @Autowired
     private BatchDatasetRepository batchDatasetRepository;
@@ -55,20 +60,44 @@ public class ChangeProcessor implements ItemProcessor<BatchLine,BatchLine>, Init
     @Autowired
     private Validator validator;
 
-    private String datasetIdentifier;
+    protected String datasetIdentifier;
 
-    private BatchDataset batchDataset;
+    protected BatchDataset batchDataset;
 
-    private Map<String,BatchFile> batchMetadata = new HashMap<String,BatchFile>();
+    protected Map<String,BatchFile> batchMetadata = new HashMap<String,BatchFile>();
 
-    private Map<String,LineMapper<Base>> lineMappers = new HashMap<String,LineMapper<Base>>();
+    protected Map<String,LineMapper<Base>> lineMappers = new HashMap<String,LineMapper<Base>>();
 
-    private Map<String,DarwinCoreProcessor> itemProcessors = new HashMap<String,DarwinCoreProcessor>();
+    protected Map<String,DarwinCoreProcessor> itemProcessors = new HashMap<String,DarwinCoreProcessor>();
 
-    private Map<String,BatchLine> linesInChunk = new HashMap<String,BatchLine>();
+    protected Map<String,BatchLine> linesInChunk = new HashMap<String,BatchLine>();
    
     public ChangeProcessor(String datasetIdentifier) {
         this.datasetIdentifier = datasetIdentifier;
+    }
+
+    public void setResolutionService(ResolutionService resolutionService) {
+        this.resolutionService = resolutionService;
+    }
+
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
+
+    public void setBatchLineRepository(BatchLineRepository batchLineRepository) {
+        this.batchLineRepository = batchLineRepository;
+    }
+
+    public void setBatchDatasetRepository(BatchDatasetRepository batchDatasetRepository) {
+        this.batchDatasetRepository = batchDatasetRepository;
+    }
+
+    public void setTermFactory(TermFactory termFactory) {
+        this.termFactory = termFactory;
     }
 
     public void afterPropertiesSet() {
@@ -159,7 +188,7 @@ public class ChangeProcessor implements ItemProcessor<BatchLine,BatchLine>, Init
         if(linesInChunk.containsKey(batchLine.getChangeManifestUrl().getLoc())) {
             // A line has already been returned for this object so squash the changes as 
             // they will be committed together
-            BatchLine existingLine = linesInChunk.get(batchLine.getChangeManifestUrl().getLastmod());
+            BatchLine existingLine = linesInChunk.get(batchLine.getChangeManifestUrl().getLoc());
             itemProcessor.remove(existingLine.getEntity());
             switch(existingLine.getChangeManifestUrl().getMd().getChange()) {
                 case created:
@@ -182,6 +211,7 @@ public class ChangeProcessor implements ItemProcessor<BatchLine,BatchLine>, Init
                                               existingLine.getChangeManifestUrl().getMd().getChange(),
                                               existingLine.toString() }));
                     }
+                    break;
                 case updated:
                     switch(batchLine.getChangeManifestUrl().getMd().getChange()) {
                         case updated:
@@ -224,9 +254,21 @@ public class ChangeProcessor implements ItemProcessor<BatchLine,BatchLine>, Init
         }
     }
 
+    @Override
     public void beforeWrite(List<? extends BatchLine> items) {
-        for(String k : itemProcessors.keySet()) {
-            itemProcessors.get(k).beforeWrite(items);
+        logger.info("beforeWrite, calling beforeWrite on itemProcessors");
+        Map<Class,List> entities = new HashMap<Class, List>();
+        for(BatchLine l : items) {
+            Object o = l.getEntity();
+            if(!entities.containsKey(o.getClass())) {
+                entities.put(o.getClass(), new ArrayList());
+            }
+            entities.get(o.getClass()).add(o);
+        }
+        for(DarwinCoreProcessor itemProcessor : itemProcessors.values()) {
+            if(entities.containsKey(itemProcessor.getType())) {
+                itemProcessor.beforeWrite(entities.get(itemProcessor.getType()));
+            }
         }
     }
 

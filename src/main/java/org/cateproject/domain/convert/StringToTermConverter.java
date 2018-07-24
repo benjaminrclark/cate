@@ -41,39 +41,37 @@ public class StringToTermConverter implements Converter<String, Term>
 		{
 			return null;
 		}
-		// normalise terms
-		String normTermName = normaliseTerm(termName);
 		// try known term enums first
-		Term term = findTermInEnum(normTermName, DwcTerm.values(),
+		Term term = findTermInEnum(termName, DwcTerm.values(),
 		                                  new String[] {DwcTerm.PREFIX + ":", DwcTerm.NS});
 		if (term == null)
 		{
-			term = findTermInEnum(normTermName, DcTerm.values(),
+			term = findTermInEnum(termName, DcTerm.values(),
 			                      new String[] {DcTerm.PREFIX + ":", DcTerm.NS});
 		}
 		if (term == null)
 		{
-			term = findTermInEnum(normTermName, GbifTerm.values(),
+			term = findTermInEnum(termName, GbifTerm.values(),
 			                      new String[] {GbifTerm.PREFIX + ":", GbifTerm.NS});
 		}
 		if (term == null)
 		{
-			term = findTermInEnum(normTermName, IucnTerm.values(),
+			term = findTermInEnum(termName, IucnTerm.values(),
 			                      new String[] {IucnTerm.PREFIX + ":", IucnTerm.NS});
 		}
 		if (term == null)
 		{
-			term = findTermInEnum(normTermName, Wgs84Term.values(),
+			term = findTermInEnum(termName, Wgs84Term.values(),
 			                      new String[] {Wgs84Term.PREFIX + ":", Wgs84Term.NS});
 		}
 		if (term == null)
 		{
-			term = findTermInEnum(normTermName, SddTerm.values(),
+			term = findTermInEnum(termName, SddTerm.values(),
 			                      new String[] {SddTerm.PREFIX + ":", SddTerm.NS});
 		}
 		if (term == null)
 		{
-			term = findTermInEnum(normTermName, SkosTerm.values(),
+			term = findTermInEnum(termName, SkosTerm.values(),
 			                      new String[] {SkosTerm.PREFIX + ":", SkosTerm.NS});
 		}
 		if (term == null)
@@ -89,7 +87,7 @@ public class StringToTermConverter implements Converter<String, Term>
 	}
 
 
-	private Term findTermInEnum(String termName,
+	protected Term findTermInEnum(String termName,
 	                                   Collection<Term> vocab)
 	{
 		for (Term term : vocab)
@@ -104,7 +102,7 @@ public class StringToTermConverter implements Converter<String, Term>
 		return null;
 	}
 
-	private Term findTermInEnum(String termName, Term[] vocab,
+	protected Term findTermInEnum(String termName, Term[] vocab,
 	                                   String[] prefixes)
 	{
 		for (String prefix : prefixes)

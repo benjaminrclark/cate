@@ -41,6 +41,15 @@ public abstract class DarwinCoreProcessor<T extends Base> implements
     public DarwinCoreProcessor(Class<T> type) {
         this.type = type;
     }
+
+    public Class<T> getType() {
+        return type;
+    }
+
+    // Only used for testing
+    public Set<EntityRelationship<T>> getEntityRelationships() {
+        return this.entityRelationships;
+    }
     
     protected void validate(T t , Set<ConstraintViolation<T>> relationViolations) {
         Set<ConstraintViolation<T>> violations = validator.validate(t);
@@ -128,4 +137,7 @@ public abstract class DarwinCoreProcessor<T extends Base> implements
         entityRelationships = new HashSet<EntityRelationship<T>>();
     }
 
+    public void setEntityRelationships(Set<EntityRelationship<T>> entityRelationships) {
+        this.entityRelationships = entityRelationships;
+    }
 }

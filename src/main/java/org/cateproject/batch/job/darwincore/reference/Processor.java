@@ -33,10 +33,4 @@ public class Processor extends NonOwnedProcessor<Reference>  {
 	protected void doPersist(Reference t) {
 		
 	}
-
-	@Override
-	protected void doResolve(Reference t, Set<ConstraintViolation<Reference>> constraintViolations) {
-		
-	}
-
 }

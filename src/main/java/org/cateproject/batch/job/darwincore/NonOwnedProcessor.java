@@ -128,6 +128,4 @@ public abstract class NonOwnedProcessor<T extends NonOwnedEntity> extends Darwin
     protected abstract void doUpdate(T persisted, T t);
 
     protected abstract void doPersist(T t);
-	
-    protected abstract void doResolve(T t, Set<ConstraintViolation<T>> constraintViolations);
 }

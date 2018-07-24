@@ -27,6 +27,14 @@ public class ResourceStoringTasklet implements Tasklet {
         this.resource = resource;
     }
 
+    public void setFileTransferService(FileTransferService fileTransferService) {
+        this.fileTransferService = fileTransferService;
+    }
+
+    public void setTemporaryFileDirectory(FileSystemResource temporaryFileDirectory) {
+        this.temporaryFileDirectory = temporaryFileDirectory;
+    }
+
     /**
      *  Copies this file from its location on the instance which is assumed to be relative to
      *  the temporary directory. Creates a new random filename for the uploaded resource with the same file extension
@@ -41,7 +49,7 @@ public class ResourceStoringTasklet implements Tasklet {
         File localFile = new File(localFileName);
         fileTransferService.copyFileOut(localFile, remoteFileName);
         
-        chunkContext.getStepContext().getJobExecutionContext().put("input.file",remoteFileName);
+        chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("input.file",remoteFileName);
         localFile.delete();
         return RepeatStatus.FINISHED;
     }  

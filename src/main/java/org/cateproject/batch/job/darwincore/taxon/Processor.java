@@ -28,6 +28,8 @@ public class Processor extends DarwinCoreProcessor<Taxon> {
     }
     
     protected void bindRelationships(Taxon t, Taxon u, Set<ConstraintViolation<Taxon>> constraintViolations) {
+        super.bindRelationships(t, u, constraintViolations);
+
         if(t.getParentNameUsage() != null) {
             resolutionService.resolveRelated(t.getParentNameUsage(), Taxon.class, constraintViolations);
             this.entityRelationships.add(new EntityRelationship<Taxon>(u, EntityRelationshipType.parent, t.getParentNameUsage().getTaxonId()));

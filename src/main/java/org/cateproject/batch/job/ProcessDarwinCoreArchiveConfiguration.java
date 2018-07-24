@@ -14,6 +14,7 @@ import org.cateproject.batch.ParameterConvertingTasklet;
 import org.cateproject.batch.ResourceFetchingTasklet;
 import org.cateproject.batch.ResourceStoringTasklet;
 import org.cateproject.batch.ResourceUnzippingTasklet;
+import org.cateproject.batch.job.ResolutionService;
 import org.cateproject.batch.job.darwincore.ArchiveMetadataReadingTasklet;
 import org.cateproject.batch.job.darwincore.BatchLineMapper;
 import org.cateproject.batch.job.darwincore.DecideImportStrategyTasklet;
@@ -79,6 +80,9 @@ public class ProcessDarwinCoreArchiveConfiguration
 
         @Autowired
         private EntityManagerFactory entityManagerFactory;
+
+        @Autowired
+        private ResolutionService resolutionService;
       
 	@Bean
 	public Job processDarwinCoreArchive()
@@ -133,7 +137,8 @@ public class ProcessDarwinCoreArchiveConfiguration
 
         @Bean
         public Step processChanges() {
-            return steps.get("processChanges").listener(batchListener).chunk(10).reader(changeReader(null)).processor(changeProcessor(null)).writer(changeWriter()).build();
+            ChangeProcessor changeProcessor = changeProcessor(null);
+            return steps.get("processChanges").listener(batchListener).listener(resolutionService).listener(changeProcessor).chunk(10).reader(changeReader(null)).processor((ItemProcessor)changeProcessor).writer(changeWriter()).build();
         }
 
         @Bean
@@ -143,7 +148,7 @@ public class ProcessDarwinCoreArchiveConfiguration
 
         @Bean
         @StepScope
-        public ItemProcessor changeProcessor(@Value("#{jobExecutionContext['dataset.identifier']}") String datasetIdentifier) {
+        public ChangeProcessor changeProcessor(@Value("#{jobExecutionContext['dataset.identifier']}") String datasetIdentifier) {
             return new ChangeProcessor(datasetIdentifier);
         }
 

@@ -2,6 +2,7 @@ package org.cateproject.multitenant.batch;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOError;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,6 +109,38 @@ public class MultitenantAwareJobLauncherTest {
         assertEquals("MultitenantContext.properties should not be changed by running a batch job", MultitenantContextHolder.getContext().getContextProperty("PROPERTY_1"), "PROPERTY_1_VALUE");
         assertEquals("MultitenantContext.properties should not be changed by running a batch job", MultitenantContextHolder.getContext().getContextProperty("PROPERTY_2"), null);
         EasyMock.verify(jobRepository, taskExecutor, job, jobParametersValidator, jobExecution, lastJobExecution, conversionService);
+        
+    }
+
+    @Test(expected = IOError.class)
+    public void testRunJobThrowsError() throws Exception{
+        Map<String, JobParameter> parameters = new HashMap<String, JobParameter>(); 
+        Map<String, Object> tenantProperties = new HashMap<String, Object>();
+        tenantProperties.put("PROPERTY_1", "PROPERTY_1_OTHER_VALUE");
+        tenantProperties.put("PROPERTY_2", "PROPERTY_2_VALUE");
+        parameters.put("tenant.id", new JobParameter("TENANT_ID"));
+        parameters.put("tenant.properties", new JobParameter("TENANT_PROPERTIES")); 
+        final Capture<Runnable> runnable = new Capture<Runnable>();
+        JobParameters jobParameters = new JobParameters(parameters);
+        EasyMock.expect(job.getName()).andReturn("JOB_NAME").anyTimes();
+        EasyMock.expect(jobRepository.getLastJobExecution(EasyMock.eq("JOB_NAME"), EasyMock.eq(jobParameters))).andReturn(null);
+        EasyMock.expect(job.getJobParametersValidator()).andReturn(jobParametersValidator);
+        jobParametersValidator.validate(EasyMock.eq(jobParameters));
+        EasyMock.expect(jobRepository.createJobExecution(EasyMock.eq("JOB_NAME"), EasyMock.eq(jobParameters))).andReturn(jobExecution);
+        EasyMock.expect(conversionService.convert(EasyMock.eq("TENANT_PROPERTIES"), EasyMock.eq(Map.class))).andReturn(tenantProperties);
+        taskExecutor.execute(EasyMock.and(EasyMock.isA(Runnable.class), EasyMock.capture(runnable)));
+        EasyMock.expectLastCall().andAnswer(new IAnswer() {
+            public Object answer() {
+                runnable.getValue().run();
+                return null;
+            } 
+        });
+        job.execute(EasyMock.eq(jobExecution));
+        EasyMock.expectLastCall().andThrow(new IOError(new Exception("exception")));
+
+        EasyMock.replay(jobRepository, taskExecutor, job, jobParametersValidator, jobExecution, lastJobExecution, conversionService);
+        MultitenantContextHolder.getContext().putContextProperty("PROPERTY_1", "PROPERTY_1_VALUE"); 
+        multitenantAwareJobLauncher.run(job, jobParameters);
         
     }
 

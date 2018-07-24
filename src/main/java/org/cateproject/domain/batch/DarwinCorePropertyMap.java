@@ -342,8 +342,8 @@ public class DarwinCorePropertyMap {
 	    }
     }
     
-    public static SortedSet<Term> getTerms(Term term) {
-    	SortedSet<Term> terms = new TreeSet<Term>();
+    public static Set<Term> getTerms(Term term) {
+    	Set<Term> terms = new HashSet<Term>();
 	    if(term.equals(DwcTerm.Taxon)) {
 	    	terms.addAll(taxonTerms.keySet());
 	    } else if(term.equals(GbifTerm.Description)) {

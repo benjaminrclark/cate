@@ -47,9 +47,9 @@ public class ResolutionService implements ChunkListener, StepExecutionListener, 
     
     private static final Logger logger = LoggerFactory.getLogger(ResolutionService.class);
     
-    private Map<Class<? extends Base>,Map<String,Base>> boundObjects = new HashMap<Class<? extends Base>,Map<String,Base>>();
+    protected Map<Class<? extends Base>,Map<String,Base>> boundObjects = new HashMap<Class<? extends Base>,Map<String,Base>>();
     
-    private Map<Class<? extends Base>,Set<Base>> newObjects = new HashMap<Class<? extends Base>,Set<Base>>();
+    protected Map<Class<? extends Base>,Set<Base>> newObjects = new HashMap<Class<? extends Base>,Set<Base>>();
     
     private StepExecution stepExecution;
 
@@ -153,18 +153,14 @@ public class ResolutionService implements ChunkListener, StepExecutionListener, 
     }
     
     public <T extends Base, U extends Base> Set<T> resolveRelated(Set<T> ts, Class<T> clazz, Set<ConstraintViolation<U>> constraintViolations) {
-        if(ts.isEmpty()) {
-            return ts;
-        } else {
-            Set<T> resolvedTs = new HashSet<T>();
-            for(T t : ts) {
-                T resolvedT = resolveRelated(t, clazz, constraintViolations);
-                if(resolvedT != null) {
-                    resolvedTs.add(resolvedT);
-                }
+        Set<T> resolvedTs = new HashSet<T>();
+        for(T t : ts) {
+            T resolvedT = resolveRelated(t, clazz, constraintViolations);
+            if(resolvedT != null) {
+                resolvedTs.add(resolvedT);
             }
-            return resolvedTs;
         }
+        return resolvedTs;
     }
     
     public <T extends Base> T resolve(T t, Class<T> clazz) {
@@ -176,7 +172,7 @@ public class ResolutionService implements ChunkListener, StepExecutionListener, 
             return (T)boundObjects.get(clazz).get(t.getIdentifier());
         } else {
             T persistedT = (T)lookup(t.getIdentifier(), clazz);
-            if(t == null) {
+            if(persistedT == null) {
                 return null;
             } else {
                 boundObjects.get(clazz).put(t.getIdentifier(), persistedT);
@@ -209,10 +205,8 @@ public class ResolutionService implements ChunkListener, StepExecutionListener, 
                     }
                     newObjects.get(clazz).add(newT);
                     return newT;
-                } catch (InstantiationException ie) {
-                    throw new RuntimeException ("Unable to create instance of " + clazz, ie );
-                } catch (IllegalAccessException iae) {
-                    throw new RuntimeException ("Unable to create instance of " + clazz, iae );
+                } catch (ReflectiveOperationException re) {
+                    throw new RuntimeException ("Unable to create instance of " + clazz, re );
                 }
                 
             } else {
@@ -244,7 +238,7 @@ public class ResolutionService implements ChunkListener, StepExecutionListener, 
         
     }
     
-    private <T extends Base> T save(T t, Class<T> clazz) {
+    protected <T extends Base> T save(T t, Class<T> clazz) {
         if(clazz.equals(Taxon.class)) {
             return (T) taxonRepository.save((Taxon)t);
         } else if(clazz.equals(Dataset.class)) {
@@ -274,7 +268,7 @@ public class ResolutionService implements ChunkListener, StepExecutionListener, 
         }
     }
     
-    private <T extends Base> boolean objectExistsInDatabase(String identifier, Class<T> clazz) {
+    protected <T extends Base> boolean objectExistsInDatabase(String identifier, Class<T> clazz) {
         boolean exists = false;
         if(clazz.equals(Taxon.class)) {
             exists = taxonRepository.existsByTaxonId(identifier);
@@ -307,7 +301,7 @@ public class ResolutionService implements ChunkListener, StepExecutionListener, 
         return exists;
     }
     
-    private <T extends Base> T lookup(String identifier, Class<T> clazz) {
+    protected <T extends Base> T lookup(String identifier, Class<T> clazz) {
         if(clazz.equals(Taxon.class)) {
             return (T)taxonRepository.findByTaxonId(identifier);
         } else if(clazz.equals(Dataset.class)) {

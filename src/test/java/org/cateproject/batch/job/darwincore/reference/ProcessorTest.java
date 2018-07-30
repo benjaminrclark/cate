@@ -2,6 +2,7 @@ package org.cateproject.batch.job.darwincore.reference;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 
 import org.easymock.EasyMock;
@@ -10,6 +11,7 @@ import org.junit.Test;
 
 import org.cateproject.batch.job.darwincore.EntityRelationship;
 import org.cateproject.batch.job.darwincore.EntityRelationshipType;
+import org.cateproject.batch.job.darwincore.ProcessorException;
 import org.cateproject.domain.Dataset;
 import org.cateproject.domain.Reference;
 import org.cateproject.domain.Taxon;
@@ -22,6 +24,11 @@ import java.util.Set;
 
 import javax.validation.Validator;
 import javax.validation.ConstraintViolation;
+
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.core.scope.context.StepContext;
+import org.springframework.batch.test.MetaDataInstanceFactory;
 
 public class ProcessorTest {
 
@@ -60,6 +67,36 @@ public class ProcessorTest {
         EasyMock.replay(resolutionService, validator);
         assertEquals("process should return the expected reference", persistedReference, processor.process(reference));
         EasyMock.verify(resolutionService, validator);
+    }
+
+    @Test
+    public void testProcessUnboundPersistedInvalid() throws Exception {
+        Reference reference = new Reference();
+        reference.setIdentifier("identifier");
+        Reference persistedReference = new Reference();
+        persistedReference.setIdentifier("persisted identifier");
+        Set<ConstraintViolation<Reference>> constraintViolations = new HashSet<ConstraintViolation<Reference>>();
+        ConstraintViolation<Reference> constraintViolation = (ConstraintViolation<Reference>)EasyMock.createMock(ConstraintViolation.class);
+        constraintViolations.add(constraintViolation);
+
+        EasyMock.expect(resolutionService.alreadyContainsBound(EasyMock.eq(reference), EasyMock.eq(Reference.class))).andReturn(false);
+        EasyMock.expect(resolutionService.resolve(EasyMock.eq(reference), EasyMock.eq(Reference.class))).andReturn(persistedReference);
+        EasyMock.expect(validator.validate(EasyMock.eq(persistedReference))).andReturn(constraintViolations);
+
+
+        EasyMock.replay(resolutionService, validator, constraintViolation);
+        ProcessorException thrownProcessorException = null;
+        try {
+            processor.process(reference);
+        } catch (ProcessorException pe) {
+            thrownProcessorException = pe;
+        }
+
+        assertNotNull("process should throw a ProcessorException", thrownProcessorException);
+        assertThat("the thrown processor exception should contain the expected contraint violation", 
+         thrownProcessorException.getConstraintViolations(),
+         hasItem(constraintViolation));
+        EasyMock.verify(resolutionService, validator, constraintViolation);
     }
 
     @Test
@@ -137,6 +174,72 @@ public class ProcessorTest {
 
         EasyMock.replay(resolutionService, validator);
         processor.beforeWrite(items);
+        EasyMock.verify(resolutionService, validator);
+    }
+
+    @Test
+    public void testBeforeChunk() {
+        StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
+        StepContext stepContext = new StepContext(stepExecution);
+        ChunkContext chunkContext = new ChunkContext(stepContext);
+        Reference reference = new Reference();
+        reference.setIdentifier("identifier");
+        processor.getEntityRelationships().add(new EntityRelationship<Reference>(reference, EntityRelationshipType.taxa, "taxon identifier"));
+
+        EasyMock.replay(resolutionService, validator);
+        processor.beforeChunk(chunkContext);
+        assertTrue("entityRelationships should be empty", processor.getEntityRelationships().isEmpty());
+        EasyMock.verify(resolutionService, validator);
+    }
+
+    @Test
+    public void testAfterChunkError() {
+        StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
+        StepContext stepContext = new StepContext(stepExecution);
+        ChunkContext chunkContext = new ChunkContext(stepContext);
+        Reference reference = new Reference();
+        reference.setIdentifier("identifier");
+        processor.getEntityRelationships().add(new EntityRelationship<Reference>(reference, EntityRelationshipType.taxa, "taxon identifier"));
+
+        EasyMock.replay(resolutionService, validator);
+        processor.afterChunkError(chunkContext);
+        assertTrue("entityRelationships should be empty", processor.getEntityRelationships().isEmpty());
+        EasyMock.verify(resolutionService, validator);
+    }
+
+    @Test
+    public void testAfterChunk() {
+        StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
+        StepContext stepContext = new StepContext(stepExecution);
+        ChunkContext chunkContext = new ChunkContext(stepContext);
+
+        EasyMock.replay(resolutionService, validator);
+        processor.afterChunk(chunkContext);
+        EasyMock.verify(resolutionService, validator);
+    }
+
+    @Test
+    public void testAfterWrite() {
+        List<Reference> items = new ArrayList<Reference>();
+
+        EasyMock.replay(resolutionService, validator);
+        processor.afterWrite(items);
+        EasyMock.verify(resolutionService, validator);
+    }
+
+    @Test
+    public void testOnWriteError() {
+        List<Reference> items = new ArrayList<Reference>();
+
+        EasyMock.replay(resolutionService, validator);
+        processor.onWriteError(new Exception("exception"), items);
+        EasyMock.verify(resolutionService, validator);
+    }
+
+    @Test
+    public void testGetType() {
+        EasyMock.replay(resolutionService, validator);
+        assertEquals("getType should return the expected type", Reference.class, processor.getType());
         EasyMock.verify(resolutionService, validator);
     }
 }

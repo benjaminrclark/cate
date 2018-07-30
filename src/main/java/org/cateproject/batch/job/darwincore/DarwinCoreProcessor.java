@@ -52,7 +52,7 @@ public abstract class DarwinCoreProcessor<T extends Base> implements
     }
     
     protected void validate(T t , Set<ConstraintViolation<T>> relationViolations) {
-        Set<ConstraintViolation<T>> violations = validator.validate(t);
+        Set violations = validator.validate(t);
         violations.addAll(relationViolations);
         if(!violations.isEmpty()) {
             ProcessorException pe = new ProcessorException(); 

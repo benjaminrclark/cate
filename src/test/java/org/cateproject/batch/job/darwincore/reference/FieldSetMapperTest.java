@@ -2,15 +2,24 @@ package org.cateproject.batch.job.darwincore.reference;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
 import java.util.Locale;
 
+import org.cateproject.domain.Dataset;
 import org.cateproject.domain.Reference;
 import org.cateproject.domain.constants.ReferenceType;
 import org.cateproject.domain.batch.TermFactory;
+import org.cateproject.batch.job.darwincore.FieldSetMapperException;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
+import org.joda.time.DateTime;
+import org.springframework.batch.item.file.transform.DefaultFieldSet;
+import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.ConversionFailedException;
+import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.validation.BindException;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -122,11 +131,89 @@ public class FieldSetMapperTest {
     } 
 
     @Test
+    public void testMapFieldReferenceAccessRights() {
+        EasyMock.expect(termFactory.findTerm(EasyMock.eq("field"))).andReturn(DcTerm.accessRights).anyTimes(); 
+        EasyMock.replay(conversionService, termFactory);
+        fieldSetMapper.mapField(reference, "field", "value");
+        assertEquals("fieldSetMapper should map correct value to the correct field", "value", reference.getAccessRights());
+        EasyMock.verify(conversionService, termFactory);
+    } 
+
+    @Test
+    public void testMapFieldCreated() {
+        DateTime dateTime = new DateTime();
+        EasyMock.expect(termFactory.findTerm(EasyMock.eq("field"))).andReturn(DcTerm.created).anyTimes(); 
+        EasyMock.expect(conversionService.convert(EasyMock.eq("value"), EasyMock.eq(DateTime.class))).andReturn(dateTime);
+        EasyMock.replay(conversionService, termFactory);
+        fieldSetMapper.mapField(reference, "field", "value");
+        assertEquals("fieldSetMapper should map correct value to the correct field", dateTime, reference.getCreated());
+        EasyMock.verify(conversionService, termFactory);
+    } 
+
+    @Test
+    public void testMapFieldReferenceLicense() {
+        EasyMock.expect(termFactory.findTerm(EasyMock.eq("field"))).andReturn(DcTerm.license).anyTimes(); 
+        EasyMock.replay(conversionService, termFactory);
+        fieldSetMapper.mapField(reference, "field", "value");
+        assertEquals("fieldSetMapper should map correct value to the correct field", "value", reference.getLicense());
+        EasyMock.verify(conversionService, termFactory);
+    } 
+
+    @Test
+    public void testMapFieldModified() {
+        DateTime dateTime = new DateTime();
+        EasyMock.expect(termFactory.findTerm(EasyMock.eq("field"))).andReturn(DcTerm.modified).anyTimes(); 
+        EasyMock.expect(conversionService.convert(EasyMock.eq("value"), EasyMock.eq(DateTime.class))).andReturn(dateTime);
+        EasyMock.replay(conversionService, termFactory);
+        fieldSetMapper.mapField(reference, "field", "value");
+        assertEquals("fieldSetMapper should map correct value to the correct field", dateTime, reference.getModified());
+        EasyMock.verify(conversionService, termFactory);
+    } 
+
+    @Test
+    public void testMapFieldReferenceRightsHolder() {
+        EasyMock.expect(termFactory.findTerm(EasyMock.eq("field"))).andReturn(DcTerm.rightsHolder).anyTimes(); 
+        EasyMock.replay(conversionService, termFactory);
+        fieldSetMapper.mapField(reference, "field", "value");
+        assertEquals("fieldSetMapper should map correct value to the correct field", "value", reference.getRightsHolder());
+        EasyMock.verify(conversionService, termFactory);
+    } 
+
+    @Test
     public void testMapOtherDcTerm() {
         EasyMock.expect(termFactory.findTerm(EasyMock.eq("field"))).andReturn(DcTerm.contributor).anyTimes(); 
         EasyMock.replay(conversionService, termFactory);
         fieldSetMapper.mapField(reference, "field", "value");
         assertNull("fieldSetMapper should map correct value to the correct field", reference.getType());
+        EasyMock.verify(conversionService, termFactory);
+    } 
+
+    @Test
+    public void testMapFieldDataset() {
+        Dataset dataset = new Dataset();
+        dataset.setIdentifier("value");
+        EasyMock.expect(termFactory.findTerm(EasyMock.eq("field"))).andReturn(DwcTerm.datasetID).anyTimes(); 
+        EasyMock.replay(conversionService, termFactory);
+        fieldSetMapper.mapField(reference, "field", "value");
+        assertEquals("fieldSetMapper should map correct value to the correct field", dataset, reference.getDataset());
+        EasyMock.verify(conversionService, termFactory);
+    } 
+
+    @Test
+    public void testMapFieldDatasetNull() {
+        EasyMock.expect(termFactory.findTerm(EasyMock.eq("field"))).andReturn(DwcTerm.datasetID).anyTimes(); 
+        EasyMock.replay(conversionService, termFactory);
+        fieldSetMapper.mapField(reference, "field", null);
+        assertNull("fieldSetMapper should map correct value to the correct field", reference.getDataset());
+        EasyMock.verify(conversionService, termFactory);
+    } 
+
+    @Test
+    public void testMapFieldDatasetEmpty() {
+        EasyMock.expect(termFactory.findTerm(EasyMock.eq("field"))).andReturn(DwcTerm.datasetID).anyTimes(); 
+        EasyMock.replay(conversionService, termFactory);
+        fieldSetMapper.mapField(reference, "field", " ");
+        assertNull("fieldSetMapper should map correct value to the correct field", reference.getDataset());
         EasyMock.verify(conversionService, termFactory);
     } 
 
@@ -155,5 +242,44 @@ public class FieldSetMapperTest {
         fieldSetMapper.mapField(reference, "field", "value");
         assertNull("fieldSetMapper should map correct value to the correct field", reference.getTaxonRemarks());
         EasyMock.verify(conversionService, termFactory);
+    } 
+
+    @Test
+    public void testMapFieldSet() throws Exception {
+        Reference reference = new Reference();
+        reference.setLanguage(Locale.ENGLISH);
+        FieldSet fieldSet = new DefaultFieldSet(new String[] {"value"});
+        fieldSetMapper.setFieldNames(new String[] {"field"});
+        fieldSetMapper.setDefaultValues(new HashMap<String,String>());
+
+        EasyMock.expect(termFactory.findTerm(EasyMock.eq("field"))).andReturn(DcTerm.language).anyTimes(); 
+        EasyMock.expect(conversionService.convert(EasyMock.eq("value"), EasyMock.eq(Locale.class))).andReturn(Locale.ENGLISH); 
+        EasyMock.replay(conversionService, termFactory);
+        assertEquals("mapFieldSet should return the expected entity", reference,fieldSetMapper.mapFieldSet(fieldSet));
+        EasyMock.verify(conversionService, termFactory);
+    } 
+
+    @Test
+    public void testMapFieldSetConversionFailed() throws Exception {
+        FieldSet fieldSet = new DefaultFieldSet(new String[] {"value"});
+        fieldSetMapper.setFieldNames(new String[] {"field"});
+        fieldSetMapper.setDefaultValues(new HashMap<String,String>());
+        ConversionFailedException conversionFailedException = 
+            new ConversionFailedException(TypeDescriptor.valueOf(String.class),
+                                          TypeDescriptor.valueOf(Locale.class),
+                                          "value",
+                                          new Exception("exception"));
+
+        EasyMock.expect(termFactory.findTerm(EasyMock.eq("field"))).andReturn(DcTerm.language).anyTimes(); 
+        EasyMock.expect(conversionService.convert(EasyMock.eq("value"), EasyMock.eq(Locale.class))).andThrow(conversionFailedException); 
+        EasyMock.replay(conversionService, termFactory);
+        FieldSetMapperException thrownFieldSetMapperException = null;
+        try {
+            fieldSetMapper.mapFieldSet(fieldSet);
+        } catch(FieldSetMapperException fsme) {
+            thrownFieldSetMapperException = fsme;
+        }
+        assertNotNull("mapFieldSet should throw a FieldSetMapperException", thrownFieldSetMapperException);
+        assertEquals("the FieldSetMapperException should contain the expected exception", thrownFieldSetMapperException.getConversionExceptions().get("field"), conversionFailedException);
     } 
 }

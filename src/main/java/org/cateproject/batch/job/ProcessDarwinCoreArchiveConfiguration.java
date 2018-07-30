@@ -111,7 +111,7 @@ public class ProcessDarwinCoreArchiveConfiguration
 	@Bean
 	public Flow processLocalDataset()
 	{
-		return new FlowBuilder<Flow>("processLocalDataset").start(fetchResource()).next(unzipResource()).next(readArchiveMetadata()).next(decideImportStrategy()).on("VALID CHANGE DUMP MANIFEST").to(importChangeDump()).next(cleanUpResources()).from(decideImportStrategy()).on("INVALID CHANGE DUMP MANIFEST").to(cleanUpResources()).from(decideImportStrategy()).on("NO DATASET IDENTIFIER").to(cleanUpResources()).end();
+		return new FlowBuilder<Flow>("processLocalDataset").start(fetchResource()).next(unzipResource()).next(readArchiveMetadata()).next(decideImportStrategy()).on("VALID CHANGE DUMP MANIFEST").to(importChangeDump()).next(cleanUpResources()).from(decideImportStrategy()).on("INVALID CHANGE DUMP MANIFEST").to(cleanUpResources()).from(decideImportStrategy()).on("DATASET NOT FOUND").to(cleanUpResources()).end();
 	}
 
         @Bean

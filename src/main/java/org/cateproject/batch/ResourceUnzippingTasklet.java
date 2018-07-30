@@ -24,7 +24,7 @@ public class ResourceUnzippingTasklet implements Tasklet
 	@Value("${temporary.file.directory:#{systemProperties['java.io.tmpdir']}}")
 	private FileSystemResource temporaryFileDirectory;
 
-	private String inputFile;
+	protected String inputFile;
 
 	static final int BUFFER = 2048;
 
@@ -32,6 +32,10 @@ public class ResourceUnzippingTasklet implements Tasklet
 	{
 		this.inputFile = inputFile;
 	}
+
+        public void setTemporaryFileDirectory(FileSystemResource temporaryFileDirectory) {
+            this.temporaryFileDirectory = temporaryFileDirectory;
+        }
 
 	public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception
 	{
@@ -76,11 +80,8 @@ public class ResourceUnzippingTasklet implements Tasklet
 				bufferedOutputStream.close();
 				bufferedInputStream.close();
 			}
-		}
-		finally
-		{
-			if (zipfile != null)
-			{
+		} finally {
+			if (zipfile != null) {
 				zipfile.close();
 			}
 		}

@@ -24,11 +24,15 @@ public class DecideImportStrategyTasklet implements Tasklet {
         this.datasetIdentifier = datasetIdentifier;
     }
 
+    public void setBatchDatasetRepository(BatchDatasetRepository batchDatasetRepository) {
+        this.batchDatasetRepository = batchDatasetRepository;
+    }
+
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
         BatchDataset batchDataset = batchDatasetRepository.findByIdentifier(datasetIdentifier); 
 
-        if (batchDataset.getIdentifier() == null || batchDataset.getIdentifier().isEmpty()) { // Should not happen
-            stepContribution.setExitStatus(new ExitStatus("NO DATASET IDENTIFIER")); 
+        if (batchDataset == null) { // Should not happen
+            stepContribution.setExitStatus(new ExitStatus("DATASET NOT FOUND")); 
         } else {
             stepContribution.setExitStatus(new ExitStatus("VALID CHANGE DUMP MANIFEST"));
         }

@@ -1,5 +1,7 @@
 package org.cateproject.batch.job.darwincore;
 
+import org.cateproject.domain.Base;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,14 +9,14 @@ import javax.validation.ConstraintViolation;
 
 public class ProcessorException extends RuntimeException {
     
-    Set constraintViolations = new HashSet<ConstraintViolation>();
+    Set<ConstraintViolation> constraintViolations = new HashSet<ConstraintViolation>();
 
-    public Set getConstraintViolations() {
+    public Set<ConstraintViolation> getConstraintViolations() {
         return constraintViolations;
     }
 
     public  void setConstraintViolations(Set constraintViolations) {
-        this.constraintViolations = constraintViolations;
+        this.constraintViolations = (Set<ConstraintViolation>)constraintViolations;
     }
 
 }

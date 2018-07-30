@@ -39,6 +39,14 @@ public class ChangeDumpManifestProcessor implements ItemProcessor<ChangeManifest
         this.datasetIdentifier = datasetIdentifier;
     }
 
+    public void setBatchLineRepository(BatchLineRepository batchLineRepository) {
+        this.batchLineRepository = batchLineRepository;
+    }
+
+    public void setChangeManifestUrlRepository(ChangeManifestUrlRepository changeManifestUrlRepository) {
+        this.changeManifestUrlRepository = changeManifestUrlRepository;
+    }
+
     public ChangeManifestUrl process(ChangeManifestUrl changeManifestUrl) throws RuntimeException {
         logger.debug("ChangeManifestUrl {} {} {}", new Object[] {changeManifestUrl.getLoc(), changeManifestUrl.getLastmod(), changeManifestUrl.getMd()});
         ChangeManifestChange changeManifestChange = changeManifestUrl.getMd();
@@ -65,23 +73,22 @@ public class ChangeDumpManifestProcessor implements ItemProcessor<ChangeManifest
             } else if ( singleRowMatcher.matches() ) {
                 logger.info("Resource {} Line {}", new Object[]{ singleRowMatcher.group(1), singleRowMatcher.group(2) });
                 BatchLine batchLine = batchLineRepository.findLineByDatasetIdentifierAndFileLocationAndLineNumber(datasetIdentifier, singleRowMatcher.group(1), Integer.parseInt(singleRowMatcher.group(2)));
-                SortedSet<BatchLine> batchLines = new TreeSet<BatchLine>();
-                batchLines.add(batchLine);
-                logger.info("BatchLines {}", batchLines);
-                if( batchLines.isEmpty()) {
+                if( batchLine == null ) {
                     throw new RuntimeException(String.format("Resources with path %s not found", changeManifestChange.getPath()));
                 } else {
                     changeManifestUrl = this.changeManifestUrlRepository.save(changeManifestUrl);
+                    batchLine.setChangeManifestUrl(changeManifestUrl);
+
+                    SortedSet<BatchLine> batchLines = new TreeSet<BatchLine>();
+                    batchLines.add(batchLine);
                     changeManifestUrl.setBatchLines(batchLines);
-                    for (BatchLine btchLine : batchLines) {
-                        btchLine.setChangeManifestUrl(changeManifestUrl);
-                    }
                     return changeManifestUrl;
                 }
             } else {
                 throw new RuntimeException(String.format("No matchers for path %s not found", changeManifestChange.getPath()));
             }
+        } else {
+            return null;
         }
-        return null;
     }
 }

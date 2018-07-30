@@ -13,11 +13,14 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResourceFetchingTasklet implements Tasklet
 {
+	private Logger logger = LoggerFactory.getLogger(ResourceFetchingTasklet.class);
 
-	private String resource;
+	protected String resource;
 
 	@Autowired
 	private FileTransferService fileTransferService;
@@ -27,6 +30,18 @@ public class ResourceFetchingTasklet implements Tasklet
 
 	@Value("${temporary.file.directory:#{systemProperties['java.io.tmpdir']}}")
 	private FileSystemResource temporaryFileDirectory;
+
+        public void setTemporaryFileDirectory(FileSystemResource temporaryFileDirectory) {
+            this.temporaryFileDirectory = temporaryFileDirectory;
+        }
+
+        public void setFileTransferService(FileTransferService fileTransferService) {
+            this.fileTransferService = fileTransferService;
+        }
+
+        public void setGetResourceClient(GetResourceClient getResourceClient) {
+            this.getResourceClient = getResourceClient;
+        }
 
 	public ResourceFetchingTasklet(String resource)
 	{
@@ -49,12 +64,9 @@ public class ResourceFetchingTasklet implements Tasklet
 
 		String localFileName = UUID.randomUUID().toString() + "." + extension;
 		File localFile = new File(workingDir, localFileName);
-		if (resource.startsWith("upload://") || resource.startsWith("static://"))
-		{
+		if (resource.startsWith("upload://") || resource.startsWith("static://")) {
 			fileTransferService.copyFileIn(resource, localFile);
-		}
-		else
-		{
+		} else {
 			getResourceClient.getResource(resource, localFile);
 		}
 

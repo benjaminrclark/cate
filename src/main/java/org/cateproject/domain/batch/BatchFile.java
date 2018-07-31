@@ -84,9 +84,12 @@ public class BatchFile implements Comparable<BatchFile>
  
             // Use the max number of columns from the file if it is greater
             // We might not have field names for all columns
-            if(maxIndex < maxColumns) {
-                totalColumns = maxColumns;
+            if((maxIndex + 1) < maxColumns) {
+               totalColumns = maxColumns;
+            } else {
+               totalColumns = maxIndex + 1;
             }
+
             List<String> names = new ArrayList<String>(totalColumns);
             for(int i = 0; i < totalColumns; i++) {
                 names.add("");
@@ -322,5 +325,21 @@ public class BatchFile implements Comparable<BatchFile>
 	public void setRowType(String rowType)
 	{
 		this.rowType = rowType;
+	}
+
+	/**
+	 * @return the lines 
+	 */
+	public Set<BatchLine> getLines()
+	{
+		return lines;
+	}
+
+	/**
+	 * @param lines the lines to set
+	 */
+	public void setLines(Set<BatchLine> lines)
+	{
+		this.lines = lines;
 	}
 }

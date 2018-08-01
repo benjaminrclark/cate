@@ -15,6 +15,7 @@ import org.cateproject.domain.Multimedia;
 import org.cateproject.file.FileTransferService;
 import org.cateproject.multitenant.MultitenantContextHolder;
 import org.cateproject.repository.jpa.MultimediaRepository;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -92,5 +93,10 @@ public class ProcessMultimediaIntegrationTest {
     public void testProcessMultimedia() throws Exception {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
         assertEquals(BatchStatus.COMPLETED,jobExecution.getStatus());
+    }
+
+    @After
+    public void tearDown() {
+    	multimediaRepository.delete(multimediaRepository.findAll());
     }
 }

@@ -10,7 +10,11 @@ import java.util.UUID;
 import org.cateproject.Application;
 import org.cateproject.batch.TestingBatchTaskExecutorConfiguration;
 import org.cateproject.file.FileTransferService;
+import org.cateproject.repository.jpa.DatasetRepository;
+import org.cateproject.repository.jpa.ReferenceRepository;
+import org.cateproject.repository.jpa.TaxonRepository;
 import org.cateproject.multitenant.MultitenantContextHolder;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +57,15 @@ public class ProcessDarwinCoreArchiveIntegrationTest
 	@Autowired
 	private JobLauncher jobLauncher;
 
+        @Autowired
+        private DatasetRepository datasetRepository;
+
+        @Autowired
+        private ReferenceRepository referenceRepository;
+
+        @Autowired
+        private TaxonRepository taxonRepository;
+
 	private String uri;
 
 	private JobParameters jobParameters;
@@ -84,4 +97,11 @@ public class ProcessDarwinCoreArchiveIntegrationTest
 		JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
+
+        @After
+        public void tearDown() {
+    	    taxonRepository.delete(taxonRepository.findAll());
+    	    referenceRepository.delete(referenceRepository.findAll());
+    	    datasetRepository.delete(datasetRepository.findAll());
+        }
 }

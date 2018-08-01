@@ -2504,12 +2504,12 @@ databaseChangeLog:
             tableName: dataset_taxa
             columns:
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
                 constraints:
                   nullable: false
             - column:
-                name: taxa
+                name: taxa_id
                 type: BIGINT
                 constraints:
                   nullable: false
@@ -2521,12 +2521,12 @@ databaseChangeLog:
             tableName: dataset_taxa_AUD
             columns:
             - column:
-                name: dataset
+                name: dataset_id
                 type: BIGINT
                 constraints:
                   nullable: false
             - column:
-                name: taxa
+                name: taxa_id
                 type: BIGINT
                 constraints:
                   nullable: false

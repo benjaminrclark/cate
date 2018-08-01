@@ -1,4 +1,3 @@
-dist: precise
 branches:
   only:
   - master
@@ -15,6 +14,9 @@ env:
   - TERM=dumb
   global:
     secure: L8I8ZOAG28NE4du33ZJ5l/9StdYM1f3HXZTHMgQMrmACYrTotVN7LSvOJD7Yn5seYfgP1/EVCToxCQe+7qQINU4rmO6/WwWN/16Eq4njZ9/1xD+3t+n6beN1estYLgrQQ7KQCFXBmXU47Ufn+wjjN27t/VP/2RLtMbcpk30HdtY=
+before_install:
+- "sudo add-apt-repository -y ppa:mc3man/trusty-media"
+- "sudo apt-get update -q"
 after_success:
 - "./gradlew jacocoTestReport coveralls"
 before_deploy:

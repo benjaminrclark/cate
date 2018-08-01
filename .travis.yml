@@ -3,7 +3,7 @@ branches:
   - master
 language: java
 jdk:
-- openjdk7
+- openjdk8
 addons:
   apt:
     packages:

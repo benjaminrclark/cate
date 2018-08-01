@@ -3376,6 +3376,11 @@ databaseChangeLog:
         - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('system',1,'Configure System');
   - changeSet:
       author: ben
+      id: 2018-07-31_01
+      changes:
+        - sql: insert into FF4J_FEATURES (FEAT_UID, ENABLE, DESCRIPTION) values ('upload',0,'Upload Files');
+  - changeSet:
+      author: ben
       id: 1344022313991-1
       changes:
        - createTable:

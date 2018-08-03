@@ -3,6 +3,8 @@ package org.cateproject;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.cateproject.batch.convert.StringToJobParametersConverter;
+import org.cateproject.batch.convert.JobParametersToStringConverter;
 import org.cateproject.batch.convert.StringToMapConverter;
 import org.cateproject.batch.convert.MapToStringConverter;
 import org.cateproject.domain.convert.StringToNomenclaturalCodeConverter;
@@ -45,6 +47,8 @@ public class Application
 	{
 		ConversionServiceFactoryBean conversionServiceFactoryBean = new ConversionServiceFactoryBean();
 		Set<Converter> converters = new HashSet<Converter>();
+		converters.add(new JobParametersToStringConverter());
+		converters.add(new StringToJobParametersConverter());
 		converters.add(new MapToStringConverter());
 		converters.add(new StringToMapConverter());
 		converters.add(new ArchiveToBatchDatasetConverter());

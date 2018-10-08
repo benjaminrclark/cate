@@ -14,6 +14,7 @@ import org.cateproject.batch.JobLaunchRequestHandler;
 import org.cateproject.domain.Multimedia;
 import org.cateproject.file.FileTransferService;
 import org.cateproject.multitenant.MultitenantContextHolder;
+import org.cateproject.repository.jpa.batch.JobLaunchRequestRepository;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -41,6 +42,8 @@ public class MultimediaHandlerTest {
 
     private JobLaunchRequestHandler jobLaunchRequestHandler;
 
+    private JobLaunchRequestRepository jobLaunchRequestRepository;
+
     private ConversionService conversionService;
 
     @Before
@@ -56,7 +59,9 @@ public class MultimediaHandlerTest {
         jobLaunchRequestHandler = EasyMock.createMock(JobLaunchRequestHandler.class);
         multimediaHandler.setJobLaunchRequestHandler(jobLaunchRequestHandler);
         conversionService = EasyMock.createMock(ConversionService.class);
+        jobLaunchRequestRepository = EasyMock.createMock(JobLaunchRequestRepository.class);
         multimediaHandler.setConversionService(conversionService);
+        multimediaHandler.setJobLaunchRequestRepository(jobLaunchRequestRepository);
 
         MultitenantContextHolder.getContext().clearContextProperties();
         MultitenantContextHolder.getContext().setTenantId("TENANT_ID");
@@ -93,11 +98,12 @@ public class MultimediaHandlerTest {
         EasyMock.expect(fileTransferService.moveFileOut(EasyMock.eq(originalFile), EasyMock.isA(String.class))).andReturn("RETURN_VALUE");
         EasyMock.expect(conversionService.convert(EasyMock.eq(expectedTenantPropertiesMap), EasyMock.eq(String.class))).andReturn("TENANT_PROPERTIES");
         EasyMock.expect(jobRegistry.getJob(EasyMock.eq("processMultimedia"))).andReturn(job);
+        EasyMock.expect(jobLaunchRequestRepository.save(EasyMock.isA(org.cateproject.domain.batch.JobLaunchRequest.class))).andReturn(null);
         jobLaunchRequestHandler.launch(EasyMock.and(EasyMock.capture(jobLaunchRequestCapture),EasyMock.isA(JobLaunchRequest.class)));
 
-        EasyMock.replay(fileTransferService, multimediaFileService, jobLaunchRequestHandler, conversionService, jobRegistry);
+        EasyMock.replay(fileTransferService, multimediaFileService, jobLaunchRequestHandler, conversionService, jobRegistry, jobLaunchRequestRepository);
         multimediaHandler.process(multimedia);
-        EasyMock.verify(fileTransferService, multimediaFileService, jobLaunchRequestHandler, conversionService, jobRegistry);
+        EasyMock.verify(fileTransferService, multimediaFileService, jobLaunchRequestHandler, conversionService, jobRegistry, jobLaunchRequestRepository);
         JobLaunchRequest jobLaunchRequest = jobLaunchRequestCapture.getValue();
         assertTrue("process should set the 'input.file' job property",((String)jobLaunchRequest.getJobParameters().getParameters().get("input.file").getValue()).startsWith("upload://"));
         assertEquals("process should set the 'query.string' job property",((String)jobLaunchRequest.getJobParameters().getParameters().get("query.string").getValue()),"select m from Multimedia m where m.identifier = :identifier");
@@ -105,8 +111,6 @@ public class MultimediaHandlerTest {
         assertEquals("process should set the 'tenant.id' job property",((String)jobLaunchRequest.getJobParameters().getParameters().get("tenant.id").getValue()),"TENANT_ID");
         assertEquals("process should set the 'user.id' job property",((String)jobLaunchRequest.getJobParameters().getParameters().get("user.id").getValue()),"USER_ID");
         assertEquals("process should set the 'tenant.properties' job property",((String)jobLaunchRequest.getJobParameters().getParameters().get("tenant.properties").getValue()),"TENANT_PROPERTIES");
-
-        assertEquals("process should set the job",jobLaunchRequest.getJob(),job);
     }
 
     @Test
@@ -119,11 +123,12 @@ public class MultimediaHandlerTest {
         multimedia.setIdentifier("http://IDENTIFIER");
         EasyMock.expect(conversionService.convert(EasyMock.eq(expectedTenantPropertiesMap), EasyMock.eq(String.class))).andReturn("TENANT_PROPERTIES");
         EasyMock.expect(jobRegistry.getJob(EasyMock.eq("processMultimedia"))).andReturn(job);
+        EasyMock.expect(jobLaunchRequestRepository.save(EasyMock.isA(org.cateproject.domain.batch.JobLaunchRequest.class))).andReturn(null);
         jobLaunchRequestHandler.launch(EasyMock.and(EasyMock.capture(jobLaunchRequestCapture),EasyMock.isA(JobLaunchRequest.class)));
 
-        EasyMock.replay(fileTransferService, multimediaFileService, jobLaunchRequestHandler, conversionService, jobRegistry);
+        EasyMock.replay(fileTransferService, multimediaFileService, jobLaunchRequestHandler, conversionService, jobRegistry, jobLaunchRequestRepository);
         multimediaHandler.process(multimedia);
-        EasyMock.verify(fileTransferService, multimediaFileService, jobLaunchRequestHandler, conversionService, jobRegistry);
+        EasyMock.verify(fileTransferService, multimediaFileService, jobLaunchRequestHandler, conversionService, jobRegistry, jobLaunchRequestRepository);
         JobLaunchRequest jobLaunchRequest = jobLaunchRequestCapture.getValue();
         assertNull("process should not set the 'input.file' job property",jobLaunchRequest.getJobParameters().getParameters().get("input.file"));
         assertNotNull("process should set the 'random.string' job property",jobLaunchRequest.getJobParameters().getParameters().get("random.string"));
@@ -132,8 +137,6 @@ public class MultimediaHandlerTest {
         assertEquals("process should set the 'tenant.id' job property",((String)jobLaunchRequest.getJobParameters().getParameters().get("tenant.id").getValue()),"TENANT_ID");
         assertEquals("process should set the 'user.id' job property",((String)jobLaunchRequest.getJobParameters().getParameters().get("user.id").getValue()),"USER_ID");
         assertEquals("process should set the 'tenant.properties' job property",((String)jobLaunchRequest.getJobParameters().getParameters().get("tenant.properties").getValue()),"TENANT_PROPERTIES");
-
-        assertEquals("process should set the job",jobLaunchRequest.getJob(),job);
     }
 
     @Test(expected = RuntimeException.class)
@@ -229,11 +232,12 @@ public class MultimediaHandlerTest {
         EasyMock.expect(multimediaFileService.filesUnchanged(EasyMock.eq(multimedia),EasyMock.eq(extractedMultimedia))).andReturn(false);
         EasyMock.expect(conversionService.convert(EasyMock.eq(expectedTenantPropertiesMap), EasyMock.eq(String.class))).andReturn("TENANT_PROPERTIES");
         EasyMock.expect(jobRegistry.getJob(EasyMock.eq("processMultimedia"))).andReturn(job);
+        EasyMock.expect(jobLaunchRequestRepository.save(EasyMock.isA(org.cateproject.domain.batch.JobLaunchRequest.class))).andReturn(null);
         jobLaunchRequestHandler.launch(EasyMock.isA(JobLaunchRequest.class));
 
-        EasyMock.replay(fileTransferService, multimediaFileService, jobLaunchRequestHandler, conversionService, jobRegistry);
+        EasyMock.replay(fileTransferService, multimediaFileService, jobLaunchRequestHandler, conversionService, jobRegistry, jobLaunchRequestRepository);
         multimediaHandler.postUpdate(multimedia);
-        EasyMock.verify(fileTransferService, multimediaFileService, jobLaunchRequestHandler, conversionService, jobRegistry);
+        EasyMock.verify(fileTransferService, multimediaFileService, jobLaunchRequestHandler, conversionService, jobRegistry, jobLaunchRequestRepository);
     }
 
     @Test

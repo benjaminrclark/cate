@@ -15,7 +15,7 @@ public class BatchEventConfiguration {
   
     @Autowired
     private JobLauncher jobLauncher;
-    
+
     @Bean
     public MessageChannel outgoingJobLaunchRequests() {
         return new DirectChannel();

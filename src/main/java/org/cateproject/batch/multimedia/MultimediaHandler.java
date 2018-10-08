@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.cateproject.domain.batch.JobLaunchRequest;
 import org.cateproject.batch.JobLaunchRequestHandler;
+import org.cateproject.repository.jpa.batch.JobLaunchRequestRepository;
 import org.cateproject.domain.Multimedia;
 import org.cateproject.file.FileTransferService;
 import org.cateproject.multitenant.MultitenantContextHolder;
@@ -16,7 +18,6 @@ import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.batch.integration.launch.JobLaunchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
@@ -42,6 +43,9 @@ public class MultimediaHandler {
     private JobLaunchRequestHandler jobLaunchRequestHandler;
 
     @Autowired
+    private JobLaunchRequestRepository jobLaunchRequestRepository;
+
+    @Autowired
     @Qualifier("conversionService")
     private ConversionService conversionService;
 
@@ -59,6 +63,10 @@ public class MultimediaHandler {
 
     public void setJobLaunchRequestHandler(JobLaunchRequestHandler jobLaunchRequestHandler) {
         this.jobLaunchRequestHandler = jobLaunchRequestHandler;
+    }
+
+    public void setJobLaunchRequestRepository(JobLaunchRequestRepository jobLaunchRequestRepository) {
+        this.jobLaunchRequestRepository = jobLaunchRequestRepository;
     }
 
     public void setConversionService(ConversionService conversionService) {
@@ -88,6 +96,7 @@ public class MultimediaHandler {
     	jobParametersMap.put("query.parameters_map", new JobParameter("identifier=" + multimedia.getIdentifier()));
         jobParametersMap.put("tenant.id", new JobParameter(MultitenantContextHolder.getContext().getTenantId()));
         jobParametersMap.put("user.id", new JobParameter(SecurityContextHolder.getContext().getAuthentication().getName()));
+        jobParametersMap.put("launch.request.identifier", new JobParameter(UUID.randomUUID().toString()));
         Map<String,Object> tenantProperties = new HashMap<String, Object>();
         tenantProperties.put("ProcessingMultimediaFile", Boolean.TRUE);
         jobParametersMap.put("tenant.properties", new JobParameter(conversionService.convert(tenantProperties,String.class)));
@@ -95,6 +104,7 @@ public class MultimediaHandler {
         try {
             Job processMultimediaJob = jobRegistry.getJob("processMultimedia");
             JobLaunchRequest jobLaunchRequest = new JobLaunchRequest(processMultimediaJob, jobParameters);
+            jobLaunchRequestRepository.save(jobLaunchRequest);
             jobLaunchRequestHandler.launch(jobLaunchRequest);
 	    return multimedia;		
 	} catch (NoSuchJobException nsje) {

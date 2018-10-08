@@ -16,7 +16,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.job.SimpleJob;
 import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.batch.integration.launch.JobLaunchRequest;
+import org.cateproject.domain.batch.JobLaunchRequest;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.Version;
@@ -46,7 +46,7 @@ public class BatchJobDeserializerTest {
     @Test
     public void testDeserialize() throws IOException, NoSuchJobException {
         Job expectedJob = new SimpleJob("TEST_JOB");
-        EasyMock.expect(jobLocator.getJob(EasyMock.eq("TEST_JOB"))).andReturn(expectedJob);
+        EasyMock.expect(jobLocator.getJob(EasyMock.eq("TEST_JOB"))).andReturn(expectedJob).times(2);
         Map<String, JobParameter> expectedJobParametersMap = new HashMap<String, JobParameter>();
         expectedJobParametersMap.put("PARAMETER_1", new JobParameter("PARAMETER_VALUE_1"));
         expectedJobParametersMap.put("PARAMETER_2", new JobParameter("PARAMETER_VALUE_2"));
@@ -55,6 +55,7 @@ public class BatchJobDeserializerTest {
         EasyMock.replay(jobLocator);
 
         JobLaunchRequest jobLaunchRequest = objectMapper.readValue(stringReader, JobLaunchRequest.class);
+        jobLaunchRequest.setJobLocator(jobLocator);
         assertEquals("deserialize should create the correct job",jobLaunchRequest.getJob(), expectedJob);
         assertEquals("deserialize should create the correct jobParameters",jobLaunchRequest.getJobParameters(),expectedJobParameters);
         EasyMock.verify(jobLocator);

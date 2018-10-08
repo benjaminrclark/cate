@@ -2,7 +2,7 @@ package org.cateproject.multitenant.event;
 
 import org.cateproject.batch.convert.BatchJobDeserializer;
 import org.cateproject.batch.convert.BatchJobSerializer;
-import org.springframework.batch.integration.launch.JobLaunchRequest;
+import org.cateproject.domain.batch.JobLaunchRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.IntegrationComponentScan;

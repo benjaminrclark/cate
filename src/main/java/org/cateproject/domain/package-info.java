@@ -5,7 +5,6 @@
 })
 @org.hibernate.annotations.TypeDefs({
 	  @org.hibernate.annotations.TypeDef(name = "dateTimeUserType", typeClass = org.jadira.usertype.dateandtime.joda.PersistentDateTime.class),
-	  @org.hibernate.annotations.TypeDef(name = "jobUserType", typeClass = org.cateproject.domain.convert.jpa.JobUserType.class),
 	  @org.hibernate.annotations.TypeDef(name = "jobParametersUserType", typeClass = org.cateproject.domain.convert.jpa.JobParametersUserType.class),
 	  @org.hibernate.annotations.TypeDef(name = "languageUserType", typeClass = org.cateproject.domain.convert.jpa.LanguageUserType.class)
 })

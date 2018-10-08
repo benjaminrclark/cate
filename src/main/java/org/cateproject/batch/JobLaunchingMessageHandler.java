@@ -2,6 +2,7 @@ package org.cateproject.batch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionException;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.integration.launch.JobLaunchRequest;
@@ -17,7 +18,7 @@ public class JobLaunchingMessageHandler implements JobLaunchRequestHandler {
   
     public void launch(JobLaunchRequest request) {
         try {
-            jobLauncher.run(request.getJob(), request.getJobParameters());
+            JobExecution jobExecution = jobLauncher.run(request.getJob(), request.getJobParameters());
         } catch (JobExecutionException jee) {
             logger.error("Exception running job {} with parameters {} : {}", new Object[] {request.getJob(), request.getJobParameters(), jee.getMessage()});
             throw new RuntimeException("Exception handling jobLaunchRequest",jee);

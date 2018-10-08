@@ -128,7 +128,7 @@ $ java -jar /var/lib/cate/cate.jar
  - cloudformation.topicArn
  - cloudformation.queueArn
  
-#### Email 
+#### Email
 
 ## Design
 

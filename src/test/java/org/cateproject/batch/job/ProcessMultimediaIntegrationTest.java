@@ -11,10 +11,12 @@ import java.util.UUID;
 
 import org.cateproject.Application;
 import org.cateproject.batch.TestingBatchTaskExecutorConfiguration;
+import org.cateproject.domain.batch.JobLaunchRequest;
 import org.cateproject.domain.Multimedia;
 import org.cateproject.file.FileTransferService;
 import org.cateproject.multitenant.MultitenantContextHolder;
 import org.cateproject.repository.jpa.MultimediaRepository;
+import org.cateproject.repository.jpa.batch.JobLaunchRequestRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +54,9 @@ public class ProcessMultimediaIntegrationTest {
     private MultimediaRepository multimediaRepository;
 
     @Autowired
+    private JobLaunchRequestRepository jobLaunchRequestRepository;
+
+    @Autowired
     private FileTransferService fileTransferService;
 
     @Autowired
@@ -69,7 +74,8 @@ public class ProcessMultimediaIntegrationTest {
         MultitenantContextHolder.getContext().clearContextProperties();
         MultitenantContextHolder.getContext().setTenantId(null);
         jobLauncherTestUtils = new JobLauncherTestUtils();
-        jobLauncherTestUtils.setJob(jobRegistry.getJob("processMultimedia"));
+        Job job = jobRegistry.getJob("processMultimedia");
+        jobLauncherTestUtils.setJob(job);
         jobLauncherTestUtils.setJobLauncher(jobLauncher);
         Multimedia multimedia = new Multimedia();
         multimedia.setIdentifier("1234");
@@ -83,10 +89,13 @@ public class ProcessMultimediaIntegrationTest {
     	jobParametersMap.put("query.parameters_map", new JobParameter("identifier=" + multimedia.getIdentifier()));
         jobParametersMap.put("tenant.id", new JobParameter("localhost"));
         jobParametersMap.put("user.id", new JobParameter("user"));
+	jobParametersMap.put("launch.request.identifier", new JobParameter(UUID.randomUUID().toString()));
         Map<String,Object> tenantProperties = new HashMap<String, Object>();
         tenantProperties.put("ProcessingMultimediaFile", Boolean.TRUE);
         jobParametersMap.put("tenant.properties", new JobParameter(conversionService.convert(tenantProperties,String.class)));
         jobParameters = new JobParameters(jobParametersMap);
+        JobLaunchRequest jobLaunchRequest = new JobLaunchRequest(job, jobParameters);
+        jobLaunchRequestRepository.save(jobLaunchRequest);
     }
 
     @Test

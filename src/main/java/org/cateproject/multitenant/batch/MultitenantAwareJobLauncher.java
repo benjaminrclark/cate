@@ -2,6 +2,8 @@ package org.cateproject.multitenant.batch;
 
 import java.util.Map;
 
+import org.cateproject.domain.batch.JobLaunchRequest;
+import org.cateproject.repository.jpa.batch.JobLaunchRequestRepository;
 import org.cateproject.multitenant.MultitenantContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,9 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
 
         @Autowired
 	private JobRepository jobRepository;
+
+        @Autowired
+        private JobLaunchRequestRepository jobLaunchRequestRepository;
 
         @Autowired
         @Qualifier("batchTaskExecutor")
@@ -122,7 +127,11 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
                                                 for(String propertyName : properties.keySet()) {
                                                     MultitenantContextHolder.getContext().putContextProperty(propertyName, properties.get(propertyName));
                                                 }
-						logger.info("Job: {} launched with the following parameters: {} and the following tenantContext {}", new Object[]{job, jobParameters, properties});
+                                                JobLaunchRequest jobLaunchRequest = jobLaunchRequestRepository.findByIdentifier(jobParameters.getString("launch.request.identifier"));
+                                                jobLaunchRequest.setJobExecutionId(jobExecution.getId());
+                                                jobLaunchRequestRepository.save(jobLaunchRequest);
+
+						logger.info("Job: {} launched with the following parameters: {} and the following tenantContext {}", new Object[]{job, jobParameters, properties}); 
 						job.execute(jobExecution);
 						logger.info("Job: {} completed with the following parameters: {} and the following status: {}", new Object[] {job, jobParameters, jobExecution.getStatus()});
 					} catch (Throwable t) {
@@ -159,6 +168,10 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
 
         public void setConversionService(ConversionService conversionService) {
             this.conversionService = conversionService;
+        }
+
+        public void setJobLaunchRequestRepository(JobLaunchRequestRepository jobLaunchRequestRepository) {
+            this.jobLaunchRequestRepository = jobLaunchRequestRepository;
         }
 
 	/**

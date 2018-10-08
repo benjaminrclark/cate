@@ -68,9 +68,6 @@ public class BatchConfiguration extends AbstractBatchConfiguration {
     @Bean
     public AutomaticJobRegistrar jobRegistrar() throws Exception {
 	registrar.setJobLoader(new DefaultJobLoader(jobRegistry()));
-	/*for (ApplicationContextFactory factory : context.getBeansOfType(ApplicationContextFactory.class).values()) {
-	    registrar.addApplicationContextFactory(factory);
-	}*/
         registrar.addApplicationContextFactory(processDarwinCoreArchiveConfiguration());
 	registrar.addApplicationContextFactory(processMultimediaConfiguration());
 	return registrar;

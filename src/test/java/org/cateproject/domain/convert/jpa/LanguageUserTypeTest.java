@@ -126,6 +126,7 @@ public class LanguageUserTypeTest {
 		EasyMock.verify(type);
 	}
 
+        @Test
 	public void testNullSafeGetWithNullValue() throws SQLException {
 		Type type = EasyMock.createMock(Type.class);
 		languageUserType.setType(type);

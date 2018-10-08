@@ -7,7 +7,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.apache.activemq.command.ActiveMQTopic;
-import org.springframework.batch.integration.launch.JobLaunchRequest;
+import org.cateproject.domain.batch.JobLaunchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

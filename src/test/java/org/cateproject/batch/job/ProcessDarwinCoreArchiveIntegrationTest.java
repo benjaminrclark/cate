@@ -9,10 +9,12 @@ import java.util.UUID;
 
 import org.cateproject.Application;
 import org.cateproject.batch.TestingBatchTaskExecutorConfiguration;
+import org.cateproject.domain.batch.JobLaunchRequest;
 import org.cateproject.file.FileTransferService;
 import org.cateproject.repository.jpa.DatasetRepository;
 import org.cateproject.repository.jpa.ReferenceRepository;
 import org.cateproject.repository.jpa.TaxonRepository;
+import org.cateproject.repository.jpa.batch.JobLaunchRequestRepository;
 import org.cateproject.multitenant.MultitenantContextHolder;
 import org.junit.After;
 import org.junit.Before;
@@ -46,6 +48,9 @@ public class ProcessDarwinCoreArchiveIntegrationTest
 	@Autowired
 	private JobRegistry jobRegistry;
 
+	@Autowired
+	private JobLaunchRequestRepository jobLaunchRequestRepository;
+
 	private JobLauncherTestUtils jobLauncherTestUtils;
 
 	@Autowired
@@ -76,7 +81,8 @@ public class ProcessDarwinCoreArchiveIntegrationTest
 		MultitenantContextHolder.getContext().clearContextProperties();
 		MultitenantContextHolder.getContext().setTenantId(null);
 		jobLauncherTestUtils = new JobLauncherTestUtils();
-		jobLauncherTestUtils.setJob(jobRegistry.getJob("processDarwinCoreArchive"));
+                Job job = jobRegistry.getJob("processDarwinCoreArchive");
+		jobLauncherTestUtils.setJob(job);
 		jobLauncherTestUtils.setJobLauncher(jobLauncher);
 		FileSystemResource file = new FileSystemResource("src/test/resources/org/cateproject/batch/job/test.zip");
 		uri = "upload://" + UUID.randomUUID().toString() + ".zip";
@@ -86,9 +92,12 @@ public class ProcessDarwinCoreArchiveIntegrationTest
 		jobParametersMap.put("tenant.id", new JobParameter("localhost"));
 		jobParametersMap.put("user.id", new JobParameter("user"));
 		jobParametersMap.put("working.dir", new JobParameter(UUID.randomUUID().toString()));
+		jobParametersMap.put("launch.request.identifier", new JobParameter(UUID.randomUUID().toString()));
 		Map<String, Object> tenantProperties = new HashMap<String, Object>();
 		jobParametersMap.put("tenant.properties", new JobParameter(conversionService.convert(tenantProperties, String.class)));
 		jobParameters = new JobParameters(jobParametersMap);
+                JobLaunchRequest jobLaunchRequest = new JobLaunchRequest(job, jobParameters);
+                jobLaunchRequestRepository.save(jobLaunchRequest);
 	}
 
 	@Test
@@ -103,5 +112,6 @@ public class ProcessDarwinCoreArchiveIntegrationTest
     	    taxonRepository.delete(taxonRepository.findAll());
     	    referenceRepository.delete(referenceRepository.findAll());
     	    datasetRepository.delete(datasetRepository.findAll());
+    	    jobLaunchRequestRepository.delete(jobLaunchRequestRepository.findAll());
         }
 }

@@ -3922,3 +3922,39 @@ databaseChangeLog:
             constraintName: batch_line_change_manifest_url_id_FK
             referencedColumnNames: id
             referencedTableName: change_manifest_url
+  - changeSet:
+      id: 2018-08-05-01
+      author: ben
+      changes:
+        - createTable:
+            tableName: job_launch_request 
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: version
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: job
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: job_parameters
+                  type: LONGTEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: identifier 
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: job_execution_id
+                  type: BIGINT

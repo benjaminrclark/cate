@@ -258,10 +258,10 @@ public class MultitenantAwareSolrServer extends SolrServer implements Initializi
 			throws SolrServerException, IOException {
 		String tenantId = MultitenantContextHolder.getContext().getTenantId();
 		if(!solrServers.containsKey(tenantId)) {
-                   logger.info("Querying root server {}", tenantId, request);
+                   logger.debug("Querying root server {}", tenantId, request);
                    return this.solrServer.request(request);
 		}
-                logger.info("Querying server {}", tenantId, request);
+                logger.debug("Querying server {}", tenantId, request);
 		return solrServers.get(tenantId).request(request);
 	}
 

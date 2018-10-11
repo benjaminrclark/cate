@@ -21,6 +21,9 @@
 	      </div>
               <div th:if="${@ff4j.check('upload')}" class="span9">
 	        <section>
+	          <th:block th:if="${error != null}">
+		    <div th:replace="fragments/alert :: alert(id='error_alert_id',cssClass='alert-error',iconClass='icon-warning-sign',title=#{alert_error_title},message=${error}, alert=null)">Error Alert</div>
+	          </th:block>
 		  <form id="upload_data_id" name="upload_data" class="form" action="#" enctype="multipart/form-data" th:action="@{/edit}" th:object="${uploadDto}" method="post">
 		    <div th:replace="fragments/form :: file(id='org_cateproject_web_form_upload_files',field='files', multiple=${true})">Upload Files Field</div>
 		    <div th:replace="fragments/form :: select(id='org_cateproject_web_form_upload_delimiter',field='delimiter', items=${delimiters})">Upload Delimiter Field</div>

@@ -7,20 +7,33 @@
 <body>
 	<div class="container">
 	  <div id="header" class="navbar navbar-fixed-top navbar-inverse"	th:replace="fragments/header :: header">Header Goes Here</div>
-		<div class="container">
-		  <div class="row">
-			<div class="span3">
-			  <ul id="edit_menu" class="well nav nav-list">
-			    <li id="list_org_cateproject_domain_Taxon">
-                  <a th:href="@{/edit/taxon}" href="./taxon/list.html" th:title="#{entity_list_all(#{label_org_cateproject_domain_taxon_plural})}" th:text="#{entity_list_all(#{label_org_cateproject_domain_taxon_plural})}">List Taxons</a>
-                </li>
-			    <li id="list_org_cateproject_domain_Multimedia">
-                  <a th:href="@{/edit/multimedia}" href="./multimedia/list.html" th:title="#{entity_list_all(#{label_org_cateproject_domain_multimedia_plural})}" th:text="#{entity_list_all(#{label_org_cateproject_domain_multimedia_plural})}">List Multimedias</a>
-                </li>
-			  </ul>
-			</div>
-		  </div>
-		</div>
+	  <div class="container">
+	    <div class="row">
+	      <div class="span3">
+	        <ul id="edit_menu" class="well nav nav-list">
+		  <li id="list_org_cateproject_domain_Taxon">
+                    <a th:href="@{/edit/taxon}" href="./taxon/list.html" th:title="#{entity_list_all(#{label_org_cateproject_domain_taxon_plural})}" th:text="#{entity_list_all(#{label_org_cateproject_domain_taxon_plural})}">List Taxons</a>
+                  </li>
+		  <li id="list_org_cateproject_domain_Multimedia">
+                    <a th:href="@{/edit/multimedia}" href="./multimedia/list.html" th:title="#{entity_list_all(#{label_org_cateproject_domain_multimedia_plural})}" th:text="#{entity_list_all(#{label_org_cateproject_domain_multimedia_plural})}">List Multimedias</a>
+                  </li>
+		</ul>
+	      </div>
+              <div th:if="${@ff4j.check('upload')}" class="span9">
+	        <section>
+		  <form id="upload_data_id" name="upload_data" class="form" action="#" enctype="multipart/form-data" th:action="@{/edit}" th:object="${uploadDto}" method="post">
+		    <div th:replace="fragments/form :: file(id='org_cateproject_web_form_upload_files',field='files', multiple=${true})">Upload Files Field</div>
+		    <div th:replace="fragments/form :: select(id='org_cateproject_web_form_upload_delimiter',field='delimiter', items=${delimiters})">Upload Delimiter Field</div>
+		    <div th:replace="fragments/form :: select(id='org_cateproject_web_form_upload_extension',field='extension', items=${extensions})">Upload Extension Field</div>
+		    <div th:replace="fragments/form :: text(id='org_cateproject_web_form_upload_datasetId',field='datasetId')">Upload Dataset Id Field</div>
+		    <div class="submit"	id="fc_org_cateproject_web_form_upload_submit">
+		      <input class="btn btn-primary" id="proceed" type="submit"	value="Submit" th:value="#{button_submit}"/>
+		    </div>
+		  </form>
+		</section>
+              </div>
+	    </div>
+	  </div>
 	</div>
 </body>
 </html>

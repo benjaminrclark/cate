@@ -17,7 +17,8 @@
 				<div th:fragment="file (id, field)" class="control-group" th:classappend="${#fields.hasErrors(field)}? error">
 					<label class="control-label" th:for="__${id}___id" th:text="#{'label_' + ${id}}">Field Label: </label>
 					<div class="controls">
-						<input	th:id="__${id}___id" type="file" th:field="*{__${field}__}" th:errorclass="error"/>
+						<input	th:if="${multiple}" th:id="__${id}___id" type="file" th:field="*{__${field}__}" th:errorclass="error" multiple="${multiple}"/>
+						<input	th:unless="${multiple}" th:id="__${id}___id" type="file" th:field="*{__${field}__}" th:errorclass="error"/>
 						<p th:if="${#fields.hasErrors('__${field}__')}" class="help-block" th:errors="*{__${field}__}">Field Error</p>
 					</div>
 				</div>

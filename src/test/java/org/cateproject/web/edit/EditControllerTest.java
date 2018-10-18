@@ -9,6 +9,7 @@ import org.cateproject.web.form.Delimiter;
 import org.cateproject.batch.JobLaunchRequestHandler;
 import org.cateproject.repository.jpa.batch.JobLaunchRequestRepository;
 import org.cateproject.web.form.UploadDto;
+import org.cateproject.web.form.UploadDtoToJobLaunchRequestConverter;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ public class EditControllerTest {
 
         private ConversionService conversionService;
 
+        private UploadDtoToJobLaunchRequestConverter uploadDtoToJobLaunchRequestConverter;
+
         private JobLaunchRequestHandler jobLaunchRequestHandler;
 
         private JobLaunchRequestRepository jobLaunchRequestRepository;
@@ -51,10 +54,12 @@ public class EditControllerTest {
             conversionService = EasyMock.createMock(ConversionService.class);
             jobLaunchRequestHandler = EasyMock.createMock(JobLaunchRequestHandler.class);
             jobLaunchRequestRepository = EasyMock.createMock(JobLaunchRequestRepository.class);
+            uploadDtoToJobLaunchRequestConverter = EasyMock.createMock(UploadDtoToJobLaunchRequestConverter.class);
 
             editController.setConversionService(conversionService);
             editController.setJobLaunchRequestHandler(jobLaunchRequestHandler);
             editController.setJobLaunchRequestRepository(jobLaunchRequestRepository);
+            editController.setUploadDtoToJobLaunchRequestConverter(uploadDtoToJobLaunchRequestConverter);
 	}
 
 	@Test
@@ -62,7 +67,7 @@ public class EditControllerTest {
 		Model uiModel = new ExtendedModelMap();
 		
 		assertEquals("list should return 'edit/show'", "edit/show", editController.uploadForm(uiModel));
-		assertEquals("uiModel should contain an upload dto", uiModel.asMap().get("uploadDto").getClass(), UploadDto.class);
+		assertEquals("uiModel should contain an upload dto", uiModel.asMap().get("result").getClass(), UploadDto.class);
 		
 		assertEquals("uiModel should contain a list of allowed extensions", uiModel.asMap().get("extensions"), DarwinCorePropertyMap.getAllowedExtensions());
 		assertEquals("uiModel should contain a list of allowed delimiters", uiModel.asMap().get("delimiters"), Arrays.asList(Delimiter.values()));
@@ -78,16 +83,16 @@ public class EditControllerTest {
                 JobLaunchRequest jobLaunchRequest = new JobLaunchRequest(new SimpleJob("job"), new JobParameters());
 	
 		EasyMock.expect(bindingResult.hasErrors()).andReturn(false);
-                EasyMock.expect(conversionService.convert(EasyMock.eq(uploadDto), EasyMock.eq(JobLaunchRequest.class))).andReturn(jobLaunchRequest);
+                EasyMock.expect(uploadDtoToJobLaunchRequestConverter.convert(EasyMock.eq(uploadDto))).andReturn(jobLaunchRequest);
                 EasyMock.expect(jobLaunchRequestRepository.save(EasyMock.eq(jobLaunchRequest))).andReturn(jobLaunchRequest);
                 jobLaunchRequestHandler.launch(jobLaunchRequest);
                 
-		EasyMock.replay(bindingResult, conversionService, jobLaunchRequestHandler, jobLaunchRequestRepository);
+		EasyMock.replay(bindingResult, conversionService, jobLaunchRequestHandler, jobLaunchRequestRepository, uploadDtoToJobLaunchRequestConverter);
 		
 		assertEquals("upload should return 'redirect:/edit'", "redirect:/edit", editController.upload(uploadDto, bindingResult, uiModel, request, redirectAttributes));
 		assertTrue("uiModel should be empty", uiModel.asMap().isEmpty());
 		assertEquals("success message code should be 'upload_accepted'", "upload_accepted", ((MessageSourceResolvable)redirectAttributes.getFlashAttributes().get("success")).getCodes()[0]);
-		EasyMock.verify(bindingResult, conversionService, jobLaunchRequestHandler, jobLaunchRequestRepository);
+		EasyMock.verify(bindingResult, conversionService, jobLaunchRequestHandler, jobLaunchRequestRepository, uploadDtoToJobLaunchRequestConverter);
 	}
 
 	@Test
@@ -99,13 +104,13 @@ public class EditControllerTest {
 		UploadDto uploadDto = new UploadDto();
 		EasyMock.expect(bindingResult.hasErrors()).andReturn(true);
 
-		EasyMock.replay(bindingResult, conversionService, jobLaunchRequestHandler, jobLaunchRequestRepository);
+		EasyMock.replay(bindingResult, conversionService, jobLaunchRequestHandler, jobLaunchRequestRepository, uploadDtoToJobLaunchRequestConverter);
 		
 		assertEquals("upload should return 'edit/show'", "edit/show", editController.upload(uploadDto, bindingResult, uiModel, request, redirectAttributes));
-		assertEquals("uiModel should contain the uploadDto", uiModel.asMap().get("uploadDto"), uploadDto);
+		assertEquals("uiModel should contain the uploadDto", uiModel.asMap().get("result"), uploadDto);
 		assertEquals("error message code should be 'upload_error'", "upload_error", ((MessageSourceResolvable)uiModel.asMap().get("error")).getCodes()[0]);
 		assertEquals("uiModel should contain a list of allowed extensions", uiModel.asMap().get("extensions"), DarwinCorePropertyMap.getAllowedExtensions());
 		assertEquals("uiModel should contain a list of allowed delimiters", uiModel.asMap().get("delimiters"), Arrays.asList(Delimiter.values()));
-		EasyMock.verify(bindingResult, conversionService, jobLaunchRequestHandler, jobLaunchRequestRepository);
+		EasyMock.verify(bindingResult, conversionService, jobLaunchRequestHandler, jobLaunchRequestRepository, uploadDtoToJobLaunchRequestConverter);
 	}
 }

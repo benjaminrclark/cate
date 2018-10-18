@@ -6,6 +6,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.batch.core.launch.NoSuchJobException;
 
 import javax.persistence.Column;
@@ -19,6 +20,7 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Type;
 
 @Entity
+@Configurable
 public class JobLaunchRequest extends org.springframework.batch.integration.launch.JobLaunchRequest {
 
         @Transient
@@ -53,7 +55,7 @@ public class JobLaunchRequest extends org.springframework.batch.integration.laun
         @Override
         public Job getJob() {
             try {   
-                return jobLocator.getJob(job);
+                return jobLocator.getJob(this.job);
             } catch (NoSuchJobException nsje) {
                 throw new RuntimeException("No such job " + job);
             }

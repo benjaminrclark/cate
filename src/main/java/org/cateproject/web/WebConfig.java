@@ -13,6 +13,7 @@ import org.cateproject.web.batch.JobExecutionController;
 import org.cateproject.web.edit.MultimediaController;
 import org.cateproject.web.edit.TaxonController;
 import org.cateproject.web.format.FilterQueryAnnotationFormatterFactory;
+import org.cateproject.web.form.UploadDtoToJobLaunchRequestConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -24,7 +25,6 @@ import org.springframework.data.geo.format.PointFormatter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -42,7 +42,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         @Autowired
         private ReferenceRepository referenceRepository;
 
-        @Value("${max.upload.size:1000000}")
+        @Value("${max.upload.size:100000000}")
         private Integer maxUploadSize;
 
         public void setTaxonRepository(TaxonRepository taxonRepository) {
@@ -77,12 +77,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             return new JobExecutionController();
         }
 
-        @Bean(name = "multipartResolver")
-        public CommonsMultipartResolver multipartResolver() {
-            CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-            multipartResolver.setMaxUploadSize(maxUploadSize);
-            return multipartResolver;
-       }
+        @Bean
+        public UploadDtoToJobLaunchRequestConverter uploadDtoToJobLaunchRequestConverter() {
+            return new UploadDtoToJobLaunchRequestConverter();
+        }
 
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {

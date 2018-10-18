@@ -10,6 +10,7 @@ import org.cateproject.batch.JobLaunchRequestHandler;
 import org.cateproject.repository.jpa.batch.JobLaunchRequestRepository;
 import org.cateproject.web.form.Delimiter;
 import org.cateproject.web.form.UploadDto;
+import org.cateproject.web.form.UploadDtoToJobLaunchRequestConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,9 @@ public class EditController {
     private ConversionService conversionService;
 
     @Autowired
+    private UploadDtoToJobLaunchRequestConverter uploadDtoToJobLaunchRequestConverter;
+
+    @Autowired
     @Qualifier("remoteJobLaunchRequests")
     private JobLaunchRequestHandler jobLaunchRequestHandler;
 
@@ -53,6 +57,10 @@ public class EditController {
         this.jobLaunchRequestRepository = jobLaunchRequestRepository;
     }
 
+    public void setUploadDtoToJobLaunchRequestConverter(UploadDtoToJobLaunchRequestConverter uploadDtoToJobLaunchRequestConverter) {
+        this.uploadDtoToJobLaunchRequestConverter = uploadDtoToJobLaunchRequestConverter;
+    }
+
     @RequestMapping(method = RequestMethod.GET, produces = "text/html")
     public String uploadForm(Model uiModel) {
         populateUploadForm(uiModel, new UploadDto());
@@ -61,14 +69,14 @@ public class EditController {
 
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
     public String upload(@Valid UploadDto result, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest, RedirectAttributes redirectAttributes) {
-        if(bindingResult.hasErrors()) {
-            populateUploadForm(uiModel, result);
-            String[] codes = new String[] { "upload_error" };
-    	    DefaultMessageSourceResolvable message = new DefaultMessageSourceResolvable(codes, new Object[] {});
-    	    uiModel.addAttribute("error", message);
+       if(bindingResult.hasErrors()) {
+           populateUploadForm(uiModel, result);
+           String[] codes = new String[] { "upload_error" };
+           DefaultMessageSourceResolvable message = new DefaultMessageSourceResolvable(codes, new Object[] {});
+            uiModel.addAttribute("error", message);
             return "edit/show";
-        }
-       JobLaunchRequest jobLaunchRequest = conversionService.convert(result, JobLaunchRequest.class);
+       }
+       JobLaunchRequest jobLaunchRequest = uploadDtoToJobLaunchRequestConverter.convert(result);
        jobLaunchRequestRepository.save(jobLaunchRequest);
        jobLaunchRequestHandler.launch(jobLaunchRequest);
        String[] codes = new String[] { "upload_accepted" };
@@ -77,8 +85,8 @@ public class EditController {
        return "redirect:/edit";
     }
 
-    void populateUploadForm(Model uiModel, UploadDto uploadDto) {
-        uiModel.addAttribute("uploadDto", uploadDto);
+    void populateUploadForm(Model uiModel, UploadDto result) {
+        uiModel.addAttribute("result", result);
         uiModel.addAttribute("delimiters",Arrays.asList(Delimiter.values()));
         uiModel.addAttribute("extensions", DarwinCorePropertyMap.getAllowedExtensions());
     }

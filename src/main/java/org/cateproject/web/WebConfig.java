@@ -12,6 +12,7 @@ import org.cateproject.web.batch.JobController;
 import org.cateproject.web.batch.JobExecutionController;
 import org.cateproject.web.edit.MultimediaController;
 import org.cateproject.web.edit.TaxonController;
+import org.cateproject.web.edit.EditController;
 import org.cateproject.web.format.FilterQueryAnnotationFormatterFactory;
 import org.cateproject.web.form.UploadDtoToJobLaunchRequestConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         @Bean
         public JobExecutionController jobExecutionController() {
             return new JobExecutionController();
+        }
+
+        @Bean
+        public EditController editController() {
+            return new EditController();
         }
 
         @Bean

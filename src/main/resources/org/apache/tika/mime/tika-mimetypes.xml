@@ -4100,7 +4100,7 @@
   <mime-type type="video/parityfec"/>
   <mime-type type="video/pointer"/>
 
-  <mime-type type="video/quicktime">
+ <!-- <mime-type type="video/quicktime">
     <magic priority="50">
       <match value="moov" type="string" offset="4"/>
       <match value="mdat" type="string" offset="4"/>
@@ -4108,7 +4108,7 @@
     </magic>
     <glob pattern="*.qt"/>
     <glob pattern="*.mov"/>
-  </mime-type>
+  </mime-type>-->
 
   <mime-type type="video/raw"/>
   <mime-type type="video/rtp-enc-aescm128"/>

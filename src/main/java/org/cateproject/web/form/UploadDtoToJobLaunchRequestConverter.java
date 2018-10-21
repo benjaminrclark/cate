@@ -24,7 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.configuration.JobRegistry;
+import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
@@ -47,12 +47,28 @@ public class UploadDtoToJobLaunchRequestConverter implements Converter<UploadDto
 	private FileTransferService fileTransferService;
 
         @Autowired
-        private JobRegistry jobRegistry;
+        private JobLocator jobLocator;
 
         @Autowired
         private ConversionService conversionService;
 
 	private Set<String> priorityMimetypes = new HashSet<String>();
+
+        public void setConversionService(ConversionService conversionService) {
+            this.conversionService = conversionService;
+        }
+
+        public void setFileTransferService(FileTransferService fileTransferService) {
+            this.fileTransferService = fileTransferService;
+        }
+
+        public void setJobLocator(JobLocator jobLocator) {
+            this.jobLocator = jobLocator;
+        }
+
+        public void setTemporaryFileDirectory(FileSystemResource temporaryFileDirectory) {
+            this.temporaryFileDirectory = temporaryFileDirectory;
+        }
 
         public UploadDtoToJobLaunchRequestConverter() {
 	    priorityMimetypes.add("application/zip");
@@ -104,7 +120,7 @@ public class UploadDtoToJobLaunchRequestConverter implements Converter<UploadDto
 	}
   
         public JobLaunchRequest convertToProcessDarwinCoreArchiveJob(File file) throws IOException, NoSuchJobException {
-                Job job = jobRegistry.getJob("processDarwinCoreArchive");
+                Job job = jobLocator.getJob("processDarwinCoreArchive");
 		String uri = "upload://" + UUID.randomUUID().toString() + ".zip";
                 String jobLaunchRequestIdentifier = UUID.randomUUID().toString();
 		fileTransferService.copyFileOut(file, uri);

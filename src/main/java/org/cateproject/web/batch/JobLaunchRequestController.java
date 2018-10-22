@@ -16,6 +16,10 @@ public class JobLaunchRequestController {
     @Autowired
     private JobLaunchRequestRepository jobLaunchRequestRepository;
 
+    public void setJobLaunchRequestRepository(JobLaunchRequestRepository jobLaunchRequestRepository) {
+        this.jobLaunchRequestRepository = jobLaunchRequestRepository;
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "text/html")
     public String show(@PathVariable("id") Long id, Model uiModel) {
         JobLaunchRequest jobLaunchRequest = jobLaunchRequestRepository.findOne(id);

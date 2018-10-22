@@ -81,6 +81,7 @@ public class EditControllerTest {
 		BindingResult bindingResult = EasyMock.createMock(BindingResult.class);
 		UploadDto uploadDto = new UploadDto();
                 JobLaunchRequest jobLaunchRequest = new JobLaunchRequest(new SimpleJob("job"), new JobParameters());
+                jobLaunchRequest.setId(1L);
 	
 		EasyMock.expect(bindingResult.hasErrors()).andReturn(false);
                 EasyMock.expect(uploadDtoToJobLaunchRequestConverter.convert(EasyMock.eq(uploadDto))).andReturn(jobLaunchRequest);
@@ -89,7 +90,7 @@ public class EditControllerTest {
                 
 		EasyMock.replay(bindingResult, conversionService, jobLaunchRequestHandler, jobLaunchRequestRepository, uploadDtoToJobLaunchRequestConverter);
 		
-		assertEquals("upload should return 'redirect:/edit'", "redirect:/edit", editController.upload(uploadDto, bindingResult, uiModel, request, redirectAttributes));
+		assertEquals("upload should return 'redirect:/batch/launch/1'", "redirect:/batch/launch/1", editController.upload(uploadDto, bindingResult, uiModel, request, redirectAttributes));
 		assertTrue("uiModel should be empty", uiModel.asMap().isEmpty());
 		assertEquals("success message code should be 'upload_accepted'", "upload_accepted", ((MessageSourceResolvable)redirectAttributes.getFlashAttributes().get("success")).getCodes()[0]);
 		EasyMock.verify(bindingResult, conversionService, jobLaunchRequestHandler, jobLaunchRequestRepository, uploadDtoToJobLaunchRequestConverter);

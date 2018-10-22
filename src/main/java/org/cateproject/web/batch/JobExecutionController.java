@@ -45,6 +45,7 @@ public class JobExecutionController {
 
     @RequestMapping(produces = "text/html")
     public String list(Pageable pageable, Model uiModel, @RequestParam(value = "query", required = false) String query, @RequestParam(value = "filterQuery", required = false) @FilterQueryFormat List<FilterQuery> filterQueries) {        
+        // TODO Should this be in the repository
         SimpleFacetQuery facetQuery = new SimpleFacetQuery();	
 	FacetOptions facetOptions = new FacetOptions();
 	for(String facet : getFacets()) {

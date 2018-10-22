@@ -4,6 +4,7 @@ package org.cateproject.batch;
 import java.util.List;
 
 import org.cateproject.repository.search.batch.JobExecutionRepository;
+import org.cateproject.repository.search.batch.StepExecutionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.ExitStatus;
@@ -28,9 +29,16 @@ public class BatchListener extends ItemListenerSupport<Object, Object> implement
 
         @Autowired	
 	private JobExecutionRepository jobExecutionRepository;
+
+        @Autowired	
+	private StepExecutionRepository stepExecutionRepository;
 	
 	public void setJobExecutionRepository(JobExecutionRepository jobExecutionRepository) {
 		this.jobExecutionRepository = jobExecutionRepository;
+	}
+
+	public void setStepExecutionRepository(StepExecutionRepository stepExecutionRepository) {
+		this.stepExecutionRepository = stepExecutionRepository;
 	}
 
         @OnProcessError	
@@ -84,12 +92,14 @@ public class BatchListener extends ItemListenerSupport<Object, Object> implement
 	@AfterStep
 	public ExitStatus afterStep(StepExecution stepExecution) {
 		logger.debug("afterStep " + stepExecution);
+                stepExecutionRepository.save(stepExecution);
 		return null;
 	}
 
 	@BeforeStep
 	public void beforeStep(StepExecution stepExecution) {
 		logger.debug("beforeStep " + stepExecution);
+                stepExecutionRepository.save(stepExecution);
 	}
 	
 	

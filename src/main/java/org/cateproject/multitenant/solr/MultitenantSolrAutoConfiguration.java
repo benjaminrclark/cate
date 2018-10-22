@@ -12,6 +12,8 @@ import org.cateproject.domain.convert.solr.DatasetWritingConverter;
 import org.cateproject.domain.convert.solr.IdentificationKeyWritingConverter;
 import org.cateproject.domain.convert.solr.JobExecutionReadingConverter;
 import org.cateproject.domain.convert.solr.JobExecutionWritingConverter;
+import org.cateproject.domain.convert.solr.StepExecutionReadingConverter;
+import org.cateproject.domain.convert.solr.StepExecutionWritingConverter;
 import org.cateproject.domain.convert.solr.MappingSolrConverterFactoryBean;
 import org.cateproject.domain.convert.solr.MultimediaWritingConverter;
 import org.cateproject.domain.convert.solr.ReferenceWritingConverter;
@@ -22,7 +24,10 @@ import org.cateproject.repository.search.BaseRepository;
 import org.cateproject.repository.search.BaseRepositoryImpl;
 import org.cateproject.repository.search.batch.JobExecutionRepository;
 import org.cateproject.repository.search.batch.JobExecutionRepositoryImpl;
+import org.cateproject.repository.search.batch.StepExecutionRepository;
+import org.cateproject.repository.search.batch.StepExecutionRepositoryImpl;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -75,11 +80,16 @@ public class MultitenantSolrAutoConfiguration {
             return new JobExecutionReadingConverter();
         }
 
+        @Bean Converter<SolrDocument, StepExecution> stepExecutionReadingConverter() {
+            return new StepExecutionReadingConverter();
+        }
+
         @Bean
         public FactoryBean<MappingSolrConverter> solrConverterFactoryBean() {
              Set<Converter<SolrDocument, ? extends Object>> readingConverters = new HashSet<Converter<SolrDocument, ? extends Object>>();
              readingConverters.add(baseReadingConverter());
              readingConverters.add(jobExecutionReadingConverter());
+             readingConverters.add(stepExecutionReadingConverter());
          
              Set<Converter<? extends Object, SolrInputDocument>> writingConverters = new HashSet<Converter<? extends Object, SolrInputDocument>>();
              writingConverters.add(new DatasetWritingConverter());
@@ -89,6 +99,7 @@ public class MultitenantSolrAutoConfiguration {
              writingConverters.add(new ReferenceWritingConverter());
              writingConverters.add(new TermWritingConverter());
              writingConverters.add(new JobExecutionWritingConverter());
+             writingConverters.add(new StepExecutionWritingConverter());
          
              MappingSolrConverterFactoryBean solrConverterFactoryBean = new MappingSolrConverterFactoryBean();
              solrConverterFactoryBean.setReadingConverters(readingConverters);
@@ -123,5 +134,12 @@ public class MultitenantSolrAutoConfiguration {
             JobExecutionRepositoryImpl jobExecutionRepository = new JobExecutionRepositoryImpl();
             jobExecutionRepository.setSolrOperations(solrTemplate());
             return jobExecutionRepository;
+        }
+
+        @Bean
+        public StepExecutionRepository stepExecutionRepository() throws Exception {
+            StepExecutionRepositoryImpl stepExecutionRepository = new StepExecutionRepositoryImpl();
+            stepExecutionRepository.setSolrOperations(solrTemplate());
+            return stepExecutionRepository;
         }
 }

@@ -1,0 +1,52 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head(title=#{entity_show(#{label_org_springframework_batch_core_jobexecution})})">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/css/bootstrap.min.css"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.2.min.js"><!-- required for FF3 and Opera --></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/2.2.2/js/bootstrap.min.js"><!-- required for FF3 and Opera --></script>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="500">
+<div id="header" class="navbar navbar-fixed-top navbar-inverse" th:replace="fragments/header :: header">Header Goes Here</div>
+<header class="page-header">
+  <div class="container">
+    <div class="row">
+      <h1 id="page-title" class="span8">
+        <i class="glyphicons-icon cogwheels"><!----></i> <span th:text="#{entity_show(#{label_org_cateproject_domain_batch_joblaunchrequest})}">Show JobLaunchRequest</span>
+      </h1>
+	</div>
+  </div>
+</header>
+<div class="container">
+  <div class="row">
+  <div class="span12">
+    <section>
+    <form id="show_org_cateproject_domain_batch_JobLaunchRequest"  name="show_org_cateproject_domain_batch_JobLaunchRequest" class="form form-horizontal" th:object="${result}">
+      <div th:replace="fragments/form :: display(id='org_cateproject_domain_batch_joblaunchrequest_id',field='id')">Id Field</div>
+      <div th:replace="fragments/form :: displayLink(id='org_cateproject_domain_batch_joblaunchrequest_job',field='job', link='/batch/job/' + ${result.job})">Name Field</div>
+      <div th:replace="fragments/form :: displayLink(id='org_cateproject_domain_batch_joblaunchrequest_jobexecutionid',field='jobExecutionId', link='/batch/execution/' + ${result.jobExecutionId})">Name Field</div>
+      <div th:replace="fragments/form :: displayText(id='org_cateproject_domain_batch_joblaunchrequest_jobparameters',field='jobParameters')">Parameters Field</div>
+     </form>
+    </section>
+  </div>
+  </div>
+  </div>
+  <script  th:inline="javascript">
+    /*[+
+
+    var url = '/batch/launch/' + [[${result.id}]];
+
+    +]*/
+    function doPoll(){
+      $.getJSON(url, function(data) {
+        if(data.jobExecution !== null) {
+            $(location).attr('href','/batch/execution/' + data.jobExecution);
+        }
+        setTimeout(doPoll,2000);
+      });
+    }
+
+    $(document).ready(function(){
+      doPoll();
+    });
+  </script>
+</body>
+</html>

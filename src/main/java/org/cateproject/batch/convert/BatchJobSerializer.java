@@ -2,11 +2,12 @@ package org.cateproject.batch.convert;
 
 import java.io.IOException;
 
+import org.cateproject.domain.batch.JobLaunchRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.integration.launch.JobLaunchRequest;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -36,6 +37,12 @@ public class BatchJobSerializer extends JsonSerializer<JobLaunchRequest>{
             generator.writeEndObject();
         }
         generator.writeEndObject();
+        generator.writeFieldName("jobExecution");
+        if(value.getJobExecutionId() == null) {
+            generator.writeNull();
+        } else {
+            generator.writeNumber(value.getJobExecutionId());
+        }
         generator.writeEndObject();
     }
 

@@ -80,7 +80,7 @@ public class EditController {
        String[] codes = new String[] { "upload_accepted" };
        DefaultMessageSourceResolvable message = new DefaultMessageSourceResolvable(codes, new Object[] {});
        redirectAttributes.addFlashAttribute("success", message);
-       return "redirect:/edit";
+       return "redirect:/batch/launch/" + jobLaunchRequest.getId();
     }
 
     void populateUploadForm(Model uiModel, UploadDto result) {

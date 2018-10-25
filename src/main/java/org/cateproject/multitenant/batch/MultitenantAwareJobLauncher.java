@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.cateproject.domain.batch.JobLaunchRequest;
 import org.cateproject.repository.jpa.batch.JobLaunchRequestRepository;
+import org.cateproject.repository.search.batch.JobExecutionRepository;
 import org.cateproject.multitenant.MultitenantContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,9 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
         private JobLaunchRequestRepository jobLaunchRequestRepository;
 
         @Autowired
+        private JobExecutionRepository jobExecutionRepository;
+
+        @Autowired
         @Qualifier("batchTaskExecutor")
 	private TaskExecutor taskExecutor;
 
@@ -111,6 +115,7 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
 		 * assertion and the next method returning successfully.
 		 */
 		jobExecution = jobRepository.createJobExecution(job.getName(), jobParameters);
+                jobExecutionRepository.save(jobExecution);
                 final String originalTenantId = MultitenantContextHolder.getContext().getTenantId();
                 final Map<String, Object> originalProperties = MultitenantContextHolder.getContext().copyContextProperties();
                 final String tenantId = jobParameters.getString("tenant.id");
@@ -172,6 +177,10 @@ public class MultitenantAwareJobLauncher implements JobLauncher, InitializingBea
 
         public void setJobLaunchRequestRepository(JobLaunchRequestRepository jobLaunchRequestRepository) {
             this.jobLaunchRequestRepository = jobLaunchRequestRepository;
+        }
+
+        public void setJobExecutionRepository(JobExecutionRepository jobExecutionRepository) {
+            this.jobExecutionRepository = jobExecutionRepository;
         }
 
 	/**

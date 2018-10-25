@@ -20,10 +20,10 @@ public class StepExecutionRepositoryImpl extends FacetableRepositoryImpl<StepExe
         this.setIdFieldName("id");
     }
 
-    public Page<StepExecution> findByJobExecutionOrderByStartTimeAsc(JobExecution jobExecution, Pageable pageable) {
+    public Page<StepExecution> findByJobExecutionOrderByIdAsc(JobExecution jobExecution, Pageable pageable) {
         SimpleQuery query = new SimpleQuery();
         query.setPageRequest(pageable);
-        query.addSort(new Sort(Sort.Direction.ASC,"stepexecution.createtime_dt"));
+        query.addSort(new Sort(Sort.Direction.ASC,"base.id_l"));
         query.addCriteria(Criteria.where("stepexecution.jobexecution_l").expression(jobExecution.getId().toString()));
         return super.getSolrOperations().queryForPage(query,StepExecution.class);
     }

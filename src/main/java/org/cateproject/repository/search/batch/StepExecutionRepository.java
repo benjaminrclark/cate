@@ -11,5 +11,5 @@ import org.springframework.data.solr.repository.SolrCrudRepository;
 
 public interface StepExecutionRepository extends SolrCrudRepository<StepExecution, Long>, FacetableRepository<StepExecution> {
 
-    Page<StepExecution> findByJobExecutionOrderByStartTimeAsc(JobExecution jobExecution, Pageable pageable);
+    Page<StepExecution> findByJobExecutionOrderByIdAsc(JobExecution jobExecution, Pageable pageable);
 }

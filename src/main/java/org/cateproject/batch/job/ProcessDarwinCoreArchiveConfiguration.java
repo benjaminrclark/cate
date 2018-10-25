@@ -127,7 +127,7 @@ public class ProcessDarwinCoreArchiveConfiguration
 
         @Bean
         public Flow importChangeDump() {
-	    return new FlowBuilder<Flow>("importChangeDump").start(readFiles()).next(processChangeDumpManifest()).next(processChanges()).next(cleanUpResources()).end();
+	    return new FlowBuilder<Flow>("importChangeDump").start(readFiles()).next(processChangeDumpManifest()).next(processChanges()).end();
         }
 
         @Bean

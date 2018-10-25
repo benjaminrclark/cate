@@ -32,8 +32,55 @@
       <div th:replace="fragments/form :: display(id='org_springframework_batch_core_jobexecution_stepexecutioncount',field='stepExecutionCount')">Id Field</div>
      </form>
     </section>
+    <section>
+      <table class="log">
+        <thead>
+          <tr>
+            <th>Start</th>
+            <th>Message</th>
+            <th>Duration</th>
+            <th>Reads</th>
+            <th>Writes</th>
+            <th>Commits</th>
+            <th>Rollbacks</th>
+            <th>Exit Code</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="step : ${result.stepExecutions}">
+            <td th:text="${step.startDateTime}">2018-10-23 08:12:29.998</td>
+            <td th:text="${step.message}">Fetching resource</td>
+            <td th:text="'in ' + ${step.duration}">PT2S</td>
+            <td th:text="${step.readCount}">1</td>
+            <td th:text="${step.writeCount}">1</td>
+            <td th:text="${step.commitCount}">1</td>
+            <td th:text="${step.rollbackCount}">1</td>
+            <td th:text="${step.exitCode}">SUCCESS</td>
+            <td th:text="${step.exitDescription}">Exit Description</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
   </div>
   </div>
   </div>
+  <script  th:inline="javascript">
+    /*[+
+
+    var url = '/batch/execution/' + [[${result.id}]];
+
+    +]*/
+    function doPoll(){
+      $.getJSON(url, function(data) {
+        console.log(data);
+        setTimeout(doPoll,2000);
+      });
+    }
+
+    $(document).ready(function(){
+      doPoll();
+    });
+  </script>
 </body>
 </html>

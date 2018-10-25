@@ -38,7 +38,7 @@ public class StepExecutionRepositoryImplTest {
         EasyMock.expect(solrOperations.queryForPage(EasyMock.isA(SimpleQuery.class), EasyMock.eq(StepExecution.class))).andReturn(result);
 
         EasyMock.replay(solrOperations);
-        assertEquals("findByJobExecutionOrderByStartTimeAsc should return the expected result",result, stepExecutionRepository.findByJobExecutionOrderByStartTimeAsc(jobExecution, pageable));
+        assertEquals("findByJobExecutionOrderByStartTimeAsc should return the expected result",result, stepExecutionRepository.findByJobExecutionOrderByIdAsc(jobExecution, pageable));
         EasyMock.verify(solrOperations);
     }
 }

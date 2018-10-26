@@ -29,6 +29,8 @@ public class JobExecutionInfoTest {
 
     private JobExecutionInfo jobExecutionInfo;
 
+    private List<StepExecutionInfo> stepExecutionInfos;
+
     private JobExecution jobExecution;
 
     @Before
@@ -45,7 +47,8 @@ public class JobExecutionInfoTest {
         jobExecution.setEndTime(new Date(3000));
         jobExecution.setStatus(BatchStatus.COMPLETED);
         jobExecution.setExitStatus(new ExitStatus("EXIT_CODE","EXIT_DESCRIPTION"));
-        jobExecutionInfo = new JobExecutionInfo(jobExecution);
+        stepExecutionInfos = new ArrayList<StepExecutionInfo>();
+        jobExecutionInfo = new JobExecutionInfo(jobExecution, stepExecutionInfos);
         DateTimeUtils.setCurrentMillisFixed(5000);
     }
 
@@ -105,6 +108,7 @@ public class JobExecutionInfoTest {
         assertEquals("getId should return the expected value", new Long(1L), jobExecutionInfo.getId());
     }
 
+
     @Test
     public void testGetJobParameters() {
         Map<String, JobParameter> jobParametersMap = new HashMap<String, JobParameter>();
@@ -115,5 +119,10 @@ public class JobExecutionInfoTest {
     @Test
     public void testGetStatus() {
         assertEquals("getStatus should return the expected value", BatchStatus.COMPLETED, jobExecutionInfo.getStatus());
+    }
+
+    @Test
+    public void testGetStepExecutions() {
+        assertEquals("getStepExecutions should return the expected value", stepExecutionInfos, jobExecutionInfo.getStepExecutions());
     }
 }

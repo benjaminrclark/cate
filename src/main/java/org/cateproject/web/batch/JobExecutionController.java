@@ -53,6 +53,10 @@ public class JobExecutionController {
         this.stepExecutionRepository = stepExecutionRepository;
     }
 
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
     public List<String> getFacets() {
     	List<String> facets = new ArrayList<String>();
         facets.add("jobexecution.jobname_t");
